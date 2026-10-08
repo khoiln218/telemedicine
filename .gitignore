@@ -1,0 +1,24 @@
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# File khóa tạm của Office (Excel, Word đang mở)
+~$*
+
+# draw.io backup
+*.drawio.bkp
+*.drawio.dtmp
+
+# Python / Flask (GĐ4)
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+
+# Editor
+.idea/
+
+# Không đưa lên repo public: giáo trình có bản quyền, danh sách SV cả lớp
+docs/de-bai/Fundamentals of Database Systems*.pdf
+docs/de-bai/DanhSachSinhVien*.pdf
