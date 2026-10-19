@@ -44,14 +44,14 @@ Tên/khóa dưới đây là ứng viên; cần thống nhất tên khóa với 
 | Thực thể | Thuộc tính ứng viên | Liên kết / ghi chú |
 |---|---|---|
 | HO_SO_BENH_AN | `ma_hs`, `ma_bn`, `ngay_tao`, `trang_thai`, `nguoi_tao` | Bệnh nhân 1 — 0..N hồ sơ hoặc 1 — 1 hồ sơ; cần chốt cardinality. Nếu mỗi bệnh nhân chỉ có một hồ sơ, `ma_bn` là UNIQUE. |
-| LAN_KHAM | `ma_lan_kham`, `ma_hs`/`ma_bn`, `ma_lich_hen`, `ma_bac_si`, `thoi_diem_kham`, `tom_tat`, `nguoi_tao` | Mỗi lần khám thuộc một bệnh nhân và một bác sĩ. Khảo sát mảng B đề xuất 1 lịch hoàn thành — 0..1 lần khám (`ma_lich_hen` UNIQUE). |
+| LAN_KHAM | `ma_lan_kham`, `ma_lich_hen`, `thoi_diem_kham`, `tom_tat`, `nguoi_tao` | `ma_lich_hen` là FK UNIQUE; bệnh nhân và bác sĩ được suy ra qua `LICH_HEN`, không lặp `ma_bn`/`ma_bac_si`. Mỗi lịch hoàn thành có tối đa một lần khám. |
 | CHAN_DOAN | `ma_chan_doan` hoặc khóa ghép, `ma_lan_kham`, `ma_icd10`, `ghi_chu`, `la_chan_doan_chinh` | Một lần khám có thể có nhiều chẩn đoán; danh mục mã ICD-10 cần chốt cách quản lý. |
-| DON_THUOC | `ma_don`, `ma_lan_kham`, `thoi_diem_ke`, `ma_bac_si_ke`, `nguoi_tao` | Đơn thuộc lần khám. Quy tắc đề xuất yêu cầu người kê là bác sĩ khám. Cardinality 1 hay nhiều đơn/lần khám cần chốt. |
+| DON_THUOC | `ma_don`, `ma_lan_kham`, `thoi_diem_ke`, `nguoi_tao` | Đơn thuộc lần khám; bác sĩ kê được suy ra qua lần khám và lịch hẹn, không lưu lặp `ma_bac_si_ke`. Một lần khám có thể có nhiều đơn theo giả định hiện tại. |
 | CHI_TIET_DON_THUOC | `ma_don`, `ma_thuoc`, `so_luong`, `lieu_dung`, có thể `thu_tu` | Thực thể kết hợp giữa đơn và thuốc; khóa ghép hoặc khóa thay thế. `so_luong` dương; quy tắc liều dùng cần định nghĩa miền không rỗng/dương phù hợp biểu diễn. |
 | THUOC | `ma_thuoc`, `ten_thuoc`, `dang_bao_che`, `ham_luong`, `trang_thai` | Một thuốc có thể chứa một hoặc nhiều hoạt chất; không lưu danh sách hoạt chất dạng chuỗi. |
 | HOAT_CHAT | `ma_hoat_chat`, `ten_hoat_chat` | Danh mục chuẩn hóa để liên kết thuốc với dị ứng. |
 | THUOC_HOAT_CHAT | `ma_thuoc`, `ma_hoat_chat`, có thể `ham_luong` | Quan hệ M:N thuốc–hoạt chất; mỗi cặp phải duy nhất. |
-| DI_UNG | `ma_bn`, `ma_hoat_chat`, `ngay_ghi_nhan`, `trang_thai`, `ghi_chu` | Dị ứng gắn bệnh nhân và hoạt chất; bệnh nhân/hoạt chất được quản lý ở mảng liên quan hoặc danh mục dùng chung. Tránh dùng tên tự do làm định danh. |
+| DI_UNG | `ma_bn`, `ma_hoat_chat`, `ngay_ghi_nhan`, `trang_thai`, `ghi_chu` | Dị ứng gắn bệnh nhân và hoạt chất; trạng thái `DANG_HIEU_LUC` xác định dị ứng đang hiệu lực. Kiểm tra tại thời điểm kê đơn; không tự hồi tố đơn cũ khi tình trạng dị ứng/danh mục thuốc thay đổi. |
 
 Mảng B đã đề xuất `LAN_KHAM` liên kết 1:1 với `LICH_HEN`, với `ma_lh`/`ma_lich_hen` UNIQUE NOT NULL. Mảng C cần thống nhất chính xác tên cột và quy tắc chỉ tạo lần khám khi lịch đạt trạng thái phù hợp.
 
@@ -80,13 +80,13 @@ Mảng B đã đề xuất `LAN_KHAM` liên kết 1:1 với `LICH_HEN`, với `m
 
 ## 7. Giả định cần nhóm xác nhận
 
-1. Một bệnh nhân có đúng một hồ sơ bệnh án nội bộ hay có thể có nhiều hồ sơ theo cơ sở/đợt điều trị?
-2. Một lịch hẹn hoàn thành có tối đa một lần khám? Có trường hợp hủy/no-show vẫn tạo bản ghi khám không?
-3. Một lần khám có thể có nhiều đơn thuốc hay tối đa một đơn? Ai được phép sửa đơn sau khi kê?
+1. Áp dụng đề xuất của trưởng nhóm: mỗi bệnh nhân có đúng một hồ sơ bệnh án nội bộ; `ma_bn` UNIQUE ở `HO_SO_BENH_AN`.
+2. Một lịch hẹn chỉ tạo lần khám khi lịch đã `HOAN_THANH`; `ma_lich_hen` UNIQUE ở `LAN_KHAM`. Hủy/no-show không tạo lần khám.
+3. Một lần khám có thể có nhiều đơn thuốc; bác sĩ khám là người kê. Cần chốt quyền sửa sau khi kê trong thiết kế SQL.
 4. Chẩn đoán tối thiểu một là điều kiện trước khi tạo đơn, trước khi hoàn tất lần khám, hay chỉ áp dụng cho lần khám có kê đơn?
 5. Danh mục ICD-10 là tập mã nhỏ giả lập hay cần nhập toàn bộ danh mục? Trường nào là nguồn mô tả chính?
 6. Thuốc chứa nhiều hoạt chất không? Dị ứng chỉ xét hoạt chất khớp chính xác trong đồ án hay cần mô hình phản ứng chéo? Đề xuất giới hạn ở khớp mã hoạt chất chính xác.
-7. Hồ sơ “không được xóa” áp dụng chỉ cho `HO_SO_BENH_AN` hay cả `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC` và chi tiết? Đề xuất chặn xóa vật lý toàn bộ lịch sử y tế, dùng trạng thái/thu hồi phù hợp.
+7. Theo review, chặn `DELETE` vật lý trên năm bảng `HO_SO_BENH_AN`, `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC`, `CHI_TIET_DON_THUOC`; dùng trạng thái/thu hồi phù hợp khi ngừng sử dụng.
 8. Ai tạo/cập nhật bệnh án và có cần lưu đầy đủ lịch sử sửa đổi cho demo không? Đề xuất lưu `created_at`, `created_by`; audit chi tiết để ngoài phạm vi nếu không được yêu cầu.
 9. Cách liên kết user/role của bệnh nhân với `ma_bn` là gì? Nếu không có đăng nhập thực, demo chỉ kiểm thử role DB và ghi rõ hạn chế.
 
