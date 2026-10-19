@@ -4,63 +4,84 @@
 |---|---|
 | Mã việc | T08 (GĐ0, tuần 2) |
 | Người viết / review | Lê Ngọc Khôi / Đặng Hữu Khoa |
-| Dùng cho | Báo cáo mục 1.2.2 (gộp ở T10), ERD mảng B (T12), test 5.1 (T43) |
-| Căn cứ | [T03 – khảo sát mảng B](../khao-sat/T03_KhaoSat_MangB.md), sườn báo cáo v0 |
+| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt |
+| Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
+| Căn cứ | [T03 – khảo sát mảng B](../khao-sat/T03_KhaoSat_MangB.md) |
+| Dùng cho | Báo cáo mục 1.2.2, T12 (ERD mảng B), T36 (trigger/view), T43 (kiểm thử) |
 
-BR-B01…B05 giữ đúng số hiệu như bản v0, vì mục 4.1.4 và 5.1 đã tham chiếu. Bảng này thay cho bảng quy tắc ở mục 5 của T03.
+Nguyên tắc viết: mỗi quy tắc là một phát biểu khẳng định, dùng thuật ngữ ở mục 1, không phụ thuộc cách cài đặt; cơ chế cài đặt tách riêng ở mục 3. Số hiệu BR-B01…B05 giữ nguyên vì báo cáo đã tham chiếu.
 
-## Thuật ngữ dùng trong quy tắc
+## 1. Thuật ngữ
 
-- **Lịch hẹn còn hiệu lực**: lịch hẹn có trạng thái khác HUY và VANG_MAT.
-- **Giao nhau về thời gian**: hai khoảng [bắt đầu, kết thúc) có phần chung. Hẹn nối tiếp nhau, ví dụ 9:00–9:15 và 9:15–9:30, không bị tính là giao nhau.
-
-## Bảng quy tắc (dán vào mục 1.2.2)
-
-| Mã | Phát biểu quy tắc | Loại ràng buộc | Cơ chế đảm bảo |
-|---|---|---|---|
-| BR-B01 | Thời gian của một lịch hẹn phải nằm trọn trong một ca làm việc của bác sĩ được hẹn | Nghiệp vụ (liên bảng, mảng A) | Trigger `trg_lich_hen_hop_le` |
-| BR-B02 | Hai lịch hẹn còn hiệu lực của cùng một bác sĩ không được giao nhau về thời gian | Nghiệp vụ | `EXCLUDE USING gist` (cần extension `btree_gist`) |
-| BR-B03 | Lịch hẹn với bác sĩ chuyên khoa phải kèm giấy chuyển chuyên khoa còn hạn, đúng chuyên khoa, nếu bệnh nhân **chưa từng** có lịch hẹn HOAN_THANH ở chuyên khoa đó (tái khám không cần giấy) | Nghiệp vụ | Trigger `trg_lich_hen_hop_le` |
-| BR-B04 | Lịch hẹn tư vấn từ xa bắt buộc có nền tảng, đường dẫn phiên và thời lượng > 0 phút | Miền giá trị | NOT NULL + CHECK |
-| BR-B05 | Lịch hẹn mới luôn ở trạng thái DA_DAT. Trạng thái chỉ được chuyển: DA_DAT → DA_XAC_NHAN hoặc HUY; DA_XAC_NHAN → HOAN_THANH, HUY hoặc VANG_MAT. HOAN_THANH, HUY, VANG_MAT là trạng thái cuối | Nghiệp vụ (chuyển trạng thái) | CHECK miền giá trị + DEFAULT + trigger `trg_trang_thai_lich_hen` |
-| BR-B06 | Mỗi lịch hẹn thuộc đúng một hình thức: khám trực tiếp hoặc tư vấn từ xa | Phân lớp (d, total) | Cột phân loại + CHECK; chi tiết theo phương án ánh xạ ở 2.2 |
-| BR-B07 | Thời gian kết thúc của lịch hẹn phải sau thời gian bắt đầu | Miền giá trị | CHECK |
-| BR-B08 | Mỗi giấy chuyển chuyên khoa chỉ được dùng cho tối đa một lịch hẹn | Bản số | UNIQUE trên cột mã giấy của lịch hẹn |
-| BR-B09 | Giấy chuyển chuyên khoa chỉ do bác sĩ đa khoa lập, hiệu lực tối đa 30 ngày kể từ ngày lập | Phân lớp + miền giá trị | FK tới lớp bác sĩ đa khoa (mảng A) + CHECK |
-| BR-B10 | Mỗi lịch hẹn có tối đa một hóa đơn, chỉ lập cho lịch hẹn HOAN_THANH, số tiền ≥ 0 | Bản số + nghiệp vụ | UNIQUE + CHECK + trigger |
-| BR-B11 | Số điện thoại của bệnh nhân không trùng nhau | Khóa (khóa ứng viên) | UNIQUE |
-
-## Cách kiểm chứng (đầu vào T43)
-
-Mỗi quy tắc có ít nhất một thao tác sai phải bị CSDL từ chối:
-
-| Mã | Thao tác thử (phải bị từ chối) |
+| Thuật ngữ | Định nghĩa |
 |---|---|
-| BR-B01 | INSERT lịch hẹn 18:00–18:15 khi ca của bác sĩ là 07:00–11:00 |
-| BR-B02 | INSERT lịch 9:00–9:30 khi bác sĩ đã có lịch DA_XAC_NHAN 9:15–9:45. Ngược lại, nếu lịch cũ đã HUY thì INSERT phải **thành công** |
-| BR-B03 | INSERT lịch với BS chuyên khoa Tim mạch cho bệnh nhân chưa từng khám Tim mạch, không kèm giấy chuyển |
-| BR-B04 | INSERT tư vấn từ xa có link phiên NULL, hoặc thời lượng = 0 |
-| BR-B05 | UPDATE lịch hẹn từ HOAN_THANH về DA_DAT; UPDATE từ DA_DAT thẳng sang HOAN_THANH |
-| BR-B06 | Gán một lịch hẹn vào cả hai lớp trực tiếp và từ xa |
-| BR-B07 | INSERT lịch hẹn có kết thúc = bắt đầu |
-| BR-B08 | Dùng cùng một mã giấy chuyển cho lịch hẹn thứ hai |
-| BR-B09 | INSERT giấy chuyển do bác sĩ chuyên khoa lập; hoặc giấy có ngày hết hạn = ngày lập + 45 |
-| BR-B10 | INSERT hóa đơn cho lịch hẹn DA_XAC_NHAN; INSERT hóa đơn thứ hai cho cùng lịch hẹn |
-| BR-B11 | INSERT bệnh nhân trùng số điện thoại |
+| Ca làm việc | Khoảng thời gian bác sĩ được xếp làm việc |
+| Ca làm việc còn hiệu lực | Khoảng thời gian làm việc đã xếp và chưa bị hủy |
+| Lịch hẹn còn hiệu lực | Cuộc hẹn chưa bị hủy và không phải trường hợp bệnh nhân vắng mặt |
+| Giao nhau về thời gian | Hai khoảng thời gian có phần chung; hai cuộc hẹn nối tiếp nhau, cuộc trước kết thúc đúng lúc cuộc sau bắt đầu, không tính là giao nhau |
+| Tư vấn từ xa | Khám qua cuộc gọi video thay vì đến phòng khám |
+| Giấy chuyển chuyên khoa | Giấy do bác sĩ đa khoa lập để bệnh nhân được khám bác sĩ chuyên khoa trong cùng phòng khám |
+| Tái khám | Bệnh nhân đã từng được khám xong ở cùng chuyên khoa |
 
-## Liên kết mục tiêu (mục 1.1)
+## 2. Danh sách quy tắc
 
-- MT-02 (lịch hẹn không xung đột): BR-B01, BR-B02, BR-B07
-- MT-03 (khám trực tiếp và từ xa): BR-B04, BR-B06
+Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **hành vi** là điều kiện ràng buộc một thao tác.
 
-## Phụ thuộc mảng A (nhờ Hữu Khoa xác nhận khi review)
+| Mã | Phát biểu quy tắc | Loại | Lý do | Nguồn |
+|---|---|---|---|---|
+| BR-B01 | Thời gian của mỗi lịch hẹn phải nằm trọn trong một ca làm việc còn hiệu lực của bác sĩ được hẹn | Hành vi | Bác sĩ chỉ khám trong giờ làm việc | T03 bước 1; MT-02 |
+| BR-B02 | Hai lịch hẹn còn hiệu lực của cùng một bác sĩ, hoặc của cùng một bệnh nhân, không được giao nhau về thời gian | Cấu trúc | Bác sĩ không khám hai bệnh nhân cùng lúc; bệnh nhân không khám hai nơi cùng lúc | T03 bước 1; MT-02 |
+| BR-B03 | Lịch hẹn với bác sĩ chuyên khoa phải kèm một giấy chuyển chuyên khoa cấp cho chính bệnh nhân đó, còn hạn, đúng chuyên khoa và chưa dùng cho lịch hẹn khác, trừ khi là tái khám | Hành vi | Bệnh nhân khám chuyên khoa lần đầu phải qua bác sĩ đa khoa | T03 bước 5 |
+| BR-B04 | Mỗi lịch hẹn tư vấn từ xa phải có nền tảng và đường dẫn phiên | Cấu trúc | Bệnh nhân cần thông tin để vào cuộc gọi | T03 bước 4; MT-03 |
+| BR-B05 | Lịch hẹn mới luôn ở trạng thái đã đặt; chỉ được chuyển từ đã đặt sang đã xác nhận hoặc hủy, từ đã xác nhận sang hoàn thành, hủy hoặc vắng mặt; hoàn thành, hủy, vắng mặt là trạng thái cuối | Hành vi | Không sửa lại lịch hẹn đã kết thúc | T03 bước 2, sơ đồ trạng thái |
+| BR-B06 | Mỗi lịch hẹn thuộc đúng một hình thức: khám trực tiếp hoặc tư vấn từ xa | Cấu trúc | Mỗi hình thức có thông tin riêng | T03 bước 1; MT-03 |
+| BR-B07 | Giấy chuyển chuyên khoa chỉ do bác sĩ đa khoa lập và có hiệu lực tối đa 30 ngày kể từ ngày lập | Cấu trúc | Phân biệt vai trò bác sĩ đa khoa và chuyên khoa | T03 bước 5 |
 
-- BR-B01 cần bảng ca làm việc có bác sĩ, ngày, giờ bắt đầu, giờ kết thúc.
-- BR-B03 cần biết bác sĩ chuyên khoa thuộc chuyên khoa nào.
-- BR-B09 cần tham chiếu được riêng lớp bác sĩ đa khoa. Điều này phụ thuộc phương án ánh xạ 8A/8B/8C. Nếu chọn phương án gộp một bảng (8C) thì BR-B09 chuyển sang dùng trigger.
+## 3. Cơ chế đảm bảo
 
-## Đã chốt so với T03
+| Mã | Cơ chế trong CSDL | Ghi chú |
+|---|---|---|
+| BR-B01 | Trigger `trg_lich_hen_hop_le` trên INSERT/UPDATE `LICH_HEN`: tồn tại ca làm việc khác `HUY` của bác sĩ chứa khoảng thời gian hẹn | Liên bảng với mảng A |
+| BR-B02 | Hai ràng buộc `EXCLUDE USING gist`: (`ma_bac_si` WITH =, khoảng thời gian WITH &&) và (`ma_bn` WITH =, khoảng thời gian WITH &&), chỉ áp dụng cho trạng thái khác `HUY`, `VANG_MAT` | Cần extension `btree_gist` |
+| BR-B03 | Trigger `trg_lich_hen_hop_le` kiểm tra giấy cùng `ma_bn` với lịch hẹn, còn hạn, đúng chuyên khoa, và trường hợp tái khám; UNIQUE trên cột mã giấy của `LICH_HEN` | Tái khám: đã có lịch `HOAN_THANH` ở cùng chuyên khoa |
+| BR-B04 | `NOT NULL` trên `nen_tang`, `link_phien` | Thời lượng tính từ thời điểm bắt đầu, kết thúc của lịch hẹn, không lưu riêng |
+| BR-B05 | `CHECK` miền giá trị + `DEFAULT 'DA_DAT'` + trigger `trg_trang_thai_lich_hen` | Trạng thái: `DA_DAT`, `DA_XAC_NHAN`, `HOAN_THANH`, `HUY`, `VANG_MAT` |
+| BR-B06 | Cột phân loại `hinh_thuc` + `CHECK` | Chi tiết theo phương án ánh xạ ở 2.2 |
+| BR-B07 | FK tới lớp bác sĩ đa khoa + `CHECK (ngay_het_han <= ngay_lap + 30)` | Nếu chọn ánh xạ 8C (một bảng bác sĩ) thì phần bác sĩ đa khoa chuyển sang trigger |
 
-- Giờ hẹn lưu dạng khoảng thời gian (bắt đầu, kết thúc) và dùng EXCLUDE để chống trùng. Không làm bảng khung giờ.
-- Tái khám được miễn giấy chuyển. "Tái khám" nghĩa là bệnh nhân đã có lịch hẹn HOAN_THANH ở cùng chuyên khoa.
-- Không có thực thể BAO_HIEM_Y_TE trong mảng B.
+## 4. Kiểm chứng (đầu vào T43)
+
+Chạy trên dữ liệu giả lập, ghi rõ bản ghi tiền điều kiện và kết quả thực tế.
+
+| Mã test | Quy tắc | Thao tác sai phải bị từ chối | Thao tác hợp lệ đi kèm |
+|---|---|---|---|
+| TC-02 | BR-B01 | Đặt lịch 18:00–18:15 khi ca của bác sĩ là 07:00–11:00; hoặc đặt vào ca đã hủy | Đặt lịch 08:00–08:15 trong ca còn hiệu lực |
+| TC-01 | BR-B02 | Đặt lịch 9:00–9:30 khi bác sĩ, hoặc bệnh nhân, đã có lịch `DA_XAC_NHAN` 9:15–9:45 | Cùng thao tác khi lịch cũ đã `HUY` |
+| – | BR-B03 | Đặt lịch bác sĩ chuyên khoa Tim mạch cho bệnh nhân chưa từng khám Tim mạch, không kèm giấy; dùng giấy của bệnh nhân khác; hoặc dùng lại giấy đã gắn với lịch khác | Đặt lịch kèm giấy hợp lệ, hoặc tái khám không cần giấy |
+| – | BR-B04 | Tư vấn từ xa không có nền tảng hoặc link phiên | Tư vấn từ xa đủ nền tảng, link phiên |
+| – | BR-B05 | Chuyển `HOAN_THANH` về `DA_DAT`; chuyển `DA_DAT` thẳng sang `HOAN_THANH` | Chuyển `DA_DAT` → `DA_XAC_NHAN` → `HOAN_THANH` |
+| – | BR-B06 | Gán một lịch hẹn vào cả hai hình thức | Lịch hẹn thuộc đúng một hình thức |
+| – | BR-B07 | Giấy chuyển do bác sĩ chuyên khoa lập; hoặc ngày hết hạn = ngày lập + 45 | Giấy do bác sĩ đa khoa lập, hạn 30 ngày |
+
+TC-01, TC-02 giữ số hiệu như báo cáo; các quy tắc còn lại đánh mã test khi gộp `tests.sql`.
+
+## 5. Phụ thuộc mảng A, C
+
+| Quy tắc | Dùng từ mảng khác | Nội dung |
+|---|---|---|
+| BR-B01 | A: `CA_LAM_VIEC` | Ca làm việc có bác sĩ, thời điểm bắt đầu, kết thúc |
+| BR-B02 | A: `BAC_SI` | Khóa bác sĩ dùng trong EXCLUDE |
+| BR-B03 | A: `BAC_SI_CHUYEN_KHOA`, `CHUYEN_KHOA` | Chuyên khoa của bác sĩ được hẹn |
+| BR-B07 | A: `BAC_SI_DA_KHOA` | Phụ thuộc phương án ánh xạ phân lớp bác sĩ |
+| BR-B05 | C: BR-C02 dùng lại | Lần khám chỉ tạo cho lịch `HOAN_THANH` |
+
+## 6. Quyết định thiết kế đã chốt
+
+- Giờ hẹn lưu dạng khoảng thời gian (bắt đầu, kết thúc); không làm bảng khung giờ.
+- Chuyên khoa của lịch hẹn lấy qua bác sĩ, không lưu riêng.
+- Phí khám là thuộc tính `phi_kham` của lịch hẹn.
+- Không cấp số thứ tự khám; mỗi lịch hẹn có khoảng giờ riêng.
+- Tư vấn từ xa dùng chung lần khám, chẩn đoán, đơn thuốc với khám trực tiếp; không kiểm tra bệnh có thuộc danh mục được khám từ xa (Thông tư 30/2023/TT-BYT).
+- Giấy chuyển chuyên khoa là quy trình nội bộ trong một phòng khám, không liên quan chuyển người bệnh theo BHYT.
+- Lễ tân là người dùng hệ thống với role CSDL `r_le_tan`, không phải thực thể.
+- Các ràng buộc đơn giản nằm ở ràng buộc chung (báo cáo mục 1.2.4), vẫn cài trong DDL: thời gian kết thúc sau bắt đầu, `sdt` của bệnh nhân không trùng, `phi_kham` không âm.
