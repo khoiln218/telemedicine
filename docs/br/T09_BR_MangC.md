@@ -4,70 +4,81 @@
 |---|---|
 | Mã việc | T09 (GĐ0, tuần 2) |
 | Người viết / review | Nguyễn Đăng Khoa / Lê Ngọc Khôi |
-| Ngày cập nhật theo review | 19/10/2026 |
-| Dùng cho | Mục 1.2.3 (gộp ở T10), T15 (truy vết BR–ER), T28 (chuẩn hóa), T38 (trigger/view), T43 (kiểm thử) |
-| Căn cứ | [T05 – khảo sát mảng C](../khao-sat/T05_KhaoSat_MangC.md), sườn báo cáo v0, kế hoạch nhóm |
-| Trạng thái | Bản đề xuất để nhóm review; giữ nguyên mã BR-C01…C05 đang được sườn báo cáo tham chiếu |
+| Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt |
+| Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
+| Căn cứ | [T05 – khảo sát mảng C](../khao-sat/T05_KhaoSat_MangC.md) |
+| Dùng cho | Báo cáo mục 1.2.3, T15 (truy vết BR → ER), T38 (trigger/view), T43 (kiểm thử) |
 
-## Thuật ngữ và giả định phạm vi
+Nguyên tắc viết: mỗi quy tắc là một phát biểu khẳng định, dùng thuật ngữ ở mục 1, không phụ thuộc cách cài đặt; cơ chế cài đặt tách riêng ở mục 3. Số hiệu BR-C01…C05 giữ nguyên vì báo cáo đã tham chiếu.
 
-- **Lần khám hoàn thành:** lần khám gắn với lịch hẹn đã ở trạng thái `HOAN_THANH` theo mảng B. Tên cột/trạng thái cần khớp với lược đồ cuối.
-- **Bác sĩ khám:** bác sĩ được gán cho lần khám. Đề xuất chỉ bác sĩ này được kê đơn cho lần khám đó.
-- **Dị ứng còn hiệu lực:** bản ghi `DI_UNG` có `trang_thai = 'DANG_HIEU_LUC'` tại thời điểm kê đơn. Đồ án kiểm tra khớp mã hoạt chất chính xác; không mô hình hóa phản ứng chéo hay mức độ dị ứng lâm sàng. Quy tắc được kiểm tra lúc kê/cập nhật dòng đơn; việc thay đổi dị ứng hoặc danh mục hoạt chất về sau không hồi tố đơn đã kê.
-- **Xóa bệnh án:** xóa vật lý bản ghi hồ sơ/lịch sử y tế bằng `DELETE`. Đề xuất giữ lịch sử và đánh dấu trạng thái thay vì xóa.
-- Các quy tắc dưới đây là quy tắc dữ liệu của đồ án để học thiết kế CSDL, không phải tiêu chuẩn kê đơn hoặc hướng dẫn chăm sóc y tế.
+## 1. Thuật ngữ
 
-## Bảng quy tắc (đầu vào mục 1.2.3)
+| Thuật ngữ | Định nghĩa |
+|---|---|
+| Lần khám | Một lần bác sĩ khám cho bệnh nhân theo cuộc hẹn đã đặt trước |
+| Lịch hẹn hoàn thành | Cuộc hẹn mà bệnh nhân đã được khám xong; sau đó không đổi sang trạng thái khác được nữa |
+| Bác sĩ khám | Bác sĩ được phân công cho cuộc hẹn và trực tiếp khám bệnh nhân |
+| Đơn thuốc | Danh sách thuốc bác sĩ kê sau khi khám, mỗi thuốc ghi số lượng và cách dùng |
+| Dị ứng đã ghi nhận | Hoạt chất mà bệnh nhân đã được ghi lại là bị dị ứng |
+| Hồ sơ bệnh án | Toàn bộ thông tin khám, chẩn đoán, thuốc đã kê và dị ứng của một bệnh nhân |
+| Hủy bản ghi | Đánh dấu một chẩn đoán hoặc đơn thuốc là không còn giá trị nhưng vẫn giữ lại, thay cho việc xóa |
 
-| Mã | Phát biểu quy tắc | Loại ràng buộc | Cơ chế đảm bảo đề xuất |
+Các quy tắc là quy tắc dữ liệu của đồ án để học thiết kế CSDL, không phải tiêu chuẩn kê đơn hay hướng dẫn chăm sóc y tế.
+
+## 2. Danh sách quy tắc
+
+Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **hành vi** là điều kiện ràng buộc một thao tác.
+
+| Mã | Phát biểu quy tắc | Loại | Lý do | Nguồn |
+|---|---|---|---|---|
+| BR-C01 | Không được kê cho bệnh nhân thuốc có hoạt chất mà bệnh nhân đã ghi nhận dị ứng | Hành vi | An toàn đơn thuốc | T05 bước 4; MT-05 |
+| BR-C02 | Đơn thuốc chỉ được lập cho lần khám có lịch hẹn đã hoàn thành, và người kê là bác sĩ khám | Hành vi | Đơn phải gắn với một lần khám thật, đúng người chịu trách nhiệm | T05 bước 1, 3; MT-05 |
+| BR-C03 | Mỗi lần khám phải có ít nhất một chẩn đoán trước khi lập đơn thuốc | Hành vi | Đơn thuốc phải có căn cứ chẩn đoán | T05 bước 2, 3; MT-04 |
+| BR-C04 | Số lượng của mỗi thuốc trong đơn phải lớn hơn 0, và liều dùng phải được ghi | Cấu trúc | Đơn thuốc điện tử phải ghi thuốc, liều dùng và thời gian dùng | T05 bước 3; MT-05 |
+| BR-C05 | Lần khám, chẩn đoán và đơn thuốc đã ghi không được xóa hay sửa nội dung; chẩn đoán và đơn ghi sai thì hủy | Hành vi | Giữ đầy đủ lịch sử bệnh án; hồ sơ bệnh án điện tử phải truy xuất, phục hồi được (Thông tư 13/2025/TT-BYT) | T05 bước 5; MT-04 |
+
+## 3. Cơ chế đảm bảo
+
+| Mã | Cơ chế trong CSDL | Ghi chú |
+|---|---|---|
+| BR-C01 | Trigger `trg_chan_thuoc_di_ung` trên INSERT `CHI_TIET_DON_THUOC`: so hoạt chất của thuốc với `DI_UNG` của bệnh nhân (bệnh nhân lấy qua đơn → lần khám → lịch hẹn) | Kiểm tra lúc kê; không hồi tố đơn cũ khi dị ứng hoặc danh mục thay đổi |
+| BR-C02 | Trigger `trg_lan_kham_hoan_thanh` trên INSERT `LAN_KHAM`: lịch hẹn phải `HOAN_THANH`; FK `DON_THUOC.ma_lan_kham` | Vế "người kê là bác sĩ khám" được bảo đảm bằng thiết kế: không có cột bác sĩ kê, bác sĩ suy ra qua `LICH_HEN` |
+| BR-C03 | Trigger trên INSERT `DON_THUOC`: tồn tại chẩn đoán `HIEU_LUC` của lần khám | BR-C05 ngăn xóa chẩn đoán sau khi lập đơn |
+| BR-C04 | `NOT NULL` + `CHECK (so_luong > 0)` + `CHECK (btrim(lieu_dung) <> '')` | Liều dùng lưu dạng văn bản |
+| BR-C05 | Trigger `trg_khong_xoa_benh_an` BEFORE DELETE, UPDATE trên `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC`, `CHI_TIET_DON_THUOC`: từ chối xóa; chỉ cho UPDATE `trang_thai` từ `HIEU_LUC` sang `DA_HUY` ở `CHAN_DOAN`, `DON_THUOC`; FK không `CASCADE` | Dòng thuốc ghi sai thì hủy cả đơn và kê lại; vì không sửa được nên BR-C01, BR-C02 chỉ cần kiểm tra khi INSERT |
+
+## 4. Kiểm chứng (đầu vào T43)
+
+Chạy trên dữ liệu giả lập, ghi rõ bản ghi tiền điều kiện và kết quả thực tế.
+
+| Mã test | Quy tắc | Thao tác sai phải bị từ chối | Thao tác hợp lệ đi kèm |
 |---|---|---|---|
-| BR-C01 | Không kê thuốc có hoạt chất trùng với hoạt chất mà bệnh nhân đã ghi nhận dị ứng còn hiệu lực tại thời điểm kê đơn | Nghiệp vụ, liên bảng | Trigger `trg_chan_thuoc_di_ung` trên chi tiết đơn; tra các bản ghi `DI_UNG` có trạng thái `DANG_HIEU_LUC` và hoạt chất tương ứng của thuốc. |
-| BR-C02 | Đơn thuốc chỉ lập cho lần khám có lịch hẹn đã `HOAN_THANH`, và người kê là bác sĩ khám | Nghiệp vụ, liên bảng | FK + trigger kiểm tra trạng thái lịch hẹn và bác sĩ qua chuỗi `DON_THUOC` → `LAN_KHAM` → `LICH_HEN`; trạng thái `HOAN_THANH` là trạng thái cuối theo BR-B05. |
-| BR-C03 | Một lần khám phải có ít nhất một chẩn đoán trước khi lập đơn thuốc | Nghiệp vụ, tính đầy đủ liên bảng | Trigger khi tạo đơn kiểm tra chẩn đoán tồn tại; việc chẩn đoán không bị xóa vật lý được bảo đảm bởi BR-C05. |
-| BR-C04 | Số lượng thuốc phải lớn hơn 0; liều dùng bắt buộc và không được để trống | Miền giá trị | `NOT NULL` + `CHECK (so_luong > 0)`; với liều dùng lưu dạng văn bản, kiểm tra không rỗng sau `btrim`. |
-| BR-C05 | Hồ sơ bệnh án và lịch sử khám không được xóa vật lý; khi ngừng sử dụng thì đánh dấu trạng thái | Nghiệp vụ, lưu giữ dữ liệu | Trigger `trg_khong_xoa_benh_an` chặn `DELETE` ở `HO_SO_BENH_AN`, `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC`, `CHI_TIET_DON_THUOC`; FK không `CASCADE`. |
+| TC-04 | BR-C01 | Kê thuốc có hoạt chất bệnh nhân đã ghi nhận dị ứng | Kê thuốc không trùng hoạt chất dị ứng |
+| TC-05 | BR-C05 | `DELETE` một lần khám, chẩn đoán, đơn hoặc dòng đơn; UPDATE số lượng của dòng đơn hoặc mã ICD-10 của chẩn đoán | UPDATE `DON_THUOC.trang_thai = 'DA_HUY'`, bản ghi vẫn còn |
+| TC-06 | FK | Lập đơn với `ma_lan_kham` không tồn tại | Lập đơn với lần khám tồn tại |
+| TC-07 | BR-C04 | Thêm thuốc vào đơn với số lượng 0/âm hoặc liều trống | Thêm thuốc với số lượng và liều hợp lệ |
+| TC-08 | BR-C02 | Tạo lần khám cho lịch hẹn chưa `HOAN_THANH` | Tạo lần khám cho lịch `HOAN_THANH` rồi lập đơn |
+| TC-09 | BR-C03 | Lập đơn cho lần khám chưa có chẩn đoán | Thêm chẩn đoán rồi lập đơn |
 
-## Truy vết sơ bộ BR → ER/SQL (đầu vào T15)
+TC-04…TC-07 giữ số hiệu như báo cáo; TC-08, TC-09 là mã bổ sung, chốt khi gộp `tests.sql`.
 
-| Mã BR | Biểu diễn ở ER/EER | Cài đặt bổ sung cần có | Ca kiểm chứng tối thiểu |
-|---|---|---|---|
-| BR-C01 | Liên kết `BENH_NHAN`–`DI_UNG`–`HOAT_CHAT`; `THUOC` M:N `HOAT_CHAT`; chi tiết đơn thuộc đơn và thuốc | Trigger `trg_chan_thuoc_di_ung` kiểm tra dị ứng đang hiệu lực khi kê/cập nhật dòng đơn | Thuốc có hoạt chất dị ứng đang hiệu lực bị từ chối; thuốc không trùng hoạt chất được chấp nhận |
-| BR-C02 | `DON_THUOC` thuộc `LAN_KHAM`; lần khám thuộc lịch hẹn, bác sĩ khám lấy từ lịch hẹn | FK + trigger; bác sĩ kê không lưu lặp ở `DON_THUOC`, được xác định qua `LICH_HEN`; yêu cầu lịch `HOAN_THANH` theo BR-B05 | Đơn cho lịch chưa hoàn thành hoặc bác sĩ khác bác sĩ lịch hẹn bị từ chối; đơn hợp lệ được chấp nhận |
-| BR-C03 | `LAN_KHAM` 1:N `CHAN_DOAN`, `LAN_KHAM` 1:N `DON_THUOC` | Trigger khi tạo đơn kiểm tra chẩn đoán tồn tại; BR-C05 chặn xóa vật lý chẩn đoán | Tạo đơn khi chưa có chẩn đoán bị từ chối; thêm chẩn đoán trước rồi tạo đơn thành công |
-| BR-C04 | `so_luong` dương; `lieu_dung` bắt buộc | `NOT NULL`, `CHECK (so_luong > 0)`, `CHECK (btrim(lieu_dung) <> '')` | Số lượng 0/âm hoặc liều trống bị từ chối |
-| BR-C05 | Hồ sơ, lần khám, chẩn đoán, đơn và chi tiết đơn được giữ lại | Trigger `trg_khong_xoa_benh_an` chặn `DELETE` ở 5 bảng; FK không cascade | DELETE ở một trong 5 bảng bị từ chối; thao tác đánh dấu trạng thái được chấp nhận |
+## 5. Phụ thuộc mảng A, B
 
-## Thao tác thử cho T43
+| Quy tắc | Dùng từ mảng khác | Nội dung |
+|---|---|---|
+| BR-C01 | B: `BENH_NHAN` | Dị ứng gắn với bệnh nhân |
+| BR-C02 | B: `LICH_HEN`, BR-B05; A: `BAC_SI` | Trạng thái `HOAN_THANH` là trạng thái cuối; bác sĩ khám lấy từ lịch hẹn |
+| BR-C03, BR-C05 | – | Chỉ dùng bảng mảng C |
 
-Mỗi test cần chạy trên dữ liệu giả lập riêng, ghi rõ bản ghi tiền điều kiện và kết quả thật. Không dùng thông tin bệnh nhân thật.
+## 6. Quyết định thiết kế đã chốt
 
-| Mã test đề xuất | Quy tắc | Thao tác sai cần bị từ chối | Test hợp lệ đi kèm |
-|---|---|---|---|
-| TC-04 | BR-C01 | Tạo chi tiết đơn chứa thuốc có hoạt chất bệnh nhân đã ghi nhận dị ứng | Tạo chi tiết đơn với thuốc không trùng hoạt chất dị ứng |
-| TC-08 | BR-C02 | Lập đơn cho lịch chưa `HOAN_THANH`, hoặc bác sĩ kê khác bác sĩ khám | Lập đơn cho lần khám hoàn thành do chính bác sĩ phụ trách thực hiện |
-| TC-09 | BR-C03 | Lập đơn cho lần khám chưa có chẩn đoán | Thêm ít nhất một chẩn đoán hợp lệ rồi lập đơn |
-| TC-06 | FK | INSERT đơn thuốc tham chiếu `ma_lan_kham` không tồn tại | Lập đơn với khóa lần khám tồn tại và hợp lệ |
-| TC-07 | BR-C04 | Thêm dòng đơn với số lượng 0/âm hoặc liều trống/không dương theo kiểu đã chốt | Thêm dòng có số lượng và liều hợp lệ |
-| TC-05 | BR-C05 | `DELETE` hồ sơ bệnh án hoặc bản ghi lịch sử thuộc phạm vi bảo vệ | Đánh dấu ngừng sử dụng bằng UPDATE và xác nhận bản ghi còn tồn tại |
-
-TC-04, TC-05, TC-06 và TC-07 giữ nguyên số hiệu đã có trong sườn/báo cáo v1. TC-08/TC-09 là mã đề xuất bổ sung; cần người tổng hợp xác nhận không trùng mã test của nhóm trước khi đưa vào `tests.sql` và báo cáo.
-
-## Mục tiêu hệ thống liên quan
-
-- MT-04 (hồ sơ bệnh án đầy đủ): BR-C03, BR-C05 và khả năng truy vấn lịch sử.
-- MT-05 (đơn thuốc an toàn): BR-C01, BR-C02, BR-C04.
-- Các truy vấn Q09–Q12 phải chạy trên schema/seed thống nhất và không làm lộ dữ liệu ngoài vai trò.
-
-## Điểm cần review/chốt với nhóm
-
-1. Giữ nguyên BR-C01…C05 theo sườn v0 và bảng 1.2.3 của báo cáo v1.
-2. Áp dụng đề xuất review: một hồ sơ/bệnh nhân; lần khám chỉ tạo khi lịch `HOAN_THANH`; liều dùng lưu văn bản; chặn `DELETE` năm bảng bệnh án.
-3. Xác nhận trạng thái `DANG_HIEU_LUC` là cách biểu diễn dị ứng còn hiệu lực trong ERD/DDL.
-4. Chốt mã test bổ sung TC-08/TC-09 với người gộp báo cáo/tests.
-
-## Ghi chú về thuật ngữ và thiết kế
-
-- Sườn/báo cáo v1 ghi “Mỗi lần khám có ít nhất một chẩn đoán trước khi kê đơn”; test TC-09 được đề xuất để có bằng chứng riêng.
-- Theo review, `LAN_KHAM` không lưu lặp `ma_bn`/`ma_bac_si`; bệnh nhân và bác sĩ được xác định qua lịch hẹn. `DON_THUOC` không lưu `ma_bac_si_ke`, bác sĩ kê được xác định qua lần khám và lịch hẹn. Các khóa/cột này cần được giữ nhất quán ở T13/T21.
-- Liều dùng được lưu dạng văn bản theo review nên kiểm tra được tính bắt buộc/không rỗng; chỉ `so_luong` bị kiểm tra số học dương.
-- Trigger liên bảng cần xem xét cập nhật đồng thời và thứ tự thao tác; khi cài đặt cần tránh để INSERT/UPDATE cạnh tranh tạo trạng thái không hợp lệ.
+- `LAN_KHAM` và `DON_THUOC` không lưu lặp bệnh nhân, bác sĩ; xác định qua lịch hẹn (`ma_lh`).
+- Không có bảng hồ sơ bệnh án; hồ sơ trình bày bằng view `v_ho_so_tom_tat_benh_nhan`.
+- Chi tiết đơn là liên kết M:N `KÊ` giữa đơn và thuốc, khóa `(ma_don, ma_thuoc)`.
+- `DI_UNG` không có trạng thái: có bản ghi nghĩa là đang dị ứng; hết dị ứng thì xóa bản ghi (`DI_UNG` không thuộc BR-C05).
+- Dị ứng chỉ xét trùng đúng mã hoạt chất; không mô hình hóa phản ứng chéo hay mức độ dị ứng lâm sàng.
+- Một lần khám có thể có nhiều đơn.
+- Liều dùng lưu dạng văn bản, ghi cả cách dùng và thời gian dùng.
+- Danh mục ICD-10 là tập mã nhỏ giả lập, đủ cho dữ liệu mẫu.
+- Không liên thông Hệ thống đơn thuốc quốc gia, không ký số đơn và hồ sơ; mã đơn là khóa nội bộ.
+- Quản trị là người dùng hệ thống với role CSDL `r_quan_tri`, không phải thực thể.
