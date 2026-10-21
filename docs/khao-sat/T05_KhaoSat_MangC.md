@@ -21,13 +21,13 @@
 
 ## 2. Bên liên quan
 
-| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu | Trong ERD |
-|---|---|---|---|
-| Bác sĩ | Ghi lần khám, chẩn đoán, kê đơn | Xem lịch sử khám, dị ứng của bệnh nhân; thêm lần khám, chẩn đoán, đơn thuốc | Thực thể BAC_SI (mảng A) |
-| Bệnh nhân | Người được khám, nhận đơn | Xem hồ sơ bệnh án, đơn thuốc của chính mình | Thực thể BENH_NHAN (mảng B) |
-| Quản trị | Quản lý danh mục thuốc, hoạt chất, ICD-10 | Thêm, sửa danh mục | Không – role `r_quan_tri` |
+| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu |
+|---|---|---|
+| Bác sĩ | Ghi lần khám, chẩn đoán, kê đơn | Xem lịch sử khám, dị ứng của bệnh nhân; thêm lần khám, chẩn đoán, đơn thuốc |
+| Bệnh nhân | Người được khám, nhận đơn | Xem hồ sơ bệnh án, đơn thuốc của chính mình |
+| Quản trị | Quản lý danh mục thuốc, hoạt chất, ICD-10 | Thêm, sửa danh mục |
 
-Tác nhân ghi "Không" là người dùng hệ thống: chỉ có role CSDL để phân quyền, không lưu thành thực thể trong ERD.
+Mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu; lễ tân không xem bệnh án.
 
 ## 3. Hiện trạng quy trình
 
@@ -50,49 +50,38 @@ Quy định và thực tế liên quan:
 
 ## 4. Yêu cầu đối với CSDL
 
-Rút ra từ quy trình; phát biểu chính thức, đánh số và cách kiểm chứng ở [T09](../br/T09_BR_MangC.md).
+Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 
-| Nguồn trong quy trình | Yêu cầu | Quy tắc |
-|---|---|---|
-| Bước 4: kiểm tra dị ứng | Không kê thuốc có hoạt chất bệnh nhân dị ứng | BR-C01 |
-| Bước 1, 3: lần khám từ lịch hoàn thành, bác sĩ của lịch kê đơn | Chỉ lập đơn cho lần khám của lịch hoàn thành; người kê là bác sĩ khám | BR-C02 |
-| Bước 3: kê đơn sau khi có chẩn đoán | Lần khám phải có chẩn đoán trước khi lập đơn | BR-C03 |
-| Bước 3: số lượng và liều dùng | Số lượng lớn hơn 0; liều dùng bắt buộc | BR-C04 |
-| Bước 5: giữ lịch sử | Không xóa, không sửa nội dung lần khám, chẩn đoán, đơn thuốc | BR-C05 |
+| Nguồn trong quy trình | Yêu cầu |
+|---|---|
+| Bước 4: kiểm tra dị ứng | Không kê thuốc có hoạt chất bệnh nhân dị ứng |
+| Bước 1, 3: lần khám từ lịch hoàn thành, bác sĩ của lịch kê đơn | Chỉ lập đơn cho lần khám của lịch hoàn thành; người kê là bác sĩ khám |
+| Bước 3: kê đơn sau khi có chẩn đoán | Lần khám phải có chẩn đoán trước khi lập đơn |
+| Bước 3: số lượng và liều dùng | Số lượng lớn hơn 0; liều dùng bắt buộc |
+| Bước 5: giữ lịch sử | Không xóa, không sửa nội dung lần khám, chẩn đoán, đơn thuốc |
+| Mục 2: nhu cầu dữ liệu từng bên | Chỉ bác sĩ ghi bệnh án; lễ tân không xem; bệnh nhân chỉ xem hồ sơ của mình |
 
 ## 5. Ràng buộc và giả định
 
-- Bệnh nhân và bác sĩ của lần khám lấy qua lịch hẹn, không lưu lặp.
+- Bệnh nhân và bác sĩ của lần khám là bệnh nhân, bác sĩ của lịch hẹn, không ghi lặp.
 - Một lần khám có thể có nhiều đơn; một thuốc chỉ xuất hiện một lần trong một đơn.
-- Liều dùng lưu dạng văn bản, ghi cả cách dùng và thời gian dùng.
-- Dị ứng chỉ xét trùng đúng mã hoạt chất; kiểm tra lúc kê đơn, không hồi tố đơn cũ.
+- Liều dùng ghi dạng văn bản, gồm cả cách dùng và thời gian dùng.
+- Dị ứng chỉ xét trùng đúng hoạt chất; kiểm tra lúc kê đơn, không hồi tố đơn cũ.
 - Danh mục ICD-10 là tập mã nhỏ giả lập, đủ cho dữ liệu mẫu.
-- Hồ sơ bệnh án không có bảng riêng; trình bày bằng view `v_ho_so_tom_tat_benh_nhan`.
+- Hồ sơ bệnh án là tổng hợp các lần khám, chẩn đoán, đơn thuốc, dị ứng của bệnh nhân, không lưu riêng.
 - Lưu vết tối thiểu bằng người tạo và thời điểm tạo; không làm audit đầy đủ.
-- Quản trị là người dùng hệ thống, không phải thực thể: chỉ có role CSDL `r_quan_tri` (quản lý danh mục thuốc, hoạt chất, ICD-10).
+- Quản trị là nhân viên (mảng A), quản lý danh mục thuốc, hoạt chất, ICD-10.
 
-## 6. Kết quả khảo sát (đầu vào T13)
+## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T09, T13)
 
-| Thực thể | Thuộc tính chính | Liên kết |
+| Đối tượng | Thông tin cần lưu | Quan hệ với đối tượng khác |
 |---|---|---|
-| LAN_KHAM | ma_lan_kham, thoi_diem_kham, tom_tat, created_by | 1:1 LICH_HEN (B), mỗi lịch hoàn thành có tối đa một lần khám; 1:N CHAN_DOAN; 1:N DON_THUOC |
-| CHAN_DOAN | ma_chan_doan, la_chan_doan_chinh, ghi_chu, trang_thai | N:1 LAN_KHAM; N:1 MA_ICD10 |
-| MA_ICD10 | ma_icd10, mo_ta | 1:N CHAN_DOAN |
-| DON_THUOC | ma_don, thoi_diem_ke, trang_thai, created_by | N:1 LAN_KHAM; M:N THUOC (KÊ) |
-| THUOC | ma_thuoc, ten_thuoc, dang_bao_che, ham_luong | M:N DON_THUOC (KÊ); M:N HOAT_CHAT (CHỨA) |
-| HOAT_CHAT | ma_hoat_chat, ten_hoat_chat | M:N THUOC (CHỨA); M:N BENH_NHAN (DỊ_ỨNG) |
-
-Các liên kết:
-
-| Liên kết | Thực thể tham gia | Tỉ số | Thuộc tính |
-|---|---|---|---|
-| PHÁT_SINH | LICH_HEN (B) – LAN_KHAM | 1:1 | – |
-| CÓ_CHẨN_ĐOÁN | LAN_KHAM – CHAN_DOAN | 1:N | – |
-| MÃ_HÓA | MA_ICD10 – CHAN_DOAN | 1:N | – |
-| LẬP_ĐƠN | LAN_KHAM – DON_THUOC | 1:N | – |
-| KÊ | DON_THUOC – THUOC | M:N | so_luong, lieu_dung |
-| CHỨA | THUOC – HOAT_CHAT | M:N | ham_luong |
-| DỊ_ỨNG | BENH_NHAN (B) – HOAT_CHAT | M:N | ngay_ghi_nhan, ghi_chu |
+| Lần khám | Thời điểm khám, tóm tắt, người tạo | Phát sinh từ đúng một lịch hẹn đã hoàn thành (mảng B); có nhiều chẩn đoán, nhiều đơn thuốc |
+| Chẩn đoán | Có phải chẩn đoán chính, ghi chú, trạng thái (hiệu lực, đã hủy) | Thuộc một lần khám; theo một mã ICD-10 |
+| Mã ICD-10 | Mã, mô tả | Dùng cho nhiều chẩn đoán |
+| Đơn thuốc | Thời điểm kê, trạng thái (hiệu lực, đã hủy), người tạo | Thuộc một lần khám; gồm nhiều thuốc, mỗi thuốc ghi số lượng và liều dùng |
+| Thuốc | Tên thuốc, dạng bào chế, hàm lượng | Có trong nhiều đơn; chứa nhiều hoạt chất, mỗi hoạt chất ghi hàm lượng |
+| Hoạt chất | Tên hoạt chất | Có trong nhiều thuốc; bệnh nhân (mảng B) có thể dị ứng nhiều hoạt chất, mỗi lần ghi nhận có ngày và ghi chú |
 
 ## Nguồn tham khảo
 

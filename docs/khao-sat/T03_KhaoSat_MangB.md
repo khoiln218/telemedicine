@@ -13,22 +13,22 @@
 | Mục | Nội dung |
 |---|---|
 | Mục tiêu | Xác định dữ liệu, trạng thái và quy tắc cần lưu cho việc đặt và quản lý lịch hẹn khám, đủ cho một CSDL đồ án môn học |
-| Phạm vi | Bệnh nhân, lịch hẹn khám trực tiếp / tư vấn từ xa, giấy chuyển chuyên khoa nội bộ, phí khám |
-| Ngoài phạm vi | Tài khoản đăng nhập, đặt hộ người thân, cuộc gọi video, BHYT |
+| Phạm vi | Bệnh nhân, lịch hẹn khám trực tiếp / tư vấn từ xa, giấy chuyển chuyên khoa nội bộ, phí khám, tài khoản đăng nhập theo vai trò |
+| Ngoài phạm vi | Đăng ký tài khoản trực tuyến, quên mật khẩu, đặt hộ người thân, cuộc gọi video, BHYT |
 | Đối tượng khảo sát | Luồng đặt khám của 3 ứng dụng đặt khám phổ biến tại Việt Nam: Medpro, YouMed, BookingCare; quy định về khám bệnh, chữa bệnh từ xa và chuyển người bệnh |
 | Phương pháp | Phân tích ứng dụng hiện có (đi qua luồng đặt lịch, ghi lại các trường dữ liệu và trạng thái) và nghiên cứu văn bản pháp lý liên quan. Không phỏng vấn trực tiếp nhân viên y tế |
 | Giới hạn | Không mô tả đầy đủ nghiệp vụ y tế thật; quy trình ở mục 3 là phần chung của ba ứng dụng, đã lược bớt chi tiết riêng của từng nơi |
 
 ## 2. Bên liên quan
 
-| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu | Trong ERD |
-|---|---|---|---|
-| Bệnh nhân | Đặt lịch, khám trực tiếp hoặc tư vấn từ xa | Xem lịch hẹn của mình | Thực thể BENH_NHAN |
-| Lễ tân | Đặt hộ, xác nhận, hủy lịch hẹn | Thêm, sửa bệnh nhân và lịch hẹn; xem lịch làm việc bác sĩ | Không – role `r_le_tan` |
-| Bác sĩ đa khoa | Khám, lập giấy chuyển chuyên khoa | Xem lịch hẹn của mình; lập giấy chuyển | Thực thể BAC_SI_DA_KHOA (mảng A) |
-| Bác sĩ chuyên khoa | Khám theo chuyên khoa khi có giấy chuyển hoặc tái khám | Xem lịch hẹn của mình | Thực thể BAC_SI_CHUYEN_KHOA (mảng A) |
+| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu |
+|---|---|---|
+| Bệnh nhân | Đặt lịch, khám trực tiếp hoặc tư vấn từ xa | Xem lịch hẹn của mình |
+| Lễ tân | Đặt hộ, xác nhận, hủy lịch hẹn | Thêm, sửa bệnh nhân và lịch hẹn; xem lịch làm việc bác sĩ |
+| Bác sĩ đa khoa | Khám, lập giấy chuyển chuyên khoa | Xem lịch hẹn của mình; lập giấy chuyển |
+| Bác sĩ chuyên khoa | Khám theo chuyên khoa khi có giấy chuyển hoặc tái khám | Xem lịch hẹn của mình |
 
-Tác nhân ghi "Không" là người dùng hệ thống: chỉ có role CSDL để phân quyền, không lưu thành thực thể trong ERD.
+Mọi tác nhân đăng nhập bằng một tài khoản mang đúng một vai trò; mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu.
 
 ## 3. Hiện trạng quy trình
 
@@ -50,7 +50,7 @@ stateDiagram-v2
     DA_XAC_NHAN --> VANG_MAT
 ```
 
-Lịch hẹn HUY hoặc VANG_MAT **không chiếm giờ** của bác sĩ.
+Lịch hẹn đã hủy hoặc vắng mặt **không chiếm giờ** của bác sĩ.
 
 Quy định và thực tế liên quan:
 
@@ -62,49 +62,43 @@ Quy định và thực tế liên quan:
 
 ## 4. Yêu cầu đối với CSDL
 
-Rút ra từ quy trình; phát biểu chính thức, đánh số và cách kiểm chứng ở [T08](../br/T08_BR_MangB.md).
+Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 
-| Nguồn trong quy trình | Yêu cầu | Quy tắc |
-|---|---|---|
-| Bước 1: chỉ chọn giờ còn trống trong lịch làm việc | Lịch hẹn nằm trong ca của bác sĩ; không trùng lịch khác của bác sĩ hay của bệnh nhân | BR-B01, BR-B02 |
-| Bước 5: khám chuyên khoa cần giấy chuyển | Lịch chuyên khoa phải kèm giấy chuyển hợp lệ của chính bệnh nhân, trừ tái khám | BR-B03 |
-| Bước 4: vào cuộc gọi qua link | Tư vấn từ xa bắt buộc có nền tảng, link phiên | BR-B04 |
-| Sơ đồ trạng thái | Trạng thái chỉ chuyển theo sơ đồ | BR-B05 |
-| Bước 1: chọn một hình thức | Mỗi lịch hẹn thuộc đúng một hình thức | BR-B06 |
-| Bước 5: bác sĩ đa khoa lập giấy | Chỉ bác sĩ đa khoa lập giấy; giấy có hạn | BR-B07 |
+| Nguồn trong quy trình | Yêu cầu |
+|---|---|
+| Bước 1: chỉ chọn giờ còn trống trong lịch làm việc | Lịch hẹn nằm trong ca của bác sĩ; không trùng lịch khác của bác sĩ hay của bệnh nhân |
+| Bước 5: khám chuyên khoa cần giấy chuyển | Lịch chuyên khoa phải kèm giấy chuyển hợp lệ của chính bệnh nhân, trừ tái khám |
+| Bước 4: vào cuộc gọi qua link | Tư vấn từ xa bắt buộc có nền tảng, link phiên |
+| Sơ đồ trạng thái | Trạng thái chỉ chuyển theo sơ đồ |
+| Bước 1: chọn một hình thức | Mỗi lịch hẹn thuộc đúng một hình thức |
+| Bước 5: bác sĩ đa khoa lập giấy | Chỉ bác sĩ đa khoa lập giấy; giấy có hạn |
+| Mục 2: nhu cầu dữ liệu từng bên | Mỗi vai trò chỉ thao tác đúng phần dữ liệu của mình |
+| Mục 2: đăng nhập theo vai trò | Tài khoản bệnh nhân gắn đúng bệnh nhân; tài khoản khác gắn đúng nhân viên cùng loại |
+| Bước 1: lễ tân tiếp nhận bệnh nhân | Lễ tân tạo tài khoản bệnh nhân; quản trị quản lý tài khoản nhân viên; tài khoản chỉ khóa, không xóa |
 
 ## 5. Ràng buộc và giả định
 
-- Giờ hẹn lưu dạng khoảng thời gian (bắt đầu, kết thúc), không dùng bảng khung giờ cố định.
-- Chuyên khoa của lịch hẹn lấy qua bác sĩ, không lưu riêng.
-- Tái khám là bệnh nhân đã có lịch hẹn HOAN_THANH ở cùng chuyên khoa.
-- Phí khám là một thuộc tính của lịch hẹn.
+- Giờ hẹn là một khoảng thời gian (bắt đầu, kết thúc), không chia khung giờ cố định.
+- Chuyên khoa của lịch hẹn là chuyên khoa của bác sĩ được hẹn, không ghi riêng.
+- Tái khám là bệnh nhân đã có lịch hẹn hoàn thành ở cùng chuyên khoa.
+- Phí khám gắn với từng lịch hẹn.
 - Không cấp số thứ tự khám; mỗi lịch hẹn có khoảng giờ riêng.
 - Không kiểm tra bệnh của bệnh nhân có thuộc danh mục được khám từ xa.
-- Lễ tân là người dùng hệ thống, không phải thực thể: chỉ có role CSDL `r_le_tan` (thêm, sửa bệnh nhân và lịch hẹn; không xem bệnh án).
+- Lễ tân là nhân viên (mảng A), có tài khoản với vai trò lễ tân (thêm, sửa bệnh nhân và lịch hẹn; không xem bệnh án).
+- Có 4 vai trò cố định: quản trị, bác sĩ, lễ tân, bệnh nhân; mỗi tài khoản mang đúng một vai trò.
+- Quản trị tạo tài khoản nhân viên, đổi vai trò, khóa tài khoản; lễ tân tạo tài khoản bệnh nhân khi tiếp nhận. Bệnh nhân không tự đăng ký và không bắt buộc có tài khoản (lễ tân đặt hộ).
+- Tài khoản quản trị đầu tiên có sẵn khi khởi tạo hệ thống. Mật khẩu không lưu ở dạng đọc được.
 
-## 6. Kết quả khảo sát (đầu vào T12)
+## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T08, T12)
 
-| Thực thể | Thuộc tính chính | Liên kết |
+| Đối tượng | Thông tin cần lưu | Quan hệ với đối tượng khác |
 |---|---|---|
-| BENH_NHAN | ma_bn, ho_ten, ngay_sinh, gioi_tinh, sdt (UNIQUE), email | 1:N LICH_HEN |
-| LICH_HEN (lớp cha) | ma_lh, thoi_gian_bd, thoi_gian_kt, ly_do_kham, trang_thai, hinh_thuc, phi_kham, ngay_tao | N:1 BENH_NHAN, BAC_SI (A); 1:1 LAN_KHAM (C) |
-| KHAM_TRUC_TIEP (lớp con) | phong_kham | ISA LICH_HEN |
-| TU_VAN_TU_XA (lớp con) | nen_tang, link_phien | ISA LICH_HEN; thời lượng tính từ giờ bắt đầu, kết thúc của lịch hẹn |
-| GIAY_CHUYEN_KHOA | ma_giay, ngay_lap, ly_do, ngay_het_han | N:1 BENH_NHAN, BAC_SI_DA_KHOA (A), CHUYEN_KHOA (A); 0..1 LICH_HEN dùng giấy |
+| Bệnh nhân | Họ tên, ngày sinh, giới tính, số điện thoại (không trùng), email | Đặt nhiều lịch hẹn; được cấp nhiều giấy chuyển; có tối đa một tài khoản |
+| Lịch hẹn | Thời điểm bắt đầu, kết thúc, lý do khám, trạng thái, hình thức, phí khám, ngày tạo. Khám trực tiếp: phòng khám. Tư vấn từ xa: nền tảng, đường dẫn phiên | Của một bệnh nhân với một bác sĩ (mảng A); có thể dùng một giấy chuyển; có tối đa một lần khám (mảng C) |
+| Giấy chuyển chuyên khoa | Ngày lập, lý do, ngày hết hạn | Cấp cho một bệnh nhân; do một bác sĩ đa khoa lập; chuyển đến một chuyên khoa (mảng A); dùng cho tối đa một lịch hẹn |
+| Tài khoản | Tên đăng nhập, mật khẩu, vai trò, trạng thái (hoạt động, khóa) | Của đúng một bệnh nhân hoặc một nhân viên (mảng A) |
 
-Các liên kết:
-
-| Liên kết | Thực thể tham gia | Tỉ số | Thuộc tính |
-|---|---|---|---|
-| ĐẶT | BENH_NHAN – LICH_HEN | 1:N | – |
-| PHỤ_TRÁCH | BAC_SI (A) – LICH_HEN | 1:N | – |
-| ĐƯỢC_CẤP | BENH_NHAN – GIAY_CHUYEN_KHOA | 1:N | – |
-| LẬP_GIẤY | BAC_SI_DA_KHOA (A) – GIAY_CHUYEN_KHOA | 1:N | – |
-| CHUYỂN_ĐẾN | CHUYEN_KHOA (A) – GIAY_CHUYEN_KHOA | 1:N | – |
-| SỬ_DỤNG | GIAY_CHUYEN_KHOA – LICH_HEN | 1:1 | – |
-
-Phân lớp LICH_HEN → {KHAM_TRUC_TIEP, TU_VAN_TU_XA}: mỗi lịch hẹn thuộc **đúng một** lớp con. Đây là điểm EER của mảng B.
+Điểm phân loại cần chú ý ở bước thiết kế: mỗi lịch hẹn thuộc đúng một hình thức, mỗi hình thức có thông tin riêng.
 
 ## Nguồn tham khảo
 
