@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T03 (GĐ0, tuần 1) |
 | Người thực hiện / review | Lê Ngọc Khôi / Nguyễn Đăng Khoa |
-| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt |
+| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 tách quản trị theo 3 mảng |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – thu thập và phân tích yêu cầu |
 | Dùng cho | T08 (BR-B), T12 (ERD mảng B) |
 
@@ -27,6 +27,7 @@
 | Lễ tân | Đặt hộ, xác nhận, hủy lịch hẹn | Thêm, sửa bệnh nhân và lịch hẹn; xem lịch làm việc bác sĩ |
 | Bác sĩ đa khoa | Khám, lập giấy chuyển chuyên khoa | Xem lịch hẹn của mình; lập giấy chuyển |
 | Bác sĩ chuyên khoa | Khám theo chuyên khoa khi có giấy chuyển hoặc tái khám | Xem lịch hẹn của mình |
+| Quản trị tài khoản | Cấp, khóa tài khoản nhân viên | Thêm, sửa tài khoản nhân viên |
 
 Mọi tác nhân đăng nhập bằng một tài khoản mang đúng một vai trò; mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu.
 
@@ -74,7 +75,7 @@ Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 | Bước 5: bác sĩ đa khoa lập giấy | Chỉ bác sĩ đa khoa lập giấy; giấy có hạn |
 | Mục 2: nhu cầu dữ liệu từng bên | Mỗi vai trò chỉ thao tác đúng phần dữ liệu của mình |
 | Mục 2: đăng nhập theo vai trò | Tài khoản bệnh nhân gắn đúng bệnh nhân; tài khoản khác gắn đúng nhân viên cùng loại |
-| Bước 1: lễ tân tiếp nhận bệnh nhân | Lễ tân tạo tài khoản bệnh nhân; quản trị quản lý tài khoản nhân viên; tài khoản chỉ khóa, không xóa |
+| Bước 1: lễ tân tiếp nhận bệnh nhân | Lễ tân tạo tài khoản bệnh nhân; quản trị tài khoản quản lý tài khoản nhân viên; tài khoản chỉ khóa, không xóa |
 
 ## 5. Ràng buộc và giả định
 
@@ -85,9 +86,9 @@ Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 - Không cấp số thứ tự khám; mỗi lịch hẹn có khoảng giờ riêng.
 - Không kiểm tra bệnh của bệnh nhân có thuộc danh mục được khám từ xa.
 - Lễ tân là nhân viên (mảng A), có tài khoản với vai trò lễ tân (thêm, sửa bệnh nhân và lịch hẹn; không xem bệnh án).
-- Có 4 vai trò cố định: quản trị, bác sĩ, lễ tân, bệnh nhân; mỗi tài khoản mang đúng một vai trò.
-- Quản trị tạo tài khoản nhân viên, đổi vai trò, khóa tài khoản; lễ tân tạo tài khoản bệnh nhân khi tiếp nhận. Bệnh nhân không tự đăng ký và không bắt buộc có tài khoản (lễ tân đặt hộ).
-- Tài khoản quản trị đầu tiên có sẵn khi khởi tạo hệ thống. Mật khẩu không lưu ở dạng đọc được.
+- Có 6 vai trò cố định: quản trị nhân sự, quản trị tài khoản, quản trị danh mục, bác sĩ, lễ tân, bệnh nhân; mỗi tài khoản mang đúng một vai trò.
+- Quản trị tài khoản tạo tài khoản nhân viên, đổi vai trò, khóa tài khoản; lễ tân tạo tài khoản bệnh nhân khi tiếp nhận. Bệnh nhân không tự đăng ký và không bắt buộc có tài khoản (lễ tân đặt hộ).
+- Tài khoản đầu tiên (vai trò quản trị tài khoản) có sẵn khi khởi tạo hệ thống. Mật khẩu không lưu ở dạng đọc được.
 
 ## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T08, T12)
 
