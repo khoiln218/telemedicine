@@ -13,26 +13,26 @@
 | Mục | Nội dung |
 |---|---|
 | Mục tiêu | Xác định dữ liệu cần lưu về bác sĩ, chuyên khoa và ca làm việc để điều phối lịch hẹn, đủ cho một CSDL đồ án môn học |
-| Phạm vi | Bác sĩ phân lớp đa khoa / chuyên khoa, chuyên khoa, giấy phép hành nghề của bác sĩ, ca làm việc |
-| Ngoài phạm vi | Điều dưỡng, lễ tân và nhân sự khác; cơ sở khám; lương, hợp đồng; phạm vi kỹ thuật chuyên môn chi tiết; lịch sử các lần gia hạn giấy phép |
+| Phạm vi | Nhân viên (bác sĩ, lễ tân, quản trị), bác sĩ phân lớp đa khoa / chuyên khoa, chuyên khoa, giấy phép hành nghề của bác sĩ, ca làm việc |
+| Ngoài phạm vi | Điều dưỡng và nhân sự khác; cơ sở khám; lương, hợp đồng; phạm vi kỹ thuật chuyên môn chi tiết; lịch sử các lần gia hạn giấy phép |
 | Đối tượng khảo sát | Phần chọn bác sĩ và xem lịch làm việc trong các ứng dụng đặt khám Medpro, YouMed, BookingCare; quy định về giấy phép và phạm vi hành nghề |
 | Phương pháp | Phân tích ứng dụng hiện có và nghiên cứu văn bản pháp lý. Không phỏng vấn trực tiếp nhân viên y tế |
 | Giới hạn | Không mô tả đầy đủ quản lý nhân sự y tế thật; quy định pháp lý chỉ dùng làm căn cứ cho dữ liệu, không kiểm tra điều kiện cấp phép |
 
 ## 2. Bên liên quan
 
-| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu | Trong ERD |
-|---|---|---|---|
-| Quản trị | Thêm bác sĩ, chuyên khoa; xếp, sửa, hủy ca làm việc | Thêm, sửa bác sĩ, chuyên khoa, ca làm việc | Không – role `r_quan_tri` |
-| Bác sĩ đa khoa | Khám ban đầu, lập giấy chuyển chuyên khoa | Xem lịch làm việc của mình | Thực thể BAC_SI_DA_KHOA |
-| Bác sĩ chuyên khoa | Khám theo một chuyên khoa | Xem lịch làm việc của mình | Thực thể BAC_SI_CHUYEN_KHOA |
-| Lễ tân | Đặt lịch hẹn cho bệnh nhân | Xem bác sĩ theo chuyên khoa và ca còn trống | Không – role `r_le_tan` |
+| Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu |
+|---|---|---|
+| Quản trị | Thêm nhân viên, bác sĩ, chuyên khoa; xếp, sửa, hủy ca làm việc | Thêm, sửa nhân viên, bác sĩ, chuyên khoa, ca làm việc |
+| Bác sĩ đa khoa | Khám ban đầu, lập giấy chuyển chuyên khoa | Xem lịch làm việc của mình |
+| Bác sĩ chuyên khoa | Khám theo một chuyên khoa | Xem lịch làm việc của mình |
+| Lễ tân | Đặt lịch hẹn cho bệnh nhân | Xem bác sĩ theo chuyên khoa và ca còn trống |
 
-Tác nhân ghi "Không" là người dùng hệ thống: chỉ có role CSDL để phân quyền, không lưu thành thực thể trong ERD.
+Mọi tác nhân là người của phòng khám đều là nhân viên; bác sĩ có thêm thông tin hành nghề. Mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu.
 
 ## 3. Hiện trạng quy trình
 
-1. **Tiếp nhận bác sĩ**: quản trị lưu thông tin bác sĩ, số giấy phép hành nghề, ngày cấp, ngày hết hạn và loại bác sĩ (đa khoa hoặc chuyên khoa). Bác sĩ chuyên khoa được gắn với chuyên khoa của mình.
+1. **Tiếp nhận nhân viên**: quản trị lưu thông tin cá nhân và loại nhân viên (bác sĩ, lễ tân, quản trị); với bác sĩ, lưu thêm số giấy phép hành nghề, ngày cấp, ngày hết hạn và loại bác sĩ (đa khoa hoặc chuyên khoa). Bác sĩ chuyên khoa được gắn với chuyên khoa của mình.
 2. **Xếp ca**: quản trị xếp ca làm việc cho bác sĩ theo ngày và khung giờ. Bác sĩ có giấy phép hết hạn không được xếp ca. Một bác sĩ không có hai ca chồng giờ.
 3. **Công bố lịch**: ứng dụng hiển thị bác sĩ theo chuyên khoa và các khung giờ còn trống trong ca để bệnh nhân hoặc lễ tân đặt lịch.
 4. **Thay đổi ca**: quản trị có thể sửa giờ hoặc hủy ca. Không được sửa hoặc hủy nếu việc đó làm lịch hẹn đã nhận rơi ra ngoài giờ làm việc.
@@ -42,45 +42,39 @@ Lưu ý pháp lý: từ 01/01/2024, Luật Khám bệnh, chữa bệnh 15/2023/Q
 
 ## 4. Yêu cầu đối với CSDL
 
-Rút ra từ quy trình; phát biểu chính thức, đánh số và cách kiểm chứng ở [T07](../br/T07_BR_MangA.md).
+Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 
-| Nguồn trong quy trình | Yêu cầu | Quy tắc |
-|---|---|---|
-| Bước 1: loại bác sĩ | Mỗi bác sĩ thuộc đúng một loại: đa khoa hoặc chuyên khoa | BR-A01 |
-| Bước 1: gắn chuyên khoa | Mỗi bác sĩ chuyên khoa thuộc đúng một chuyên khoa | BR-A02 |
-| Bước 2: giấy phép hết hạn | Chỉ xếp ca cho bác sĩ có giấy phép còn hạn đến hết ngày của ca | BR-A03 |
-| Bước 2: không chồng ca | Các ca còn hiệu lực của một bác sĩ không chồng giờ | BR-A04 |
-| Bước 1: số giấy phép | Số giấy phép bắt buộc và không trùng | BR-A05 |
-| Bước 2: khung giờ ca | Ca kết thúc sau khi bắt đầu | BR-A06 |
-| Bước 1, 5: thời hạn giấy phép | Ngày hết hạn sau ngày cấp | BR-A07 |
-| Bước 4: thay đổi ca | Không sửa, hủy ca làm lịch hẹn đã nhận rơi ra ngoài ca | BR-A08 |
+| Nguồn trong quy trình | Yêu cầu |
+|---|---|
+| Bước 1: loại bác sĩ | Mỗi bác sĩ thuộc đúng một loại: đa khoa hoặc chuyên khoa |
+| Bước 1: gắn chuyên khoa | Mỗi bác sĩ chuyên khoa thuộc đúng một chuyên khoa |
+| Bước 2: giấy phép hết hạn | Chỉ xếp ca cho bác sĩ có giấy phép còn hạn đến hết ngày của ca |
+| Bước 2: không chồng ca | Các ca còn hiệu lực của một bác sĩ không chồng giờ |
+| Bước 1: số giấy phép | Số giấy phép bắt buộc và không trùng |
+| Bước 2: khung giờ ca | Ca kết thúc sau khi bắt đầu |
+| Bước 1, 5: thời hạn giấy phép | Ngày hết hạn sau ngày cấp |
+| Bước 4: thay đổi ca | Không sửa, hủy ca làm lịch hẹn đã nhận rơi ra ngoài ca |
+| Mục 2: nhu cầu dữ liệu từng bên | Chỉ quản trị thay đổi nhân viên, bác sĩ, chuyên khoa, ca; bác sĩ, lễ tân chỉ xem |
+| Bước 1: loại nhân viên | Mỗi nhân viên thuộc đúng một loại; chỉ bác sĩ có thông tin bác sĩ |
 
 ## 5. Ràng buộc và giả định
 
-- Chỉ quản lý bác sĩ; điều dưỡng, lễ tân không lưu trong CSDL. Lễ tân, quản trị là người dùng hệ thống với role CSDL riêng, không phải thực thể.
-- Giấy phép hành nghề là thuộc tính của bác sĩ; chỉ lưu giấy phép hiện hành, không lưu lịch sử gia hạn. Tên cột giữ `so_chung_chi`, `ngay_cap_cc`, `ngay_het_han_cc` để thống nhất với các mảng khác.
+- Quản lý nhân viên gồm bác sĩ, lễ tân, quản trị; điều dưỡng và nhân sự khác không thuộc phạm vi. Lễ tân, quản trị không có thông tin riêng ngoài thông tin chung của nhân viên.
+- Chỉ lưu giấy phép hành nghề hiện hành của bác sĩ, không lưu lịch sử gia hạn.
 - Mỗi bác sĩ chuyên khoa thuộc đúng một chuyên khoa; bác sĩ đa khoa không gắn chuyên khoa.
-- Ca làm việc lưu dạng khoảng thời gian (bắt đầu, kết thúc); ca bị hủy có trạng thái `HUY` và không tính khi kiểm tra chồng giờ.
-- Phòng khám có một cơ sở; không mô hình hóa nơi làm việc của ca.
+- Ca làm việc có thời điểm bắt đầu, kết thúc; ca bị hủy vẫn được giữ lại và không tính khi xét chồng giờ.
+- Phòng khám có một cơ sở; không quản lý nơi làm việc của ca.
 
-## 6. Kết quả khảo sát (đầu vào T11)
+## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T07, T11)
 
-| Thực thể | Thuộc tính chính | Liên kết |
+| Đối tượng | Thông tin cần lưu | Quan hệ với đối tượng khác |
 |---|---|---|
-| BAC_SI (lớp cha) | ma_bac_si, ho_ten, ngay_sinh, sdt, email, so_chung_chi (UNIQUE), ngay_cap_cc, ngay_het_han_cc, loai_bac_si | 1:N CA_LAM_VIEC; 1:N LICH_HEN (B) |
-| BAC_SI_DA_KHOA (lớp con) | – | ISA BAC_SI; 1:N GIAY_CHUYEN_KHOA (B) |
-| BAC_SI_CHUYEN_KHOA (lớp con) | – | ISA BAC_SI; N:1 CHUYEN_KHOA |
-| CHUYEN_KHOA | ma_chuyen_khoa, ten_chuyen_khoa | 1:N BAC_SI_CHUYEN_KHOA; 1:N GIAY_CHUYEN_KHOA (B) |
-| CA_LAM_VIEC | ma_ca, thoi_gian_bd, thoi_gian_kt, trang_thai | N:1 BAC_SI |
+| Nhân viên | Họ tên, ngày sinh, số điện thoại, email, loại nhân viên (bác sĩ, lễ tân, quản trị) | Có tối đa một tài khoản đăng nhập (mảng B) |
+| Bác sĩ | Số giấy phép hành nghề, ngày cấp, ngày hết hạn, loại bác sĩ (đa khoa, chuyên khoa) | Là một nhân viên; có nhiều ca làm việc; phụ trách nhiều lịch hẹn (mảng B). Bác sĩ chuyên khoa thuộc một chuyên khoa; bác sĩ đa khoa lập giấy chuyển chuyên khoa (mảng B) |
+| Chuyên khoa | Tên chuyên khoa | Có nhiều bác sĩ chuyên khoa; là nơi chuyển đến của giấy chuyển (mảng B) |
+| Ca làm việc | Thời điểm bắt đầu, kết thúc, trạng thái (còn hiệu lực, đã hủy) | Thuộc đúng một bác sĩ |
 
-Các liên kết:
-
-| Liên kết | Thực thể tham gia | Tỉ số | Thuộc tính |
-|---|---|---|---|
-| THUỘC | CHUYEN_KHOA – BAC_SI_CHUYEN_KHOA | 1:N | – |
-| XẾP_CA | BAC_SI – CA_LAM_VIEC | 1:N | – |
-
-Phân lớp BAC_SI → {BAC_SI_DA_KHOA, BAC_SI_CHUYEN_KHOA}: mỗi bác sĩ thuộc **đúng một** lớp con, phân theo thuộc tính `loai_bac_si`. Đây là điểm EER trọng tâm của đề tài.
+Hai điểm phân loại cần chú ý ở bước thiết kế: nhân viên chia theo loại và chỉ bác sĩ có thông tin riêng; mỗi bác sĩ thuộc đúng một trong hai loại đa khoa, chuyên khoa.
 
 ## Nguồn tham khảo
 
