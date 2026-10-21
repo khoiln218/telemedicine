@@ -20,5 +20,5 @@ venv/
 .idea/
 
 # Không đưa lên repo public: giáo trình có bản quyền, danh sách SV cả lớp
-docs/de-bai/Fundamentals of Database Systems*.pdf
-docs/de-bai/DanhSachSinhVien*.pdf
+docs/0_de-bai/Fundamentals of Database Systems*.pdf
+docs/0_de-bai/DanhSachSinhVien*.pdf

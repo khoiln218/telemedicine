@@ -6,7 +6,7 @@
 | Người làm / review | Đặng Hữu Khoa (A), Lê Ngọc Khôi (B), Nguyễn Đăng Khoa (C) / Đặng Hữu Khoa |
 | Ngày | 19/10/2026; cập nhật 21/10/2026 thêm BR-A09, BR-B08, BR-C06 (phân quyền), BR-B09, BR-B10 và `TAI_KHOAN`; BR-A10 và `NHAN_VIEN` |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – truy vết yêu cầu hai chiều |
-| Căn cứ | Khảo sát [T04](../khao-sat/T04_KhaoSat_MangA.md), [T03](../khao-sat/T03_KhaoSat_MangB.md), [T05](../khao-sat/T05_KhaoSat_MangC.md); quy tắc [T07](../br/T07_BR_MangA.md), [T08](../br/T08_BR_MangB.md), [T09](../br/T09_BR_MangC.md); ERD [A](../../erd/A.drawio), [B](../../erd/B.drawio), [C](../../erd/C.drawio) |
+| Căn cứ | Khảo sát [T04](../1_khao-sat/T04_KhaoSat_MangA.md), [T03](../1_khao-sat/T03_KhaoSat_MangB.md), [T05](../1_khao-sat/T05_KhaoSat_MangC.md); quy tắc [T07](../2_quy-tac/T07_BR_MangA.md), [T08](../2_quy-tac/T08_BR_MangB.md), [T09](../2_quy-tac/T09_BR_MangC.md); ERD [A](../3_erd/A.drawio), [B](../3_erd/B.drawio), [C](../3_erd/C.drawio) |
 | Dùng cho | Báo cáo mục 2.1.5 |
 
 Mục đích: chứng minh mỗi quy tắc nghiệp vụ có nguồn khảo sát và được thể hiện trong ERD; đồng thời mỗi thành phần ERD đều phục vụ ít nhất một yêu cầu. Tài liệu dừng ở mô hình khái niệm, không ghi cơ chế cài đặt.

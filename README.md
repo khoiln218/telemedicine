@@ -13,12 +13,14 @@ Kế hoạch, phân công và báo cáo tuần: [docs/KeHoach_G5_Telemedicine.xl
 ## Cấu trúc thư mục
 
 ```
-docs/        Báo cáo (docx), kế hoạch (xlsx)
-  de-bai/    Đề bài, mẫu báo cáo, kế hoạch đánh giá của môn học
-  khao-sat/  Ghi chú khảo sát GĐ0
-erd/         Sơ đồ ER/EER (.drawio)
-sql/         Script SQL – xem thứ tự chạy bên dưới
-app/         Ứng dụng Flask (GĐ4, tuần 11)
+docs/            Báo cáo (docx), kế hoạch (xlsx)
+  0_de-bai/      Đề bài, mẫu báo cáo, kế hoạch đánh giá của môn học
+  1_khao-sat/    Khảo sát nghiệp vụ (T03–T05)
+  2_quy-tac/     Quy tắc nghiệp vụ (T07–T09)
+  3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14)
+  4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
+sql/             Script SQL – xem thứ tự chạy bên dưới
+app/             Ứng dụng Flask (GĐ4, tuần 11)
 ```
 
 Tên file trong `sql/` theo kế hoạch:
@@ -76,7 +78,7 @@ Công cụ GUI (tùy chọn): pgAdmin 4 (có sẵn trong bộ cài Windows) ho�
 - Bản desktop: https://github.com/jgraph/drawio-desktop/releases (macOS: `brew install --cask drawio`).
 - Hoặc dùng bản web https://app.diagrams.net, hoặc extension **Draw.io Integration** trong VS Code.
 - Vẽ ERD theo ký hiệu Chen/Elmasri: vào **+ More Shapes** → bật **Entity Relation**.
-- Lưu file `.drawio` vào `erd/`, đặt tên theo mảng: `erd/A.drawio`, `erd/B.drawio`, `erd/C.drawio`, `erd/ERD_tong.drawio`.
+- Lưu file `.drawio` vào `docs/3_erd/`, đặt tên theo mảng: `A.drawio`, `B.drawio`, `C.drawio`, `ERD_tong.drawio`.
 
 ### 4. Python (từ GĐ4)
 
