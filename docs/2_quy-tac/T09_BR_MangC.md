@@ -6,7 +6,7 @@
 | Người viết / review | Nguyễn Đăng Khoa / Lê Ngọc Khôi |
 | Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt; 21/10/2026 thêm BR-C06 (phân quyền) |
 | Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
-| Căn cứ | [T05 – khảo sát mảng C](../khao-sat/T05_KhaoSat_MangC.md) |
+| Căn cứ | [T05 – khảo sát mảng C](../1_khao-sat/T05_KhaoSat_MangC.md) |
 | Dùng cho | Báo cáo mục 1.2.3, T13 (ERD mảng C), T15 (truy vết) |
 
 Nguyên tắc viết: mỗi quy tắc là một phát biểu khẳng định, dùng thuật ngữ ở mục 1, không phụ thuộc cách cài đặt. Tài liệu chỉ nêu quy tắc là gì; quy tắc được bảo đảm bằng cơ chế nào trong CSDL thuộc bước cài đặt.
