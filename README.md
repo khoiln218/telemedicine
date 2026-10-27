@@ -30,7 +30,7 @@ Tên file trong `sql/` theo kế hoạch:
 | File | Nội dung | Việc |
 |---|---|---|
 | `A_schema.sql`, `B_schema.sql`, `C_schema.sql` | DDL từng mảng | T32–T34 |
-| `schema.sql` | DDL tổng (gộp 3 mảng) | T35 |
+| `schema.sql` | DDL tích hợp các mảng đã có (hiện A+B; nối C khi hoàn tất) | T35 |
 | `A_trigger_view.sql`, `B_…`, `C_…` | Trigger + view từng mảng | T36–T38 |
 | `seed.sql` | Dữ liệu mẫu | T39 |
 | `queries_A.sql`, `queries_B.sql`, `queries_C.sql` | 4 truy vấn mỗi mảng | T40–T42 |
@@ -93,7 +93,8 @@ Chạy lại từ đầu trên CSDL sạch (khi đã có file):
 ```bash
 dropdb --if-exists telemedicine && createdb -E UTF8 -T template0 telemedicine
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/schema.sql
-psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/A_trigger_view.sql   # tương tự B, C
+psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/A_trigger_view.sql
+psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/B_trigger_view.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/seed.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/rbac.sql
 ```
