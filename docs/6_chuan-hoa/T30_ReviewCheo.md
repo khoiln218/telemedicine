@@ -35,6 +35,7 @@
 | L03 | T37 / T08 | Trigger chặn lịch hẹn với **bác sĩ đa khoa** kèm giấy chuyển; T08 không nói rõ | Như L02 | Đã sửa |
 | L04 | T37 / T08 | BR-B05 chỉ nói trạng thái cuối không chuyển tiếp; trigger chặn **mọi** sửa đổi trên lịch ở trạng thái cuối (theo lý do "không sửa lại lịch hẹn đã kết thúc") | Như L02 | Đã sửa |
 | L05 | T37 / T08 | Lịch có giấy bị hủy hoặc vắng mặt thì giấy vẫn gắn với lịch đó, đặt lại bằng giấy cũ chỉ nhận lỗi UNIQUE thô `lich_hen_ma_giay_key`; T08 chưa nói giấy như vậy có tính là đã dùng | Chốt giữ thiết kế (không dùng UNIQUE riêng phần cho lịch còn hiệu lực, vì sẽ phát sinh `ma_lh → ma_giay → ma_bn`, vi phạm 3NF). Ghi vào T08 mục 5; trigger báo "BR-B03: giấy chuyển đã dùng"; đổi giờ, đổi bác sĩ thì UPDATE lịch, không hủy rồi đặt lại | Đã sửa |
+| L06 | T33 / báo cáo 1.2.4 | Ràng buộc chung yêu cầu email đúng định dạng và ngày sinh không ở tương lai; `benh_nhan` chưa kiểm tra (phát hiện khi viết từ điển dữ liệu, T31) | Thêm CHECK `ngay_sinh <= CURRENT_DATE` và CHECK dạng email vào `B_schema.sql`; chạy lại bộ test T33, T37 không đổi | Đã sửa |
 
 ## 4. Quy tắc mảng B → cơ chế cài đặt
 
