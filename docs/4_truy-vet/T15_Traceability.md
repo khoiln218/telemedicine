@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T15 (GĐ1, tuần 4) |
 | Người làm / review | Đặng Hữu Khoa (A), Lê Ngọc Khôi (B), Nguyễn Đăng Khoa (C) / Đặng Hữu Khoa |
-| Ngày | 19/10/2026; cập nhật 21/10/2026 thêm BR-A09, BR-B08, BR-C06 (phân quyền), BR-B09, BR-B10 và `TAI_KHOAN`; BR-A10 và `NHAN_VIEN` |
+| Ngày | 19/10/2026; cập nhật 21/10/2026 thêm BR-A09, BR-B08, BR-C06 (phân quyền), BR-B09, BR-B10 và `TAI_KHOAN`; BR-A10 và `NHAN_VIEN`; tách quản trị theo 3 mảng |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – truy vết yêu cầu hai chiều |
 | Căn cứ | Khảo sát [T04](../1_khao-sat/T04_KhaoSat_MangA.md), [T03](../1_khao-sat/T03_KhaoSat_MangB.md), [T05](../1_khao-sat/T05_KhaoSat_MangC.md); quy tắc [T07](../2_quy-tac/T07_BR_MangA.md), [T08](../2_quy-tac/T08_BR_MangB.md), [T09](../2_quy-tac/T09_BR_MangC.md); ERD [A](../3_erd/A.drawio), [B](../3_erd/B.drawio), [C](../3_erd/C.drawio) |
 | Dùng cho | Báo cáo mục 2.1.5 |
@@ -54,7 +54,7 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 | BR-C03 | Bước 2, 3 | Liên kết `CÓ_CHẨN_ĐOÁN`, `LẬP_ĐƠN` | Chẩn đoán phải có trước khi lập đơn |
 | BR-C04 | Bước 3 | Thuộc tính `so_luong`, `lieu_dung` của `KÊ` | Số lượng dương, liều không rỗng |
 | BR-C05 | Bước 5 | Thuộc tính `trang_thai` của `CHAN_DOAN`, `DON_THUOC` | Không được xóa, sửa nội dung; chỉ được hủy |
-| BR-C06 | Mục 2 | `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC`, `KÊ`, `DỊ_ỨNG`; `PHÁT_SINH` (qua lịch hẹn) | Quyền thao tác theo vai trò; bệnh nhân chỉ thấy hàng của mình |
+| BR-C06 | Mục 2 | `LAN_KHAM`, `CHAN_DOAN`, `DON_THUOC`, `KÊ`, `DỊ_ỨNG`; `PHÁT_SINH` (qua lịch hẹn); `THUOC`, `HOAT_CHAT`, `MA_ICD10` | Quyền thao tác theo vai trò; bệnh nhân chỉ thấy hàng của mình |
 
 ## 2. Truy vết ngược: thành phần ERD → yêu cầu
 
@@ -118,5 +118,5 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 | Quy tắc có thành phần ERD | 10/10 | 10/10 | 6/6 |
 | Thành phần ERD phục vụ ít nhất một yêu cầu | 8/8 | 14/14 | 13/13 |
 
-Mục tiêu MT-06 (phân quyền) truy vết qua BR-A09, BR-B08, BR-B09, BR-B10, BR-C06 và `TAI_KHOAN`. Truy vết ngược ở mục 2 không ghi BR-A09, BR-B08, BR-C06 vì chúng áp lên gần như mọi thực thể.
+Mục tiêu MT-06 (phân quyền) truy vết qua BR-A09, BR-B08, BR-B09, BR-B10, BR-C06 và `TAI_KHOAN`. Truy vết ngược ở mục 2 không ghi BR-A09, BR-B08, BR-C06 vì chúng áp lên gần như mọi thực thể. Ba vai trò quản trị tách theo mảng: quản trị nhân sự (BR-A09), quản trị tài khoản (BR-B10), quản trị danh mục (BR-C06); loại nhân viên tương ứng ở BR-A10.
 

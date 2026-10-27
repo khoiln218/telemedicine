@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T05 (GĐ0, tuần 1) |
 | Người thực hiện / review | Nguyễn Đăng Khoa / Đặng Hữu Khoa |
-| Ngày | 14/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt |
+| Ngày | 14/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 tách quản trị theo 3 mảng |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – thu thập và phân tích yêu cầu |
 | Dùng cho | T09 (BR-C), T13 (ERD mảng C) |
 
@@ -25,7 +25,7 @@
 |---|---|---|
 | Bác sĩ | Ghi lần khám, chẩn đoán, kê đơn | Xem lịch sử khám, dị ứng của bệnh nhân; thêm lần khám, chẩn đoán, đơn thuốc |
 | Bệnh nhân | Người được khám, nhận đơn | Xem hồ sơ bệnh án, đơn thuốc của chính mình |
-| Quản trị | Quản lý danh mục thuốc, hoạt chất, ICD-10 | Thêm, sửa danh mục |
+| Quản trị danh mục | Quản lý danh mục thuốc, hoạt chất, ICD-10 | Thêm, sửa danh mục |
 
 Mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu; lễ tân không xem bệnh án.
 
@@ -59,7 +59,7 @@ Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 | Bước 3: kê đơn sau khi có chẩn đoán | Lần khám phải có chẩn đoán trước khi lập đơn |
 | Bước 3: số lượng và liều dùng | Số lượng lớn hơn 0; liều dùng bắt buộc |
 | Bước 5: giữ lịch sử | Không xóa, không sửa nội dung lần khám, chẩn đoán, đơn thuốc |
-| Mục 2: nhu cầu dữ liệu từng bên | Chỉ bác sĩ ghi bệnh án; lễ tân không xem; bệnh nhân chỉ xem hồ sơ của mình |
+| Mục 2: nhu cầu dữ liệu từng bên | Chỉ bác sĩ ghi bệnh án; lễ tân không xem; bệnh nhân chỉ xem hồ sơ của mình; chỉ quản trị danh mục thêm, sửa danh mục |
 
 ## 5. Ràng buộc và giả định
 
@@ -70,7 +70,7 @@ Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 - Danh mục ICD-10 là tập mã nhỏ giả lập, đủ cho dữ liệu mẫu.
 - Hồ sơ bệnh án là tổng hợp các lần khám, chẩn đoán, đơn thuốc, dị ứng của bệnh nhân, không lưu riêng.
 - Lưu vết tối thiểu bằng người tạo và thời điểm tạo; không làm audit đầy đủ.
-- Quản trị là nhân viên (mảng A), quản lý danh mục thuốc, hoạt chất, ICD-10.
+- Quản trị danh mục là nhân viên (mảng A), quản lý danh mục thuốc, hoạt chất, ICD-10; không xem bệnh án.
 
 ## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T09, T13)
 
