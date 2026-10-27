@@ -8,9 +8,11 @@
 --   chuyen_khoa(ma_chuyen_khoa INTEGER PK).
 -- Giá trị vai_tro trùng giá trị nhan_vien.loai_nv, thêm BENH_NHAN.
 --
--- Ràng buộc cần trigger (BR-B01, B02 phần ca, B03 phần hạn và chuyên khoa, B05, B09 phần
--- vai trò) nằm ở B_trigger_view.sql (T37); phân quyền BR-B08, B10 ở rbac.sql (T45).
+-- Ràng buộc cần trigger (BR-B01; B03 phần hạn, chuyên khoa, tái khám; B05; B09 phần vai trò;
+-- B10 không xóa tài khoản) nằm ở B_trigger_view.sql (T37); phân quyền BR-B08, B10 ở rbac.sql (T45).
 -- Không có ON DELETE CASCADE: bệnh nhân, lịch hẹn, tài khoản không bị xóa khi còn tham chiếu.
+-- Khóa tự tăng: dữ liệu mẫu (T39) không ghi mã; nếu ghi tường minh thì phải setval sequence,
+-- nếu không lần thêm kế tiếp sẽ trùng khóa.
 
 CREATE EXTENSION IF NOT EXISTS btree_gist;  -- cho EXCLUDE trên cột INTEGER (BR-B02)
 

@@ -60,7 +60,13 @@ BEGIN
         RETURN NEW;
     END IF;
 
-    -- Giấy đúng bệnh nhân và chưa dùng đã có ràng buộc ở B_schema.sql; ở đây kiểm tra chuyên khoa và hạn
+    -- Giấy đúng bệnh nhân và chưa dùng đã có ràng buộc ở B_schema.sql; ở đây báo lỗi dễ hiểu cho
+    -- giấy đã dùng (kể cả lịch đã hủy, vắng mặt – T08 mục 5), rồi kiểm tra chuyên khoa và hạn
+    IF EXISTS (SELECT 1 FROM lich_hen WHERE ma_giay = NEW.ma_giay AND ma_lh <> NEW.ma_lh) THEN
+        RAISE EXCEPTION 'BR-B03: giấy chuyển % đã dùng cho lịch hẹn khác', NEW.ma_giay
+            USING ERRCODE = 'check_violation';
+    END IF;
+
     SELECT * INTO v_giay FROM giay_chuyen_khoa WHERE ma_giay = NEW.ma_giay;
     IF v_giay.ma_chuyen_khoa <> v_chuyen_khoa THEN
         RAISE EXCEPTION 'BR-B03: giấy chuyển không đúng chuyên khoa của bác sĩ được hẹn'
@@ -75,7 +81,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_lich_hen_hop_le
+CREATE OR REPLACE TRIGGER trg_lich_hen_hop_le
     BEFORE INSERT OR UPDATE OF thoi_gian_bd, thoi_gian_kt, ma_bac_si, ma_bn, ma_giay
     ON lich_hen
     FOR EACH ROW EXECUTE FUNCTION fn_lich_hen_hop_le();
@@ -108,7 +114,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_trang_thai_lich_hen
+CREATE OR REPLACE TRIGGER trg_trang_thai_lich_hen
     BEFORE INSERT OR UPDATE ON lich_hen
     FOR EACH ROW EXECUTE FUNCTION fn_trang_thai_lich_hen();
 
@@ -129,21 +135,30 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_tai_khoan_vai_tro
+CREATE OR REPLACE TRIGGER trg_tai_khoan_vai_tro
     BEFORE INSERT OR UPDATE OF vai_tro, ma_nv ON tai_khoan
     FOR EACH ROW EXECUTE FUNCTION fn_tai_khoan_vai_tro();
 
--- BR-B10: tài khoản không bị xóa, chỉ khóa (áp dụng cả với chủ sở hữu bảng, không chỉ qua GRANT)
+-- BR-B10: tài khoản không bị xóa, chỉ khóa (áp dụng cả với chủ sở hữu bảng, không chỉ qua GRANT).
+-- TRUNCATE không kích hoạt trigger DELETE nên chặn thêm bằng trigger mức câu lệnh.
 CREATE OR REPLACE FUNCTION fn_tai_khoan_khong_xoa() RETURNS trigger AS $$
 BEGIN
+    IF TG_OP = 'TRUNCATE' THEN
+        RAISE EXCEPTION 'BR-B10: tài khoản không được xóa, chỉ được khóa'
+            USING ERRCODE = 'check_violation';
+    END IF;
     RAISE EXCEPTION 'BR-B10: tài khoản % không được xóa, chỉ được khóa', OLD.ten_dang_nhap
         USING ERRCODE = 'check_violation';
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER trg_tai_khoan_khong_xoa
+CREATE OR REPLACE TRIGGER trg_tai_khoan_khong_xoa
     BEFORE DELETE ON tai_khoan
     FOR EACH ROW EXECUTE FUNCTION fn_tai_khoan_khong_xoa();
+
+CREATE OR REPLACE TRIGGER trg_tai_khoan_khong_truncate
+    BEFORE TRUNCATE ON tai_khoan
+    FOR EACH STATEMENT EXECUTE FUNCTION fn_tai_khoan_khong_xoa();
 
 -- Lịch hẹn trong ngày cho lễ tân, bác sĩ (màn hình T49). Lọc theo khoảng để dùng idx_lich_hen_thoi_gian.
 CREATE OR REPLACE VIEW v_lich_hen_hom_nay AS

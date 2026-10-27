@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T08 (GĐ0, tuần 2) |
 | Người viết / review | Lê Ngọc Khôi / Đặng Hữu Khoa |
-| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 thêm BR-B08 (phân quyền), BR-B09, BR-B10 (tài khoản); tách quản trị theo 3 mảng |
+| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 thêm BR-B08 (phân quyền), BR-B09, BR-B10 (tài khoản); tách quản trị theo 3 mảng; 27/10/2026 làm rõ BR-B03, BR-B05 theo review T30 (L02–L05) |
 | Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
 | Căn cứ | [T03 – khảo sát mảng B](../1_khao-sat/T03_KhaoSat_MangB.md) |
 | Dùng cho | Báo cáo mục 1.2.2, T12 (ERD mảng B), T15 (truy vết) |
@@ -80,5 +80,9 @@ Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **
 - Lễ tân là nhân viên (mảng A). Lễ tân chuyển mọi trạng thái lịch hẹn, kể cả hoàn thành.
 - Có 6 vai trò cố định, trong đó quản trị tách theo mảng: nhân sự (A), tài khoản (B), danh mục (C); mỗi tài khoản mang đúng một vai trò. Mật khẩu không lưu ở dạng đọc được.
 - Bác sĩ xem được mọi lịch hẹn, không chỉ lịch của mình.
+- Giấy chuyển "còn hạn" (BR-B03) tính theo ngày hẹn: ngày hẹn nằm trong khoảng từ ngày lập đến ngày hết hạn của giấy.
+- Giấy chuyển chỉ dùng cho lịch hẹn với bác sĩ chuyên khoa; lịch hẹn với bác sĩ đa khoa không kèm giấy (BR-B03).
+- Giấy đã gắn với một lịch hẹn thì coi là đã dùng, kể cả khi lịch đó bị hủy hoặc vắng mặt (BR-B03). Đổi giờ, đổi bác sĩ thì sửa lịch hẹn đang có, không hủy rồi đặt lại; bệnh nhân hủy lịch thì xin giấy mới từ bác sĩ đa khoa.
+- Lịch hẹn ở trạng thái cuối (hoàn thành, hủy, vắng mặt) không được sửa bất kỳ thông tin nào, không chỉ trạng thái (BR-B05).
 - Ngoài phạm vi: quên mật khẩu qua email, chính sách độ mạnh mật khẩu, nhật ký đăng nhập.
 - Các ràng buộc đơn giản nằm ở ràng buộc chung (báo cáo mục 1.2.4): thời gian kết thúc sau bắt đầu, số điện thoại của bệnh nhân không trùng, phí khám không âm.
