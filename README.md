@@ -19,6 +19,7 @@ docs/            Báo cáo (docx), kế hoạch (xlsx)
   2_quy-tac/     Quy tắc nghiệp vụ (T07–T09)
   3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14)
   4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
+  5_anh-xa/      Ánh xạ ERD → lược đồ quan hệ (T19–T21)
 sql/             Script SQL – xem thứ tự chạy bên dưới
 app/             Ứng dụng Flask (GĐ4, tuần 11)
 ```
