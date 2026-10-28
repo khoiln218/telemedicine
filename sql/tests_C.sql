@@ -131,6 +131,36 @@ INSERT INTO kq_c (ma, quy_tac, mo_ta, ky_vong, dat, thong_bao)
 SELECT 'TC06C', 'BR-C06', 'Bệnh nhân được đọc dị ứng của mình', 'true',
        has_table_privilege('r_benh_nhan', 'v_di_ung_cua_toi', 'SELECT'), 'has_table_privilege';
 
+-- BR-C06 thử thao tác thật dưới role ứng dụng.
+CALL pg_temp.kt_c('TC06D', 'BR-C06', 'Lễ tân đọc view hồ sơ lâm sàng',
+    $q$SET LOCAL ROLE r_le_tan; SELECT count(*) FROM v_ho_so_tom_tat$q$, 'permission denied');
+CALL pg_temp.kt_c('TC06E', 'BR-C06', 'Bệnh nhân chỉ thấy hồ sơ của chính mình qua v_ho_so_cua_toi',
+    $q$SELECT set_config('app.ma_bn', (SELECT min(l.ma_bn)::text FROM lan_kham k JOIN lich_hen l ON l.ma_lh = k.ma_lh), true);
+       SET LOCAL ROLE r_benh_nhan;
+       DO $d$ BEGIN
+           IF NOT EXISTS (SELECT 1 FROM v_ho_so_cua_toi)
+              OR EXISTS (SELECT 1 FROM v_ho_so_cua_toi WHERE ma_bn <> current_setting('app.ma_bn')::int) THEN
+               RAISE EXCEPTION 'view trả hồ sơ của người khác hoặc rỗng';
+           END IF;
+       END $d$;
+       RESET app.ma_bn$q$, 'OK');
+CALL pg_temp.kt_c('TC06F', 'BR-C06', 'Bác sĩ thêm thuốc vào danh mục',
+    $q$SET LOCAL ROLE r_bac_si; INSERT INTO thuoc (ten_thuoc, dang_bao_che, ham_luong) VALUES ('x', 'viên', '1 mg')$q$,
+    'permission denied');
+CALL pg_temp.kt_c('TC06G', 'BR-C06', 'Quản trị danh mục thêm mã ICD-10',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc; INSERT INTO ma_icd10 (ma_icd10, mo_ta) VALUES ('Z00.0', 'Khám sức khỏe tổng quát')$q$,
+    'OK');
+CALL pg_temp.kt_c('TC06H', 'BR-C06', 'Lễ tân ghi nhận dị ứng',
+    $q$SET LOCAL ROLE r_le_tan; INSERT INTO di_ung (ma_bn, ma_hoat_chat) VALUES (1, 1)$q$, 'permission denied');
+CALL pg_temp.kt_c('TC06I', 'BR-C06', 'Bác sĩ ghi nhận dị ứng',
+    $q$SET LOCAL ROLE r_bac_si;
+       INSERT INTO di_ung (ma_bn, ma_hoat_chat)
+       SELECT min(bn.ma_bn), (SELECT ma_hoat_chat FROM hoat_chat WHERE ten_hoat_chat = 'Acid clavulanic')
+         FROM benh_nhan bn
+        WHERE NOT EXISTS (SELECT 1 FROM di_ung du WHERE du.ma_bn = bn.ma_bn)$q$, 'OK');
+CALL pg_temp.kt_c('TC06J', 'BR-C06', 'Quản trị danh mục đọc chẩn đoán',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc; SELECT count(*) FROM chan_doan$q$, 'permission denied');
+
 TABLE kq_c;
 SELECT count(*) AS so_ca, count(*) FILTER (WHERE dat) AS dat,
        count(*) FILTER (WHERE NOT dat) AS khong_dat FROM kq_c;
