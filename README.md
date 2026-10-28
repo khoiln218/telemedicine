@@ -32,7 +32,7 @@ Tên file trong `sql/` theo kế hoạch:
 | `A_schema.sql`, `B_schema.sql`, `C_schema.sql` | DDL từng mảng | T32–T34 |
 | `schema.sql` | DDL tích hợp ba mảng (A → B → C) | T35 |
 | `A_trigger_view.sql`, `B_…`, `C_…` | Trigger + view từng mảng | T36–T38 |
-| `seed.sql` | Dữ liệu mẫu | T39 |
+| `A_seed.sql`, `B_seed.sql`, `C_seed.sql`, `seed.sql` | Dữ liệu mẫu từng mảng; `seed.sql` gọi cả ba | T39 |
 | `queries_A.sql`, `queries_B.sql`, `queries_C.sql` | 4 truy vấn mỗi mảng | T40–T42 |
 | `tests.sql` | Test ràng buộc | T43 |
 | `rbac.sql` | Role, GRANT/REVOKE | T45 |
@@ -102,8 +102,10 @@ psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/rbac.sql
 
 `schema.sql` gọi `A_schema.sql`, `B_schema.sql`, `C_schema.sql`; trigger/view chạy sau toàn bộ schema vì trigger
 mảng A đọc bảng lịch hẹn của B. `tests_B.sql` chạy được ngay sau `rbac.sql` (tự tạo dữ liệu thử rồi ROLLBACK);
-`tests_C.sql` cần dữ liệu mẫu. Cho tới khi có `seed.sql` (T39), `C_seed.sql` cần dữ liệu B có lịch hẹn hoàn thành
-và tài khoản bác sĩ tương ứng.
+`tests_C.sql` cần dữ liệu mẫu. `seed.sql` chỉ chạy trên CSDL vừa tạo schema (mã cố định); ngày trong dữ liệu
+tính theo ngày chạy nên truy vấn mẫu luôn có kết quả. Dữ liệu mô phỏng phòng khám đã hoạt động 3 tháng theo quy mô
+ở báo cáo mục 1 (20 bác sĩ, khoảng 150 lượt khám mỗi ngày thường, 20% từ xa); chạy hết khoảng vài giây.
+Tài khoản mẫu: `bs01`…`bs19`, `lt21`…`lt24`, `qt25`…`qt27`, `bn0001`…; mật khẩu chung `Telemed@2026`.
 
 ## Quy ước làm việc
 
