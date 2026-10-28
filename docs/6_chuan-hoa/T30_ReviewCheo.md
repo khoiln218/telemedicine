@@ -11,9 +11,9 @@
 
 | Mảng | 2.2 Ánh xạ | 2.3 FD, chuẩn hóa | 3 Từ điển dữ liệu | Đã rà |
 |---|---|---|---|---|
-| A | [T19](../5_anh-xa/T19_AnhXa_MangA.md) | [T23](T23_FD_MangA.md), [T26](T26_ChuanHoa_MangA.md) | [T29](T29_TuDienDuLieu_MangA.md) | Đã lập, chờ review chéo |
-| B | [T20](../5_anh-xa/T20_AnhXa_MangB.md) | [T24](T24_FD_MangB.md), [T27](T27_ChuanHoa_MangB.md) | T29 chưa có | **Có**, đối chiếu thêm `sql/B_schema.sql`, `sql/B_trigger_view.sql` |
-| C | [T21](../5_anh-xa/T21_AnhXa_MangC.md) | [T25](T25_FD_MangC.md), [T28](T28_ChuanHoa_MangC.md) | T29 chưa có | Có tài liệu, **chờ review chéo** |
+| A | [T19](../5_anh-xa/T19_AnhXa_MangA.md) | [T23](T23_FD_MangA.md), [T26](T26_ChuanHoa_MangA.md) | [T29](T29_TuDienDuLieu_MangA.md), báo cáo mục 3 | Đã lập, chờ review chéo |
+| B | [T20](../5_anh-xa/T20_AnhXa_MangB.md) | [T24](T24_FD_MangB.md), [T27](T27_ChuanHoa_MangB.md) | Báo cáo mục 3 (T29) | **Có**, đối chiếu thêm `sql/B_schema.sql`, `sql/B_trigger_view.sql` |
+| C | [T21](../5_anh-xa/T21_AnhXa_MangC.md) | [T25](T25_FD_MangC.md), [T28](T28_ChuanHoa_MangC.md) | Báo cáo mục 3 (T29, theo `C_schema.sql`, `C_trigger_view.sql`) | Có tài liệu, **chờ review chéo** |
 
 ## 2. Nội dung kiểm tra (mảng B)
 
@@ -36,6 +36,8 @@
 | L04 | T37 / T08 | BR-B05 chỉ nói trạng thái cuối không chuyển tiếp; trigger chặn **mọi** sửa đổi trên lịch ở trạng thái cuối (theo lý do "không sửa lại lịch hẹn đã kết thúc") | Như L02 | Đã sửa |
 | L05 | T37 / T08 | Lịch có giấy bị hủy hoặc vắng mặt thì giấy vẫn gắn với lịch đó, đặt lại bằng giấy cũ chỉ nhận lỗi UNIQUE thô `lich_hen_ma_giay_key`; T08 chưa nói giấy như vậy có tính là đã dùng | Chốt giữ thiết kế (không dùng UNIQUE riêng phần cho lịch còn hiệu lực, vì sẽ phát sinh `ma_lh → ma_giay → ma_bn`, vi phạm 3NF). Ghi vào T08 mục 5; trigger báo "BR-B03: giấy chuyển đã dùng"; đổi giờ, đổi bác sĩ thì UPDATE lịch, không hủy rồi đặt lại | Đã sửa |
 | L06 | T33 / báo cáo 1.2.4 | Ràng buộc chung yêu cầu email đúng định dạng và ngày sinh không ở tương lai; `benh_nhan` chưa kiểm tra (phát hiện khi viết từ điển dữ liệu, T31) | Thêm CHECK `ngay_sinh <= CURRENT_DATE` và CHECK dạng email vào `B_schema.sql`; chạy lại bộ test T33, T37 không đổi | Đã sửa |
+| L07 | Báo cáo mục 3 (A) | Sáu bảng mảng A ghi cột theo thứ tự Mô tả, Kiểu, Null, Khóa…, lệch tiêu đề Kiểu dữ liệu, Null, Khóa, Mặc định, Ràng buộc, Mô tả; tiêu đề bảng dùng kiểu Heading 3 (lọt vào mục lục); danh sách bảng còn dòng mẫu `bac_si` lặp | Khôi viết lại sáu bảng A theo `A_schema.sql`, `A_trigger_view.sql` cùng khuôn với B, kèm BR tương ứng; tiêu đề bảng về kiểu đoạn thường; danh sách bảng xếp A, B, C (19 bảng); bỏ dòng chờ trong bảng miền giá trị (28/10) | Đã sửa |
+| L08 | T25 / `C_schema.sql` | T25 mục 4 ghi "tên thuốc/hoạt chất không được giả định duy nhất; chỉ mã là khóa", nhưng DDL khai báo `hoat_chat.ten_hoat_chat` UNIQUE NOT NULL, tức `{ten_hoat_chat}` là khóa ứng viên. Báo cáo mục 3 ghi theo DDL | Đăng Khoa chọn: bỏ UNIQUE trong DDL, hoặc thêm khóa ứng viên `{ten_hoat_chat}` vào T25, T28. Cả hai cách HOAT_CHAT vẫn đạt BCNF | Chờ sửa |
 
 ## 4. Quy tắc mảng B → cơ chế cài đặt
 
