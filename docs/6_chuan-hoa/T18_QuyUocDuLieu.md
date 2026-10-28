@@ -11,7 +11,9 @@
 - Tên bảng và cột dùng `snake_case`, không dấu; tên bảng số ít hoặc danh từ nghiệp vụ theo ERD (ví dụ `benh_nhan`, `ca_lam_viec`).
 - Khóa chính dùng `ma_<thực_thể>`; khóa ngoại giữ nguyên tên khóa được tham chiếu. Riêng khóa bác sĩ kế thừa `nhan_vien.ma_nv` được đặt `ma_bac_si` để rõ ngữ nghĩa và khớp ERD tổng.
 - Tên trạng thái/loại dùng chữ hoa ASCII, phân tách bằng `_` (ví dụ `DA_XEP`, `BAC_SI_CHUYEN_KHOA`).
-- Ràng buộc đặt tên `pk_<bang>`, `fk_<bang>_<tham_chieu>`, `uq_<bang>_<cot>`, `ck_<bang>_<muc_dich>`, `ex_<bang>_<muc_dich>`; chỉ mục `idx_<bang>_<cot>`.
+- Ràng buộc khai báo ở mức bảng (nhiều cột, CHECK nghiệp vụ, EXCLUDE, khóa ngoại kép) đặt tên `pk_<bang>`, `fk_<bang>_<tham_chieu>`, `uq_<bang>_<cot>`, `ck_<bang>_<muc_dich>`, `ex_<bang>_<muc_dich>`. Ràng buộc một cột khai báo cạnh cột được để tên mặc định của PostgreSQL (`<bang>_pkey`, `<bang>_<cot>_key`, `<bang>_<cot>_fkey`, `<bang>_<cot>_check`); tên này cố định nên test dùng được để đối chiếu.
+- Chỉ mục đặt tên `idx_<bang>_<cot hoặc mục đích>`.
+- Tên bảng dài được viết tắt trong tên ràng buộc, chỉ mục khi không gây nhầm, ví dụ `giay` = `giay_chuyen_khoa`, `chi_tiet` = `chi_tiet_don_thuoc` (`ck_giay_han`, `idx_chi_tiet_thuoc`).
 
 ## 2. Kiểu dữ liệu
 

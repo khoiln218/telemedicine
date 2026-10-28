@@ -49,4 +49,4 @@ TO r_bac_si, r_quan_tri_danh_muc;
 -- r_quan_tri_tai_khoan: quản lý TAI_KHOAN theo BR-B10, không có quyền hồ sơ lâm sàng.
 -- r_le_tan: thao tác lịch hẹn theo BR-B08, không đọc bảng/view lâm sàng.
 -- r_benh_nhan: thao tác lịch hẹn của mình (B) và đọc v_ho_so_cua_toi (C).
--- Vai trò nhân viên và tai_khoan.vai_tro còn phụ thuộc quyết định C1 tại T30.
+-- tai_khoan.vai_tro của nhân viên luôn bằng nhan_vien.loai_nv (T30 C1); quản trị tài khoản không đổi vai trò.

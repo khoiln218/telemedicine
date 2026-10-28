@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T08 (GĐ0, tuần 2) |
 | Người viết / review | Lê Ngọc Khôi / Đặng Hữu Khoa |
-| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 thêm BR-B08 (phân quyền), BR-B09, BR-B10 (tài khoản); tách quản trị theo 3 mảng; 27/10/2026 làm rõ BR-B03, BR-B05 theo review T30 (L02–L05) |
+| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 thêm BR-B08 (phân quyền), BR-B09, BR-B10 (tài khoản); tách quản trị theo 3 mảng; 27/10/2026 làm rõ BR-B03, BR-B05 theo review T30 (L02–L05); 28/10/2026 bỏ "đổi vai trò" khỏi BR-B10 theo T30 C1 |
 | Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
 | Căn cứ | [T03 – khảo sát mảng B](../1_khao-sat/T03_KhaoSat_MangB.md) |
 | Dùng cho | Báo cáo mục 1.2.2, T12 (ERD mảng B), T15 (truy vết) |
@@ -40,7 +40,7 @@ Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **
 | BR-B07 | Giấy chuyển chuyên khoa chỉ do bác sĩ đa khoa lập và có hiệu lực tối đa 30 ngày kể từ ngày lập | Cấu trúc | Phân biệt vai trò bác sĩ đa khoa và chuyên khoa | T03 bước 5 |
 | BR-B08 | Lễ tân được thêm, sửa bệnh nhân và lịch hẹn; bác sĩ chỉ được xem bệnh nhân, lịch hẹn và lập giấy chuyển chuyên khoa; bệnh nhân chỉ được xem lịch hẹn của chính mình | Hành vi | Mỗi vai trò chỉ có quyền đủ cho việc của mình; bệnh nhân không thấy dữ liệu của người khác | T03 mục 2, 5; MT-06 |
 | BR-B09 | Tài khoản vai trò bệnh nhân gắn đúng một bệnh nhân; tài khoản vai trò khác gắn đúng một nhân viên có loại trùng vai trò; mỗi bệnh nhân, nhân viên có tối đa một tài khoản | Cấu trúc | Phân quyền theo hàng cần biết người đăng nhập là ai | T03 mục 2, 5; MT-06 |
-| BR-B10 | Chỉ quản trị tài khoản được tạo tài khoản nhân viên, đổi vai trò và khóa, mở khóa tài khoản; lễ tân chỉ được tạo tài khoản bệnh nhân và đặt lại mật khẩu cho tài khoản bệnh nhân; mỗi người chỉ đổi được mật khẩu của chính mình; tài khoản không bị xóa | Hành vi | Không ai tự nâng quyền; giữ dấu vết người tạo trên bản ghi y tế | T03 bước 1, mục 5; MT-06 |
+| BR-B10 | Chỉ quản trị tài khoản được tạo tài khoản nhân viên và khóa, mở khóa tài khoản; lễ tân chỉ được tạo tài khoản bệnh nhân và đặt lại mật khẩu cho tài khoản bệnh nhân; mỗi người chỉ đổi được mật khẩu của chính mình; tài khoản không bị xóa | Hành vi | Không ai tự nâng quyền; giữ dấu vết người tạo trên bản ghi y tế | T03 bước 1, mục 5; MT-06 |
 
 ## 3. Ví dụ minh họa
 
@@ -84,5 +84,6 @@ Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **
 - Giấy chuyển chỉ dùng cho lịch hẹn với bác sĩ chuyên khoa; lịch hẹn với bác sĩ đa khoa không kèm giấy (BR-B03).
 - Giấy đã gắn với một lịch hẹn thì coi là đã dùng, kể cả khi lịch đó bị hủy hoặc vắng mặt (BR-B03). Đổi giờ, đổi bác sĩ thì sửa lịch hẹn đang có, không hủy rồi đặt lại; bệnh nhân hủy lịch thì xin giấy mới từ bác sĩ đa khoa.
 - Lịch hẹn ở trạng thái cuối (hoàn thành, hủy, vắng mặt) không được sửa bất kỳ thông tin nào, không chỉ trạng thái (BR-B05).
+- Vai trò của tài khoản nhân viên luôn bằng loại nhân viên (BR-B09); loại nhân viên do quản trị nhân sự quản lý (BR-A09), quản trị tài khoản không đổi vai trò. Nhân viên đã có tài khoản thì không đổi loại nhân viên; trường hợp nhân viên chuyển công việc nằm ngoài phạm vi (T30 C1).
 - Ngoài phạm vi: quên mật khẩu qua email, chính sách độ mạnh mật khẩu, nhật ký đăng nhập.
 - Các ràng buộc đơn giản nằm ở ràng buộc chung (báo cáo mục 1.2.4): thời gian kết thúc sau bắt đầu, số điện thoại của bệnh nhân không trùng, phí khám không âm.

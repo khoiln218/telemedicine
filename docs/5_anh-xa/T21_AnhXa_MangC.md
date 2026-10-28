@@ -24,7 +24,8 @@ Các bảng hồ sơ dùng `ON DELETE RESTRICT` (mặc định PostgreSQL) để
 4. `DON_THUOC(`**`ma_don`**`, ma_lan_kham → LAN_KHAM, thoi_diem_ke, trang_thai, created_by → TAI_KHOAN)`
    - Mỗi đơn thuộc đúng một lần khám; một lần khám có thể có nhiều đơn.
 5. `THUOC(`**`ma_thuoc`**`, ten_thuoc, dang_bao_che, ham_luong)`
-6. `HOAT_CHAT(`**`ma_hoat_chat`**`, ten_hoat_chat)`
+6. `HOAT_CHAT(`**`ma_hoat_chat`**`, ten_hoat_chat UNIQUE NOT NULL)`
+   - Mỗi hoạt chất có một tên chung, không trùng trong danh mục; `UNIQUE` cũng để dữ liệu mẫu nạp lại được (`ON CONFLICT (ten_hoat_chat)`). Tên thuốc thì không duy nhất: cùng tên có thể khác dạng bào chế, hàm lượng.
 7. `CHI_TIET_DON_THUOC(`**`ma_don`**` → DON_THUOC, `**`ma_thuoc`**` → THUOC, so_luong, lieu_dung)`
    - Quan hệ kết hợp của `KÊ` M:N; PK ghép `(ma_don, ma_thuoc)` thể hiện một thuốc xuất hiện tối đa một lần trong một đơn. `so_luong > 0`, `lieu_dung` bắt buộc không rỗng.
 8. `THUOC_HOAT_CHAT(`**`ma_thuoc`**` → THUOC, `**`ma_hoat_chat`**` → HOAT_CHAT, ham_luong)`
@@ -32,7 +33,7 @@ Các bảng hồ sơ dùng `ON DELETE RESTRICT` (mặc định PostgreSQL) để
 9. `DI_UNG(`**`ma_bn`**` → BENH_NHAN, `**`ma_hoat_chat`**` → HOAT_CHAT, ngay_ghi_nhan, ghi_chu)`
    - Quan hệ kết hợp của `DỊ_ỨNG` M:N; cặp `(ma_bn, ma_hoat_chat)` duy nhất. Theo T09, dị ứng đang có hiệu lực được biểu diễn bằng sự tồn tại của hàng; xóa hàng là kết thúc ghi nhận.
 
-`created_by` là khóa ngoại phục vụ truy vết tài khoản tạo hồ sơ. C02 yêu cầu người kê đơn là bác sĩ được phân công cho lịch; cơ sở dữ liệu cần kiểm tra điều đó bằng trigger (T38), không suy ra chỉ từ FK tài khoản.
+`created_by` là khóa ngoại ánh xạ hai liên kết 1:N `GHI_KHÁM` (TAI_KHOAN – LAN_KHAM) và `GHI_ĐƠN` (TAI_KHOAN – DON_THUOC) theo bước 4, đặt ở phía N; lần khám, đơn tham gia toàn phần nên `NOT NULL` (T30 C5). C02 yêu cầu người kê đơn là bác sĩ được phân công cho lịch; cơ sở dữ liệu cần kiểm tra điều đó bằng trigger (T38), không suy ra chỉ từ FK tài khoản.
 
 ## 3. Ràng buộc được đặt ở tầng cài đặt
 
@@ -51,7 +52,7 @@ Quy tắc bắt buộc một đơn có ít nhất một dòng thuốc (tham gia 
 
 ## 4. Điểm cần nhóm đồng bộ
 
-- T30/C1 còn chờ nhóm chốt quan hệ `TAI_KHOAN.vai_tro` và `NHAN_VIEN.loai_nv`. Mảng C chỉ phụ thuộc FK tới `TAI_KHOAN`, không tự kết luận vai trò nhân viên.
+- T30/C1 đã chốt: `TAI_KHOAN.vai_tro` của tài khoản nhân viên luôn bằng `NHAN_VIEN.loai_nv`, nên trigger C kiểm tra `vai_tro = 'BAC_SI'` là đủ.
 - T18/T32 (DDL A) chưa có trong nhánh khi lập ánh xạ; kiểu/FK nhân viên được lấy theo B hiện tại: `tai_khoan.ten_dang_nhap`, `lich_hen.ma_lh`, `lich_hen.ma_bac_si`.
 - ERD đang dùng thuộc tính `ham_luong` cả ở THUOC và quan hệ CHỨA. Ánh xạ giữ cả hai nhưng phân biệt ngữ nghĩa: hàm lượng/nhãn tổng quát của thuốc và hàm lượng từng hoạt chất. Nhóm cần xác nhận cách ghi này trên ERD để tránh hiểu một dữ kiện bị lưu lặp.
 - Thiết kế không dùng dữ liệu bệnh nhân thật. Dữ liệu minh họa trong seed phải là giả lập.

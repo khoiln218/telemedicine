@@ -87,7 +87,7 @@ Rút ra từ quy trình ở mục 3 và nhu cầu dữ liệu ở mục 2.
 - Không kiểm tra bệnh của bệnh nhân có thuộc danh mục được khám từ xa.
 - Lễ tân là nhân viên (mảng A), có tài khoản với vai trò lễ tân (thêm, sửa bệnh nhân và lịch hẹn; không xem bệnh án).
 - Có 6 vai trò cố định: quản trị nhân sự, quản trị tài khoản, quản trị danh mục, bác sĩ, lễ tân, bệnh nhân; mỗi tài khoản mang đúng một vai trò.
-- Quản trị tài khoản tạo tài khoản nhân viên, đổi vai trò, khóa tài khoản; lễ tân tạo tài khoản bệnh nhân khi tiếp nhận. Bệnh nhân không tự đăng ký và không bắt buộc có tài khoản (lễ tân đặt hộ).
+- Quản trị tài khoản tạo tài khoản nhân viên, khóa tài khoản (vai trò theo loại nhân viên, không đổi riêng); lễ tân tạo tài khoản bệnh nhân khi tiếp nhận. Bệnh nhân không tự đăng ký và không bắt buộc có tài khoản (lễ tân đặt hộ).
 - Tài khoản đầu tiên (vai trò quản trị tài khoản) có sẵn khi khởi tạo hệ thống. Mật khẩu không lưu ở dạng đọc được.
 
 ## 6. Kết quả khảo sát: dữ liệu cần lưu (đầu vào T08, T12)

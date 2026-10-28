@@ -2,8 +2,10 @@
 -- Chạy sau A_schema.sql, B_schema.sql, C_schema.sql.
 -- Giả định từ B hiện tại: lich_hen(ma_lh, ma_bn, ma_bac_si, trang_thai),
 -- tai_khoan(ten_dang_nhap, vai_tro, ma_bn, ma_nv); tài khoản bác sĩ có ma_nv = lich_hen.ma_bac_si.
--- Cảnh báo C1/T30: vai_tro và nhan_vien.loai_nv còn chờ nhóm chốt; chức năng dưới đây không
--- tự sửa cấu trúc B, chỉ xác minh chủ tài khoản khớp bác sĩ được phân công.
+-- T30 C1: vai_tro của tài khoản nhân viên luôn bằng nhan_vien.loai_nv (trigger ở B), nên chỉ cần
+-- xác minh chủ tài khoản là bác sĩ được phân công.
+-- Hàm trigger có truy vấn bảng dùng SECURITY DEFINER: chạy với quyền chủ sở hữu, role ứng dụng
+-- không cần SELECT trên bảng nó không được xem (T30 L11). Hàm trigger không gọi trực tiếp được.
 
 -- BR-C02: lần khám và đơn thuốc chỉ thuộc lịch hoàn thành; người tạo phải là bác sĩ của lịch.
 CREATE OR REPLACE FUNCTION fn_c_kiem_tra_lan_kham_don() RETURNS trigger AS $$
@@ -36,7 +38,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE TRIGGER trg_c_lan_kham_hoan_thanh_bac_si
     BEFORE INSERT OR UPDATE OF ma_lh, created_by ON lan_kham
@@ -57,7 +59,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE TRIGGER trg_c_don_co_chan_doan
     BEFORE INSERT OR UPDATE OF ma_lan_kham ON don_thuoc
     FOR EACH ROW EXECUTE FUNCTION fn_c_don_co_chan_doan();
@@ -81,7 +83,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE TRIGGER trg_c_chi_tiet_khong_ke_hoat_chat_di_ung
     BEFORE INSERT OR UPDATE OF ma_don, ma_thuoc ON chi_tiet_don_thuoc
     FOR EACH ROW EXECUTE FUNCTION fn_c_kiem_tra_di_ung();
@@ -126,7 +128,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE TRIGGER trg_c_chan_doan_chi_huy
     BEFORE UPDATE OR DELETE ON chan_doan
     FOR EACH ROW EXECUTE FUNCTION fn_c_chi_huy_ban_ghi();
@@ -179,7 +181,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE TRIGGER trg_c_thuoc_bao_toan_lich_su BEFORE UPDATE ON thuoc
     FOR EACH ROW EXECUTE FUNCTION fn_c_bao_toan_danh_muc();
 CREATE TRIGGER trg_c_hoat_chat_bao_toan_lich_su BEFORE UPDATE ON hoat_chat
@@ -210,7 +212,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE CONSTRAINT TRIGGER ct_c_don_phai_co_chi_tiet
     AFTER INSERT ON don_thuoc DEFERRABLE INITIALLY DEFERRED
     FOR EACH ROW EXECUTE FUNCTION fn_c_don_co_chi_tiet();

@@ -6,8 +6,7 @@
 -- (tên ràng buộc hoặc một đoạn thông báo lỗi), ca mong đợi OK phải chạy được. Cuối script in bảng kết quả
 -- rồi ROLLBACK, không để lại dữ liệu. Dữ liệu thử dùng mã 9101–9199 để không đụng dữ liệu mẫu.
 --
--- Khối "Dữ liệu mảng A" chỉ ghi các cột mảng B cần (giả định ở B_schema.sql); khi có A_schema.sql (T32)
--- phải bổ sung cột bắt buộc của mảng A (ngày sinh, chứng chỉ hành nghề còn hạn đến 2030, …).
+-- Khối "Dữ liệu mảng A" ghi đủ cột bắt buộc của A_schema.sql; chứng chỉ còn hạn đến 2030 để xếp được ca.
 
 BEGIN;
 
@@ -52,11 +51,18 @@ $$ LANGUAGE plpgsql;
 
 -- ---------- Dữ liệu mảng A (sửa theo A_schema.sql) ----------
 -- 9101, 9105: bác sĩ đa khoa; 9102: tim mạch; 9103: da liễu; 9104: lễ tân
-INSERT INTO nhan_vien (ma_nv, ho_ten, loai_nv) VALUES
-    (9101, 'TB Đa khoa 1', 'BAC_SI'), (9102, 'TB Tim mạch', 'BAC_SI'), (9103, 'TB Da liễu', 'BAC_SI'),
-    (9104, 'TB Lễ tân', 'LE_TAN'), (9105, 'TB Đa khoa 2', 'BAC_SI');
+INSERT INTO nhan_vien (ma_nv, ho_ten, ngay_sinh, sdt, loai_nv) VALUES
+    (9101, 'TB Đa khoa 1', '1980-01-01', '0990019101', 'BAC_SI'),
+    (9102, 'TB Tim mạch', '1980-01-01', '0990019102', 'BAC_SI'),
+    (9103, 'TB Da liễu', '1980-01-01', '0990019103', 'BAC_SI'),
+    (9104, 'TB Lễ tân', '1995-01-01', '0990019104', 'LE_TAN'),
+    (9105, 'TB Đa khoa 2', '1980-01-01', '0990019105', 'BAC_SI');
 INSERT INTO chuyen_khoa (ma_chuyen_khoa, ten_chuyen_khoa) VALUES (9101, 'TB Tim mạch'), (9102, 'TB Da liễu');
-INSERT INTO bac_si (ma_bac_si) VALUES (9101), (9102), (9103), (9105);
+INSERT INTO bac_si (ma_bac_si, so_chung_chi, ngay_cap_cc, ngay_het_han_cc, loai_bac_si) VALUES
+    (9101, 'TB-CC-9101', '2020-01-01', '2031-01-01', 'DA_KHOA'),
+    (9102, 'TB-CC-9102', '2020-01-01', '2031-01-01', 'CHUYEN_KHOA'),
+    (9103, 'TB-CC-9103', '2020-01-01', '2031-01-01', 'CHUYEN_KHOA'),
+    (9105, 'TB-CC-9105', '2020-01-01', '2031-01-01', 'DA_KHOA');
 INSERT INTO bac_si_da_khoa (ma_bac_si) VALUES (9101), (9105);
 INSERT INTO bac_si_chuyen_khoa (ma_bac_si, ma_chuyen_khoa) VALUES (9102, 9101), (9103, 9102);
 -- Ca: hôm nay 07–11 (9101, 9105); 07/01/2030 07–11 (9101, 9102, 9103), 13–17 đã hủy (9101); 20/02/2030 07–11 (9102)
@@ -215,6 +221,8 @@ CALL pg_temp.kt('TB37', 'BR-B09', 'Tài khoản gắn cả bệnh nhân và nhâ
     'ck_tai_khoan_chu_so_huu');
 CALL pg_temp.kt('TB38', 'BR-B09', 'Đổi vai trò tài khoản lễ tân thành quản trị tài khoản',
     $q$UPDATE tai_khoan SET vai_tro = 'QUAN_TRI_TAI_KHOAN' WHERE ten_dang_nhap = 'tb_letan'$q$, 'BR-B09');
+CALL pg_temp.kt('TB38B', 'BR-B09', 'Đổi loại nhân viên của lễ tân đã có tài khoản (T30 C1)',
+    $q$UPDATE nhan_vien SET loai_nv = 'QUAN_TRI_TAI_KHOAN' WHERE ma_nv = 9104$q$, 'BR-B09');
 
 -- ---------- BR-B10: tài khoản không bị xóa ----------
 CALL pg_temp.kt('TB39', 'BR-B10', 'Khóa tài khoản – hợp lệ',

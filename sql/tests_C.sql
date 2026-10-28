@@ -38,6 +38,18 @@ CALL pg_temp.kt_c('TC01', 'BR-C01', 'Kê thuốc chứa hoạt chất đang có 
         WHERE d.trang_thai = 'HIEU_LUC' AND t.ten_thuoc = 'Thuốc mẫu C-B'
         ORDER BY d.ma_don LIMIT 1$q$, 'BR-C01');
 
+-- Trigger phải chạy được dưới role ứng dụng, không đòi SELECT bảng mảng khác (T30 L11).
+CALL pg_temp.kt_c('TC07A', 'BR-C01', 'Như TC01 nhưng chạy dưới r_bac_si (không có SELECT lich_hen)',
+    $q$SET LOCAL ROLE r_bac_si;
+       INSERT INTO chi_tiet_don_thuoc (ma_don, ma_thuoc, so_luong, lieu_dung)
+       SELECT d.ma_don, t.ma_thuoc, 1, 'liều mẫu'
+         FROM don_thuoc d CROSS JOIN thuoc t
+        WHERE d.trang_thai = 'HIEU_LUC' AND t.ten_thuoc = 'Thuốc mẫu C-B'
+        ORDER BY d.ma_don LIMIT 1$q$, 'BR-C01');
+CALL pg_temp.kt_c('TC07B', 'T05 lưu giữ lịch sử', 'Quản trị danh mục sửa thuốc đã kê (không có SELECT đơn thuốc)',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc;
+       UPDATE thuoc SET ten_thuoc = ten_thuoc || ' (sửa)' WHERE ten_thuoc = 'Thuốc mẫu C-A'$q$, 'T05:');
+
 CALL pg_temp.kt_c('TC02', 'BR-C02', 'Đơn thuốc ghi bởi tài khoản bệnh nhân không phải bác sĩ của lịch',
     $q$INSERT INTO don_thuoc (ma_lan_kham, thoi_diem_ke, created_by)
        SELECT k.ma_lan_kham, CURRENT_TIMESTAMP, tk.ten_dang_nhap

@@ -10,6 +10,8 @@
 -- Lỗi trả về mã 23514 (check_violation), thông báo bắt đầu bằng mã quy tắc để ứng dụng hiển thị (T49).
 -- Dữ liệu mẫu (T39) phải theo các trigger này: lịch hẹn thêm ở DA_DAT rồi UPDATE sang trạng thái sau;
 -- mỗi lịch hẹn nằm trong một ca; lịch chuyên khoa kèm giấy hoặc là tái khám.
+-- Hàm trigger có truy vấn bảng dùng SECURITY DEFINER: chạy với quyền chủ sở hữu, role ứng dụng
+-- không cần SELECT trên bảng nó không được xem (T30 L11). Hàm trigger không gọi trực tiếp được.
 
 -- BR-B01, BR-B03: lịch hẹn nằm trong ca; lịch chuyên khoa có giấy hợp lệ hoặc là tái khám
 CREATE OR REPLACE FUNCTION fn_lich_hen_hop_le() RETURNS trigger AS $$
@@ -79,7 +81,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE OR REPLACE TRIGGER trg_lich_hen_hop_le
     BEFORE INSERT OR UPDATE OF thoi_gian_bd, thoi_gian_kt, ma_bac_si, ma_bn, ma_giay
@@ -118,8 +120,7 @@ CREATE OR REPLACE TRIGGER trg_trang_thai_lich_hen
     BEFORE INSERT OR UPDATE ON lich_hen
     FOR EACH ROW EXECUTE FUNCTION fn_trang_thai_lich_hen();
 
--- BR-B09: vai trò của tài khoản nhân viên trùng loại nhân viên
--- (chiều ngược lại – sửa nhan_vien.loai_nv khi đã có tài khoản – chờ chốt ở T30)
+-- BR-B09: vai trò của tài khoản nhân viên trùng loại nhân viên (chiều ngược lại ở trg_nhan_vien_giu_vai_tro)
 CREATE OR REPLACE FUNCTION fn_tai_khoan_vai_tro() RETURNS trigger AS $$
 DECLARE
     v_loai_nv nhan_vien.loai_nv%TYPE;
@@ -133,11 +134,27 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE OR REPLACE TRIGGER trg_tai_khoan_vai_tro
     BEFORE INSERT OR UPDATE OF vai_tro, ma_nv ON tai_khoan
     FOR EACH ROW EXECUTE FUNCTION fn_tai_khoan_vai_tro();
+
+-- BR-B09 chiều ngược lại (T30 C1): vai trò tài khoản luôn theo loại nhân viên,
+-- nên nhân viên đã có tài khoản thì không đổi loại nhân viên được
+CREATE OR REPLACE FUNCTION fn_nhan_vien_giu_vai_tro() RETURNS trigger AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM tai_khoan WHERE ma_nv = NEW.ma_nv AND vai_tro <> NEW.loai_nv) THEN
+        RAISE EXCEPTION 'BR-B09: nhân viên % đã có tài khoản, không đổi loại nhân viên', NEW.ma_nv
+            USING ERRCODE = 'check_violation';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
+
+CREATE OR REPLACE TRIGGER trg_nhan_vien_giu_vai_tro
+    BEFORE UPDATE OF loai_nv ON nhan_vien
+    FOR EACH ROW EXECUTE FUNCTION fn_nhan_vien_giu_vai_tro();
 
 -- BR-B10: tài khoản không bị xóa, chỉ khóa (áp dụng cả với chủ sở hữu bảng, không chỉ qua GRANT).
 -- TRUNCATE không kích hoạt trigger DELETE nên chặn thêm bằng trigger mức câu lệnh.

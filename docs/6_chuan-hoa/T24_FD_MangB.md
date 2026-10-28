@@ -123,4 +123,4 @@ Khóa ứng viên:
 Điểm cần thống nhất ở T27, T30:
 
 - **FD có điều kiện** (vế trái UNIQUE cho phép NULL): đề xuất coi vế trái là khóa trên các hàng có giá trị, nên không gây dư thừa; cần Đăng Khoa chốt cách trình bày chung cho cả 3 mảng ở T22.
-- **`TAI_KHOAN.vai_tro` với nhân viên** trùng thông tin với `NHAN_VIEN.loai_nv` (BR-B09 buộc khớp). Đây là dư thừa giữa hai bảng, chuẩn hóa từng bảng không phát hiện được. Đồng thời BR-B10 cho quản trị tài khoản "đổi vai trò", trong khi loại nhân viên do quản trị nhân sự sửa (BR-A09). Cần chốt ở T30: giữ `vai_tro` và kiểm tra khớp khi cài đặt, hay bỏ `vai_tro` và suy ra từ `loai_nv` (bệnh nhân suy từ `ma_bn`).
+- **`TAI_KHOAN.vai_tro` với nhân viên** trùng thông tin với `NHAN_VIEN.loai_nv` (BR-B09 buộc khớp). Đây là dư thừa giữa hai bảng, chuẩn hóa từng bảng không phát hiện được. Đã chốt ở T30 (C1, hướng a): giữ `vai_tro`, luôn khớp `loai_nv` nhờ trigger hai chiều; bỏ "đổi vai trò" khỏi BR-B10.
