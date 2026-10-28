@@ -222,7 +222,7 @@ CALL pg_temp.kt('TB39', 'BR-B10', 'Khóa tài khoản – hợp lệ',
 CALL pg_temp.kt('TB40', 'BR-B10', 'Xóa tài khoản',
     $q$DELETE FROM tai_khoan WHERE ten_dang_nhap = 'tb_bn1'$q$, 'BR-B10');
 CALL pg_temp.kt('TB41', 'BR-B10', 'TRUNCATE bảng tài khoản',
-    $q$TRUNCATE tai_khoan$q$, 'BR-B10');
+    $q$TRUNCATE tai_khoan CASCADE$q$, 'BR-B10');
 
 -- ---------- Ràng buộc chung (1.2.4) ----------
 CALL pg_temp.kt('TB42', 'Chung', 'Lịch hẹn kết thúc trước khi bắt đầu',

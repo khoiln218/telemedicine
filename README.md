@@ -99,6 +99,11 @@ psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/seed.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/rbac.sql
 ```
 
+Các file `C_schema.sql`, `C_trigger_view.sql`, `C_seed.sql`, `queries_C.sql`, `tests_C.sql` và
+`performance_C.sql` là phần đóng góp mảng C. Khi hợp nhất, thêm C DDL vào `schema.sql`, C seed
+vào `seed.sql`, chạy trigger/view sau toàn bộ schema; test C chạy sau seed và `rbac.sql`.
+`C_seed.sql` cần fixture B có lịch hẹn hoàn thành và tài khoản bác sĩ tương ứng.
+
 ## Quy ước làm việc
 
 - `git pull` trước khi làm, commit nhỏ và thường xuyên.
