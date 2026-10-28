@@ -30,7 +30,7 @@ Tên file trong `sql/` theo kế hoạch:
 | File | Nội dung | Việc |
 |---|---|---|
 | `A_schema.sql`, `B_schema.sql`, `C_schema.sql` | DDL từng mảng | T32–T34 |
-| `schema.sql` | DDL tích hợp các mảng đã có (hiện A+B; nối C khi hoàn tất) | T35 |
+| `schema.sql` | DDL tích hợp ba mảng (A → B → C) | T35 |
 | `A_trigger_view.sql`, `B_…`, `C_…` | Trigger + view từng mảng | T36–T38 |
 | `seed.sql` | Dữ liệu mẫu | T39 |
 | `queries_A.sql`, `queries_B.sql`, `queries_C.sql` | 4 truy vấn mỗi mảng | T40–T42 |
@@ -95,14 +95,15 @@ dropdb --if-exists telemedicine && createdb -E UTF8 -T template0 telemedicine
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/schema.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/A_trigger_view.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/B_trigger_view.sql
+psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/C_trigger_view.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/seed.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/rbac.sql
 ```
 
-Các file `C_schema.sql`, `C_trigger_view.sql`, `C_seed.sql`, `queries_C.sql`, `tests_C.sql` và
-`performance_C.sql` là phần đóng góp mảng C. Khi hợp nhất, thêm C DDL vào `schema.sql`, C seed
-vào `seed.sql`, chạy trigger/view sau toàn bộ schema; test C chạy sau seed và `rbac.sql`.
-`C_seed.sql` cần fixture B có lịch hẹn hoàn thành và tài khoản bác sĩ tương ứng.
+`schema.sql` gọi `A_schema.sql`, `B_schema.sql`, `C_schema.sql`; trigger/view chạy sau toàn bộ schema vì trigger
+mảng A đọc bảng lịch hẹn của B. `tests_B.sql` chạy được ngay sau `rbac.sql` (tự tạo dữ liệu thử rồi ROLLBACK);
+`tests_C.sql` cần dữ liệu mẫu. Cho tới khi có `seed.sql` (T39), `C_seed.sql` cần dữ liệu B có lịch hẹn hoàn thành
+và tài khoản bác sĩ tương ứng.
 
 ## Quy ước làm việc
 
