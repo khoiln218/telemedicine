@@ -27,7 +27,7 @@ Vì vậy không có FD bộ phận của thuộc tính không khóa; tất cả
 | MA_ICD10 | `ma_icd10 → mo_ta` | Có | BCNF |
 | DON_THUOC | `ma_don → ...` | Có | BCNF |
 | THUOC | `ma_thuoc → ...` | Có | BCNF |
-| HOAT_CHAT | `ma_hoat_chat → ten_hoat_chat` | Có | BCNF |
+| HOAT_CHAT | `ma_hoat_chat → ten_hoat_chat`; `ten_hoat_chat → ma_hoat_chat` | Có; cả hai là khóa ứng viên | BCNF |
 | CHI_TIET_DON_THUOC | `(ma_don, ma_thuoc) → so_luong, lieu_dung` | Có | BCNF |
 | THUOC_HOAT_CHAT | `(ma_thuoc, ma_hoat_chat) → ham_luong` | Có | BCNF |
 | DI_UNG | `(ma_bn, ma_hoat_chat) → ngay_ghi_nhan, ghi_chu` | Có | BCNF |

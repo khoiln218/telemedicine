@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T07 (GĐ0, tuần 2) |
 | Người viết / review | Đặng Hữu Khoa / Nguyễn Đăng Khoa |
-| Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt; 21/10/2026 thêm BR-A09 (phân quyền), BR-A10 (loại nhân viên); tách quản trị theo 3 mảng |
+| Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt; 21/10/2026 thêm BR-A09 (phân quyền), BR-A10 (loại nhân viên); tách quản trị theo 3 mảng; 28/10/2026 làm rõ BR-A03, BR-A08 theo review T30 (L10) |
 | Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
 | Căn cứ | [T04 – khảo sát mảng A](../1_khao-sat/T04_KhaoSat_MangA.md) |
 | Dùng cho | Báo cáo mục 1.2.1, T11 (EER mảng A), T15 (truy vết) |
@@ -78,3 +78,6 @@ Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **
 - Chỉ lưu giấy phép hành nghề hiện hành, không lưu lịch sử gia hạn.
 - Ca làm việc có thời điểm bắt đầu, kết thúc; ca bị hủy vẫn được giữ lại với trạng thái hủy.
 - Phòng khám có một cơ sở; không quản lý nơi làm việc của ca.
+- Chứng chỉ "còn hạn" (BR-A03) tính cả ngày cấp: mọi ngày của ca nằm trong khoảng từ ngày cấp đến ngày hết hạn.
+- Không được sửa ngày hết hạn chứng chỉ sớm hơn ngày của một ca còn hiệu lực đã xếp; hủy hoặc chuyển ca trước rồi mới sửa (BR-A03).
+- Ca đang chứa lịch hẹn còn hiệu lực không được xóa; ca không còn dùng thì chuyển sang hủy, việc hủy theo BR-A08.

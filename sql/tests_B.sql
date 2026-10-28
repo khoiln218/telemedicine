@@ -1,13 +1,12 @@
 -- T43 (phần mảng B) – Test ràng buộc mảng B: Bệnh nhân & Lịch hẹn
 -- Người viết / review: Lê Ngọc Khôi / Nguyễn Đăng Khoa – 27/10/2026
--- Chạy sau schema.sql, B_trigger_view.sql (seed.sql có hay chưa đều được):
+-- Chạy sau schema.sql, A/B/C_trigger_view.sql và rbac.sql (seed.sql có hay chưa đều được):
 --   psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/tests_B.sql
 -- Mỗi ca chạy trong một khối con: ca mong đợi lỗi phải bị chặn đúng bởi ràng buộc/trigger ghi ở cột ky_vong
 -- (tên ràng buộc hoặc một đoạn thông báo lỗi), ca mong đợi OK phải chạy được. Cuối script in bảng kết quả
 -- rồi ROLLBACK, không để lại dữ liệu. Dữ liệu thử dùng mã 9101–9199 để không đụng dữ liệu mẫu.
 --
--- Khối "Dữ liệu mảng A" chỉ ghi các cột mảng B cần (giả định ở B_schema.sql); khi có A_schema.sql (T32)
--- phải bổ sung cột bắt buộc của mảng A (ngày sinh, chứng chỉ hành nghề còn hạn đến 2030, …).
+-- Khối "Dữ liệu mảng A" ghi đủ cột bắt buộc của A_schema.sql; chứng chỉ còn hạn đến 2030 để xếp được ca.
 
 BEGIN;
 
@@ -30,6 +29,7 @@ DECLARE
 BEGIN
     BEGIN
         EXECUTE p_sql;
+        RESET ROLE;   -- ca chạy dưới role ứng dụng (SET LOCAL ROLE) mà không lỗi
         v_dat := p_ky_vong = 'OK';
     EXCEPTION WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT, v_con = CONSTRAINT_NAME;
@@ -52,11 +52,18 @@ $$ LANGUAGE plpgsql;
 
 -- ---------- Dữ liệu mảng A (sửa theo A_schema.sql) ----------
 -- 9101, 9105: bác sĩ đa khoa; 9102: tim mạch; 9103: da liễu; 9104: lễ tân
-INSERT INTO nhan_vien (ma_nv, ho_ten, loai_nv) VALUES
-    (9101, 'TB Đa khoa 1', 'BAC_SI'), (9102, 'TB Tim mạch', 'BAC_SI'), (9103, 'TB Da liễu', 'BAC_SI'),
-    (9104, 'TB Lễ tân', 'LE_TAN'), (9105, 'TB Đa khoa 2', 'BAC_SI');
+INSERT INTO nhan_vien (ma_nv, ho_ten, ngay_sinh, sdt, loai_nv) VALUES
+    (9101, 'TB Đa khoa 1', '1980-01-01', '0990019101', 'BAC_SI'),
+    (9102, 'TB Tim mạch', '1980-01-01', '0990019102', 'BAC_SI'),
+    (9103, 'TB Da liễu', '1980-01-01', '0990019103', 'BAC_SI'),
+    (9104, 'TB Lễ tân', '1995-01-01', '0990019104', 'LE_TAN'),
+    (9105, 'TB Đa khoa 2', '1980-01-01', '0990019105', 'BAC_SI');
 INSERT INTO chuyen_khoa (ma_chuyen_khoa, ten_chuyen_khoa) VALUES (9101, 'TB Tim mạch'), (9102, 'TB Da liễu');
-INSERT INTO bac_si (ma_bac_si) VALUES (9101), (9102), (9103), (9105);
+INSERT INTO bac_si (ma_bac_si, so_chung_chi, ngay_cap_cc, ngay_het_han_cc, loai_bac_si) VALUES
+    (9101, 'TB-CC-9101', '2020-01-01', '2031-01-01', 'DA_KHOA'),
+    (9102, 'TB-CC-9102', '2020-01-01', '2031-01-01', 'CHUYEN_KHOA'),
+    (9103, 'TB-CC-9103', '2020-01-01', '2031-01-01', 'CHUYEN_KHOA'),
+    (9105, 'TB-CC-9105', '2020-01-01', '2031-01-01', 'DA_KHOA');
 INSERT INTO bac_si_da_khoa (ma_bac_si) VALUES (9101), (9105);
 INSERT INTO bac_si_chuyen_khoa (ma_bac_si, ma_chuyen_khoa) VALUES (9102, 9101), (9103, 9102);
 -- Ca: hôm nay 07–11 (9101, 9105); 07/01/2030 07–11 (9101, 9102, 9103), 13–17 đã hủy (9101); 20/02/2030 07–11 (9102)
@@ -215,6 +222,8 @@ CALL pg_temp.kt('TB37', 'BR-B09', 'Tài khoản gắn cả bệnh nhân và nhâ
     'ck_tai_khoan_chu_so_huu');
 CALL pg_temp.kt('TB38', 'BR-B09', 'Đổi vai trò tài khoản lễ tân thành quản trị tài khoản',
     $q$UPDATE tai_khoan SET vai_tro = 'QUAN_TRI_TAI_KHOAN' WHERE ten_dang_nhap = 'tb_letan'$q$, 'BR-B09');
+CALL pg_temp.kt('TB38B', 'BR-B09', 'Đổi loại nhân viên của lễ tân đã có tài khoản (T30 C1)',
+    $q$UPDATE nhan_vien SET loai_nv = 'QUAN_TRI_TAI_KHOAN' WHERE ma_nv = 9104$q$, 'BR-B09');
 
 -- ---------- BR-B10: tài khoản không bị xóa ----------
 CALL pg_temp.kt('TB39', 'BR-B10', 'Khóa tài khoản – hợp lệ',
@@ -251,6 +260,62 @@ CALL pg_temp.kt('TB48', 'Chung', 'Xóa bệnh nhân còn lịch hẹn',
 -- ---------- View ----------
 CALL pg_temp.kt_dung('TB49', 'View', 'v_lich_hen_hom_nay chỉ có 5 lịch hôm nay của dữ liệu thử, bác sĩ đa khoa ghi "Đa khoa"',
     $q$SELECT count(*) = 5 AND bool_and(chuyen_khoa = 'Đa khoa') FROM v_lich_hen_hom_nay WHERE ma_lh BETWEEN 9101 AND 9199$q$);
+
+-- ---------- BR-B08: quyền trên bệnh nhân, lịch hẹn (chạy dưới role ứng dụng) ----------
+CALL pg_temp.kt('TB50', 'BR-B08', 'Lễ tân thêm bệnh nhân, sửa lịch hẹn – hợp lệ',
+    $q$SET LOCAL ROLE r_le_tan;
+       INSERT INTO benh_nhan (ho_ten, ngay_sinh, gioi_tinh, sdt) VALUES ('TB Bệnh nhân 3', '1999-09-09', 'NU', '0990009103');
+       UPDATE lich_hen SET ly_do_kham = 'Khám lại' WHERE ma_lh = 9101$q$, 'OK');
+CALL pg_temp.kt('TB51', 'BR-B08', 'Lễ tân xóa một lịch hẹn',
+    $q$SET LOCAL ROLE r_le_tan; DELETE FROM lich_hen WHERE ma_lh = 9101$q$, 'permission denied');
+CALL pg_temp.kt('TB52', 'BR-B08', 'Bác sĩ sửa lịch hẹn',
+    $q$SET LOCAL ROLE r_bac_si; UPDATE lich_hen SET ly_do_kham = 'x' WHERE ma_lh = 9101$q$, 'permission denied');
+CALL pg_temp.kt('TB53', 'BR-B08', 'Bác sĩ xem bệnh nhân, lịch hẹn và lập giấy chuyển – hợp lệ',
+    $q$SET LOCAL ROLE r_bac_si; SELECT count(*) FROM benh_nhan; SELECT count(*) FROM v_lich_hen_hom_nay;
+       INSERT INTO giay_chuyen_khoa (ngay_lap, ly_do, ngay_het_han, ma_bn, ma_bac_si_lap, ma_chuyen_khoa)
+       VALUES (CURRENT_DATE, 'Đau ngực', CURRENT_DATE + 30, 9102, 9101, 9101)$q$, 'OK');
+CALL pg_temp.kt('TB54', 'BR-B08', 'Bệnh nhân đọc thẳng bảng lịch hẹn',
+    $q$SET LOCAL ROLE r_benh_nhan; SELECT count(*) FROM lich_hen$q$, 'permission denied');
+CALL pg_temp.kt('TB55', 'BR-B08', 'Bệnh nhân chỉ thấy lịch hẹn của chính mình qua v_lich_hen_cua_toi – hợp lệ',
+    $q$SET LOCAL app.ma_bn = '9102'; SET LOCAL ROLE r_benh_nhan;
+       DO $d$ BEGIN
+           IF NOT EXISTS (SELECT 1 FROM v_lich_hen_cua_toi)
+              OR EXISTS (SELECT 1 FROM v_lich_hen_cua_toi WHERE ma_bn <> 9102) THEN
+               RAISE EXCEPTION 'view trả lịch hẹn của người khác hoặc rỗng';
+           END IF;
+       END $d$;
+       RESET app.ma_bn$q$, 'OK');
+
+-- ---------- BR-B10: tạo, khóa tài khoản và mật khẩu theo vai trò ----------
+CALL pg_temp.kt('TB56', 'BR-B10', 'Lễ tân tạo tài khoản bệnh nhân qua hàm – hợp lệ',
+    $q$SET LOCAL ROLE r_le_tan; SELECT tao_tai_khoan_benh_nhan('tb_bn2', 'x', 9102)$q$, 'OK');
+CALL pg_temp.kt('TB57', 'BR-B10', 'Lễ tân tạo tài khoản bác sĩ',
+    $q$SET LOCAL ROLE r_le_tan;
+       INSERT INTO tai_khoan (ten_dang_nhap, mat_khau_hash, vai_tro, ma_nv) VALUES ('tb_bs1', 'x', 'BAC_SI', 9101)$q$,
+    'permission denied');
+CALL pg_temp.kt('TB58', 'BR-B10', 'Lễ tân đặt lại mật khẩu bệnh nhân qua hàm – hợp lệ',
+    $q$SET LOCAL ROLE r_le_tan; SELECT dat_lai_mat_khau_benh_nhan('tb_bn1', 'y')$q$, 'OK');
+CALL pg_temp.kt('TB59', 'BR-B10', 'Lễ tân đặt lại mật khẩu tài khoản nhân viên',
+    $q$SET LOCAL ROLE r_le_tan; SELECT dat_lai_mat_khau_benh_nhan('tb_letan', 'y')$q$, 'BR-B10');
+CALL pg_temp.kt('TB60', 'BR-B10', 'Quản trị tài khoản tạo tài khoản bác sĩ, khóa tài khoản – hợp lệ',
+    $q$SET LOCAL ROLE r_quan_tri_tai_khoan;
+       INSERT INTO tai_khoan (ten_dang_nhap, mat_khau_hash, vai_tro, ma_nv) VALUES ('tb_bs1', 'x', 'BAC_SI', 9101);
+       UPDATE tai_khoan SET trang_thai = 'KHOA' WHERE ten_dang_nhap = 'tb_letan'$q$, 'OK');
+CALL pg_temp.kt('TB61', 'BR-B10', 'Quản trị tài khoản đổi vai trò tài khoản',
+    $q$SET LOCAL ROLE r_quan_tri_tai_khoan;
+       UPDATE tai_khoan SET vai_tro = 'QUAN_TRI_TAI_KHOAN' WHERE ten_dang_nhap = 'tb_letan'$q$, 'permission denied');
+CALL pg_temp.kt('TB62', 'BR-B10', 'Quản trị tài khoản đọc mật khẩu băm',
+    $q$SET LOCAL ROLE r_quan_tri_tai_khoan; SELECT mat_khau_hash FROM tai_khoan$q$, 'permission denied');
+CALL pg_temp.kt('TB63', 'BR-B10', 'Quản trị nhân sự khóa tài khoản',
+    $q$SET LOCAL ROLE r_quan_tri_nhan_su; UPDATE tai_khoan SET trang_thai = 'KHOA' WHERE ten_dang_nhap = 'tb_bn1'$q$,
+    'permission denied');
+CALL pg_temp.kt('TB64', 'BR-B10', 'Bệnh nhân đổi mật khẩu của mình qua hàm – hợp lệ',
+    $q$SET LOCAL app.ma_bn = '9101'; SET LOCAL ROLE r_benh_nhan; SELECT doi_mat_khau('z'); RESET app.ma_bn$q$, 'OK');
+CALL pg_temp.kt('TB65', 'BR-B10', 'Bệnh nhân sửa thẳng mật khẩu tài khoản khác',
+    $q$SET LOCAL ROLE r_benh_nhan; UPDATE tai_khoan SET mat_khau_hash = 'z' WHERE ten_dang_nhap = 'tb_letan'$q$,
+    'permission denied');
+CALL pg_temp.kt('TB66', 'BR-B10', 'Đổi mật khẩu khi chưa xác định người đăng nhập',
+    $q$SET LOCAL ROLE r_benh_nhan; SELECT doi_mat_khau('z')$q$, 'BR-B10');
 
 -- ---------- Kết quả ----------
 SELECT ma, quy_tac, mo_ta, ky_vong,

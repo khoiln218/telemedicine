@@ -17,7 +17,7 @@ docs/            Báo cáo (docx), kế hoạch (xlsx)
   0_de-bai/      Đề bài, mẫu báo cáo, kế hoạch đánh giá của môn học
   1_khao-sat/    Khảo sát nghiệp vụ (T03–T05)
   2_quy-tac/     Quy tắc nghiệp vụ (T07–T09)
-  3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14)
+  3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14); lược đồ quan hệ LuocDo_QuanHe (.dot, .png) (T31)
   4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
   5_anh-xa/      Ánh xạ ERD → lược đồ quan hệ (T19–T21)
   6_chuan-hoa/   Phụ thuộc hàm, khóa, chứng minh chuẩn hóa (T22–T28)
@@ -30,12 +30,13 @@ Tên file trong `sql/` theo kế hoạch:
 | File | Nội dung | Việc |
 |---|---|---|
 | `A_schema.sql`, `B_schema.sql`, `C_schema.sql` | DDL từng mảng | T32–T34 |
-| `schema.sql` | DDL tích hợp các mảng đã có (hiện A+B; nối C khi hoàn tất) | T35 |
+| `schema.sql` | DDL tích hợp ba mảng (A → B → C) | T35 |
 | `A_trigger_view.sql`, `B_…`, `C_…` | Trigger + view từng mảng | T36–T38 |
-| `seed.sql` | Dữ liệu mẫu | T39 |
+| `A_seed.sql`, `B_seed.sql`, `C_seed.sql`, `seed.sql` | Dữ liệu mẫu từng mảng; `seed.sql` gọi cả ba | T39 |
 | `queries_A.sql`, `queries_B.sql`, `queries_C.sql` | 4 truy vấn mỗi mảng | T40–T42 |
-| `tests.sql` | Test ràng buộc | T43 |
+| `tests_A.sql`, `tests_B.sql`, `tests_C.sql`, `tests.sql` | Test ràng buộc từng mảng; `tests.sql` gọi cả ba | T43 |
 | `rbac.sql` | Role, GRANT/REVOKE | T45 |
+| `performance.sql` | EXPLAIN ANALYZE trước/sau chỉ mục (báo cáo 4.2.3) | T44 |
 
 ## Cài đặt
 
@@ -95,14 +96,21 @@ dropdb --if-exists telemedicine && createdb -E UTF8 -T template0 telemedicine
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/schema.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/A_trigger_view.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/B_trigger_view.sql
+psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/C_trigger_view.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/seed.sql
 psql -d telemedicine -v ON_ERROR_STOP=1 -f sql/rbac.sql
+psql -d telemedicine -f sql/tests.sql      # in kết quả từng ca, mỗi mảng một dòng tổng; ROLLBACK cuối
 ```
 
-Các file `C_schema.sql`, `C_trigger_view.sql`, `C_seed.sql`, `queries_C.sql`, `tests_C.sql` và
-`performance_C.sql` là phần đóng góp mảng C. Khi hợp nhất, thêm C DDL vào `schema.sql`, C seed
-vào `seed.sql`, chạy trigger/view sau toàn bộ schema; test C chạy sau seed và `rbac.sql`.
-`C_seed.sql` cần fixture B có lịch hẹn hoàn thành và tài khoản bác sĩ tương ứng.
+`schema.sql` gọi `A_schema.sql`, `B_schema.sql`, `C_schema.sql`; trigger/view chạy sau toàn bộ schema vì trigger
+mảng A đọc bảng lịch hẹn của B. Ba file test đều cần `rbac.sql` (có ca thử quyền theo vai trò); `tests_A.sql`,
+`tests_B.sql` tự tạo dữ liệu thử nên chạy được cả khi chưa có dữ liệu mẫu, `tests_C.sql` cần dữ liệu mẫu. `seed.sql` chỉ chạy trên CSDL vừa tạo schema (mã cố định); ngày trong dữ liệu
+tính theo ngày chạy nên truy vấn mẫu luôn có kết quả. Dữ liệu mô phỏng phòng khám đã hoạt động 3 tháng theo quy mô
+ở báo cáo mục 1 (20 bác sĩ, khoảng 150 lượt khám mỗi ngày thường, 20% từ xa); chạy hết khoảng vài giây.
+Tài khoản mẫu: `bs01`…`bs19`, `lt21`…`lt24`, `qt25`…`qt27`, `bn0001`…; mật khẩu chung `Telemed@2026`.
+
+Đo hiệu năng (T44) trên CSDL riêng có dữ liệu 1 năm (khoảng 52.000 lịch hẹn): chạy `seed.sql` với
+`-v so_ngay=365` rồi `psql -f sql/performance.sql`; script tạm bỏ chỉ mục trong giao dịch rồi ROLLBACK.
 
 ## Quy ước làm việc
 

@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T09 (GĐ0, tuần 2) |
 | Người viết / review | Nguyễn Đăng Khoa / Lê Ngọc Khôi |
-| Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt; 21/10/2026 thêm BR-C06 (phân quyền); tách quản trị theo 3 mảng |
+| Ngày | 14/10/2026; cập nhật 19/10/2026 theo review và phạm vi đã chốt; 21/10/2026 thêm BR-C06 (phân quyền); tách quản trị theo 3 mảng; 28/10/2026 làm rõ BR-C02, BR-C03, BR-C05 theo review T30 (L12) |
 | Chuẩn tham chiếu | Business Rules Manifesto (Business Rules Group), SBVR (OMG); thuộc tính yêu cầu theo ISO/IEC/IEEE 29148:2018 |
 | Căn cứ | [T05 – khảo sát mảng C](../1_khao-sat/T05_KhaoSat_MangC.md) |
 | Dùng cho | Báo cáo mục 1.2.3, T13 (ERD mảng C), T15 (truy vết) |
@@ -70,3 +70,7 @@ Loại theo SBVR: **cấu trúc** là điều luôn đúng với dữ liệu; **
 - Danh mục ICD-10 là tập mã nhỏ giả lập, đủ cho dữ liệu mẫu.
 - Không liên thông Hệ thống đơn thuốc quốc gia, không ký số đơn và hồ sơ.
 - Quản trị danh mục là nhân viên (mảng A), quản lý danh mục thuốc, hoạt chất, ICD-10; không xem bệnh án.
+- BR-C02 áp dụng cho cả lần khám: chỉ ghi lần khám cho lịch hẹn đã hoàn thành, người ghi là bác sĩ của lịch hẹn và tài khoản đang hoạt động.
+- Mỗi đơn thuốc có ít nhất một thuốc (ERD C: đơn tham gia toàn phần vào KÊ); đơn và các dòng thuốc được ghi cùng một lần.
+- Không hủy chẩn đoán còn hiệu lực cuối cùng của lần khám khi lần khám còn đơn thuốc hiệu lực, vì đơn sẽ mất căn cứ (BR-C03); hủy đơn trước.
+- Thuốc, hoạt chất, thành phần thuốc và mã ICD-10 đã được bệnh án dùng thì không sửa, để bệnh án cũ giữ nguyên nghĩa (BR-C05, T05); cần thay đổi thì quản trị danh mục tạo mục mới. Mục chưa dùng vẫn sửa được (BR-C06).

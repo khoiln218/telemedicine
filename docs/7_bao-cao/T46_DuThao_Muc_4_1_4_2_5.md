@@ -1,6 +1,6 @@
 # T46 – Nội dung nháp mảng C cho báo cáo v3
 
-Tài liệu này là bản nháp Markdown để review/gộp vào báo cáo Word khi nhóm thống nhất; chưa sửa file Word dùng chung.
+Tài liệu này là bản nháp Markdown phần mảng C. Đã gộp vào docs/INT1313_TX_G5_DeTai05_Telemedicine_v3.docx mục 4.1, 4.2, 5 (28/10/2026), theo tên trigger, số liệu cài đặt thực tế; bản nháp giữ lại để tham khảo.
 
 ## 4.1.6. Cài đặt và kiểm soát dữ liệu bệnh án (đóng góp mảng C)
 

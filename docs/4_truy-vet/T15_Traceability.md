@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T15 (GĐ1, tuần 4) |
 | Người làm / review | Đặng Hữu Khoa (A), Lê Ngọc Khôi (B), Nguyễn Đăng Khoa (C) / Đặng Hữu Khoa |
-| Ngày | 19/10/2026; cập nhật 21/10/2026 thêm BR-A09, BR-B08, BR-C06 (phân quyền), BR-B09, BR-B10 và `TAI_KHOAN`; BR-A10 và `NHAN_VIEN`; tách quản trị theo 3 mảng |
+| Ngày | 19/10/2026; cập nhật 21/10/2026 thêm BR-A09, BR-B08, BR-C06 (phân quyền), BR-B09, BR-B10 và `TAI_KHOAN`; BR-A10 và `NHAN_VIEN`; tách quản trị theo 3 mảng; 28/10/2026 thêm `GHI_KHÁM`, `GHI_ĐƠN` theo T30 C5 |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – truy vết yêu cầu hai chiều |
 | Căn cứ | Khảo sát [T04](../1_khao-sat/T04_KhaoSat_MangA.md), [T03](../1_khao-sat/T03_KhaoSat_MangB.md), [T05](../1_khao-sat/T05_KhaoSat_MangC.md); quy tắc [T07](../2_quy-tac/T07_BR_MangA.md), [T08](../2_quy-tac/T08_BR_MangB.md), [T09](../2_quy-tac/T09_BR_MangC.md); ERD [A](../3_erd/A.drawio), [B](../3_erd/B.drawio), [C](../3_erd/C.drawio) |
 | Dùng cho | Báo cáo mục 2.1.5 |
@@ -50,7 +50,7 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 | Quy tắc | Nguồn (T05) | Thành phần ERD | Phần ERD không thể hiện được |
 |---|---|---|---|
 | BR-C01 | Bước 4 | Liên kết M:N `DỊ_ỨNG`, `CHỨA`, `KÊ` | Không thuốc nào trong đơn chứa hoạt chất bệnh nhân dị ứng |
-| BR-C02 | Bước 1, 3 | Liên kết `PHÁT_SINH` 1:1 (lần khám bắt buộc), `LẬP_ĐƠN`; `PHỤ_TRÁCH` (mảng B) | Lần khám chỉ được tạo khi lịch hẹn đã hoàn thành |
+| BR-C02 | Bước 1, 3 | Liên kết `PHÁT_SINH` 1:1 (lần khám bắt buộc), `LẬP_ĐƠN`; `PHỤ_TRÁCH` (mảng B); `GHI_KHÁM`, `GHI_ĐƠN` (tài khoản ghi) | Lần khám chỉ được tạo khi lịch hẹn đã hoàn thành |
 | BR-C03 | Bước 2, 3 | Liên kết `CÓ_CHẨN_ĐOÁN`, `LẬP_ĐƠN` | Chẩn đoán phải có trước khi lập đơn |
 | BR-C04 | Bước 3 | Thuộc tính `so_luong`, `lieu_dung` của `KÊ` | Số lượng dương, liều không rỗng |
 | BR-C05 | Bước 5 | Thuộc tính `trang_thai` của `CHAN_DOAN`, `DON_THUOC` | Không được xóa, sửa nội dung; chỉ được hủy |
@@ -95,6 +95,8 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 | C | `KÊ` | Liên kết M:N | BR-C01, BR-C04, BR-C05 |
 | C | `CHỨA` | Liên kết M:N | BR-C01 |
 | C | `DỊ_ỨNG` | Liên kết M:N | BR-C01 |
+| C | `GHI_KHÁM` | Liên kết 1:N (TAI_KHOAN – LAN_KHAM) | BR-C02, BR-C06 |
+| C | `GHI_ĐƠN` | Liên kết 1:N (TAI_KHOAN – DON_THUOC) | BR-C02, BR-C06 |
 
 ## 3. Phụ thuộc liên mảng
 
@@ -107,7 +109,7 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 | BR-B07 | A: `BAC_SI_DA_KHOA` | Chỉ bác sĩ đa khoa lập giấy chuyển |
 | BR-B09 | A: `NHAN_VIEN` | Tài khoản nhân viên gắn một nhân viên, vai trò trùng loại nhân viên |
 | BR-C01 | B: `BENH_NHAN` | Dị ứng gắn với bệnh nhân; bệnh nhân của đơn lấy qua lịch hẹn |
-| BR-C02 | B: `LICH_HEN`, BR-B05; A: `BAC_SI` | Hoàn thành là trạng thái cuối; bác sĩ kê đơn là bác sĩ của lịch hẹn |
+| BR-C02 | B: `LICH_HEN`, `TAI_KHOAN`, BR-B05; A: `BAC_SI` | Hoàn thành là trạng thái cuối; tài khoản ghi lần khám, kê đơn là của bác sĩ phụ trách lịch hẹn |
 | BR-C06 | B: `LICH_HEN`, BR-B08 | Bệnh nhân của bản ghi bệnh án lấy qua lịch hẹn; nhận diện bệnh nhân đăng nhập dùng chung |
 
 ## 4. Kiểm tra độ phủ
@@ -116,7 +118,7 @@ Cách đọc: cột "Phần ERD không thể hiện được" ghi phần của q
 |---|---|---|---|
 | Quy tắc có nguồn khảo sát | 10/10 | 10/10 | 6/6 |
 | Quy tắc có thành phần ERD | 10/10 | 10/10 | 6/6 |
-| Thành phần ERD phục vụ ít nhất một yêu cầu | 8/8 | 14/14 | 13/13 |
+| Thành phần ERD phục vụ ít nhất một yêu cầu | 8/8 | 14/14 | 15/15 |
 
 Mục tiêu MT-06 (phân quyền) truy vết qua BR-A09, BR-B08, BR-B09, BR-B10, BR-C06 và `TAI_KHOAN`. Truy vết ngược ở mục 2 không ghi BR-A09, BR-B08, BR-C06 vì chúng áp lên gần như mọi thực thể. Ba vai trò quản trị tách theo mảng: quản trị nhân sự (BR-A09), quản trị tài khoản (BR-B10), quản trị danh mục (BR-C06); loại nhân viên tương ứng ở BR-A10.
 

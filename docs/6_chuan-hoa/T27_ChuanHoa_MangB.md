@@ -80,4 +80,4 @@ Một số quyết định ở T08 mục 5 và T20 đã loại trước các vi 
 
 `TAI_KHOAN.vai_tro` của tài khoản nhân viên trùng thông tin với `NHAN_VIEN.loai_nv` (BR-B09 buộc khớp). Đây là dư thừa **giữa hai bảng** (cùng một sự kiện lưu ở hai nơi). Chuẩn hóa xét từng bảng với FD của chính nó, nên không phát hiện và không xử lý được trường hợp này; TAI_KHOAN vẫn đạt BCNF.
 
-Đề xuất cho T30: giữ `vai_tro` vì đây là cột duy nhất cho biết vai trò của mọi tài khoản, kể cả bệnh nhân (không có `loai_nv`), và phân quyền đọc vai trò từ một chỗ. Việc khớp với `loai_nv` kiểm tra khi cài đặt (T37). Mâu thuẫn giữa BR-B10 (quản trị tài khoản đổi vai trò) và BR-A09 (quản trị nhân sự sửa loại nhân viên) cần nhóm chốt ở T30.
+Quyết định (T30 C1): giữ `vai_tro` vì đây là cột duy nhất cho biết vai trò của mọi tài khoản, kể cả bệnh nhân (không có `loai_nv`), và phân quyền đọc vai trò từ một chỗ. Việc khớp với `loai_nv` kiểm tra khi cài đặt (T37). Nhóm đã chốt hướng này ở T30 (C1): `trg_tai_khoan_vai_tro` kiểm tra khi ghi tài khoản, `trg_nhan_vien_giu_vai_tro` chặn đổi loại của nhân viên đã có tài khoản; BR-B10 bỏ "đổi vai trò" nên không còn mâu thuẫn với BR-A09.

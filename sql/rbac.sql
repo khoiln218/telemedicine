@@ -1,6 +1,6 @@
 -- T45 – Khung phân quyền theo vai trò, PostgreSQL 16.
--- Chạy sau schema.sql và các file trigger/view. Đây là phần C và khung 6 vai trò;
--- nhóm cần gộp GRANT cho bảng A/B vào đúng file này khi T32/T33 hoàn tất.
+-- Chạy sau schema.sql và các file trigger/view. Sáu vai trò, quyền theo BR-A09, BR-B08, BR-B10, BR-C06
+-- và báo cáo mục 5.2. Bảng không cấp cho ai thì chỉ chủ sở hữu dùng được (PostgreSQL không cấp quyền bảng cho PUBLIC).
 -- Các role dưới đây là NOLOGIN. Ứng dụng/DBA cấp role phù hợp cho principal đã xác thực.
 
 DO $$ BEGIN CREATE ROLE r_quan_tri_nhan_su NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$;
@@ -44,9 +44,35 @@ GRANT USAGE, SELECT ON SEQUENCE
     thuoc_ma_thuoc_seq, hoat_chat_ma_hoat_chat_seq
 TO r_bac_si, r_quan_tri_danh_muc;
 
--- Ma trận nhóm (hoàn thiện khi gộp T45 A/B):
--- r_quan_tri_nhan_su: CRUD NHAN_VIEN/BAC_SI/CHUYEN_KHOA/CA_LAM_VIEC (mảng A).
--- r_quan_tri_tai_khoan: quản lý TAI_KHOAN theo BR-B10, không có quyền hồ sơ lâm sàng.
--- r_le_tan: thao tác lịch hẹn theo BR-B08, không đọc bảng/view lâm sàng.
--- r_benh_nhan: thao tác lịch hẹn của mình (B) và đọc v_ho_so_cua_toi (C).
--- Vai trò nhân viên và tai_khoan.vai_tro còn phụ thuộc quyết định C1 tại T30.
+-- ---------- Mảng A (BR-A09) ----------
+-- Chỉ quản trị nhân sự thêm, sửa nhân viên, bác sĩ, chuyên khoa, ca; không cấp DELETE (ca hủy giữ lại, T07).
+GRANT SELECT, INSERT, UPDATE ON nhan_vien, bac_si, bac_si_da_khoa, bac_si_chuyen_khoa, chuyen_khoa, ca_lam_viec
+TO r_quan_tri_nhan_su;
+GRANT USAGE, SELECT ON SEQUENCE nhan_vien_ma_nv_seq, chuyen_khoa_ma_chuyen_khoa_seq, ca_lam_viec_ma_ca_seq
+TO r_quan_tri_nhan_su;
+-- Bác sĩ, lễ tân chỉ xem bác sĩ, chuyên khoa, ca để đặt hẹn, khám.
+GRANT SELECT ON nhan_vien, bac_si, bac_si_da_khoa, bac_si_chuyen_khoa, chuyen_khoa, ca_lam_viec, v_lich_truc_bac_si
+TO r_bac_si, r_le_tan;
+-- Quản trị tài khoản xem nhân viên để tạo tài khoản đúng người (BR-B09).
+GRANT SELECT ON nhan_vien TO r_quan_tri_tai_khoan;
+
+-- ---------- Mảng B (BR-B08, BR-B10) ----------
+-- Lễ tân thêm, sửa bệnh nhân và lịch hẹn; không xóa. Bác sĩ chỉ xem, và lập giấy chuyển.
+GRANT SELECT, INSERT, UPDATE ON benh_nhan, lich_hen TO r_le_tan;
+GRANT SELECT ON giay_chuyen_khoa, v_lich_hen_hom_nay TO r_le_tan;
+GRANT USAGE, SELECT ON SEQUENCE benh_nhan_ma_bn_seq, lich_hen_ma_lh_seq TO r_le_tan;
+GRANT SELECT ON benh_nhan, lich_hen, v_lich_hen_hom_nay TO r_bac_si;
+GRANT SELECT, INSERT ON giay_chuyen_khoa TO r_bac_si;
+GRANT USAGE, SELECT ON SEQUENCE giay_chuyen_khoa_ma_giay_seq TO r_bac_si;
+-- Quản trị tài khoản tạo tài khoản nhân viên, khóa/mở khóa (chỉ sửa trang_thai); không đọc mật khẩu băm,
+-- không đổi vai trò (vai trò theo loại nhân viên, T30 C1), không xóa (trigger BR-B10 chặn cả chủ sở hữu).
+GRANT SELECT (ten_dang_nhap, vai_tro, trang_thai, ma_bn, ma_nv), INSERT ON tai_khoan TO r_quan_tri_tai_khoan;
+GRANT UPDATE (trang_thai) ON tai_khoan TO r_quan_tri_tai_khoan;
+-- Lễ tân không có quyền trên tai_khoan, chỉ gọi hàm tạo tài khoản, đặt lại mật khẩu cho bệnh nhân.
+GRANT EXECUTE ON FUNCTION tao_tai_khoan_benh_nhan(VARCHAR, VARCHAR, INTEGER),
+    dat_lai_mat_khau_benh_nhan(VARCHAR, VARCHAR) TO r_le_tan;
+-- Mọi người dùng đổi mật khẩu của chính mình qua hàm (theo app.ma_bn / app.ma_nv).
+GRANT EXECUTE ON FUNCTION doi_mat_khau(VARCHAR) TO
+    r_quan_tri_nhan_su, r_quan_tri_tai_khoan, r_quan_tri_danh_muc, r_bac_si, r_le_tan, r_benh_nhan;
+-- Bệnh nhân chỉ xem lịch hẹn của mình qua view lọc theo app.ma_bn.
+GRANT SELECT ON v_lich_hen_cua_toi TO r_benh_nhan;

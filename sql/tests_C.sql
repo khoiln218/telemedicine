@@ -1,6 +1,6 @@
 -- T43 – Bộ kiểm thử ràng buộc mảng C.
 -- Chạy sau schema.sql, A/B/C_trigger_view.sql, seed.sql và rbac.sql trên CSDL thử nghiệm.
--- Dữ liệu mẫu chung phải có một lịch hoàn thành, tài khoản bác sĩ và C_seed.sql đã chạy.
+-- Dữ liệu mẫu (seed.sql) phải có đơn thuốc hiệu lực của bệnh nhân có ghi nhận dị ứng.
 -- Mỗi ca lỗi được cô lập trong subtransaction; toàn bộ fixture được ROLLBACK cuối file.
 
 BEGIN;
@@ -15,6 +15,7 @@ DECLARE
 BEGIN
     BEGIN
         EXECUTE p_sql;
+        RESET ROLE;   -- ca chạy dưới role ứng dụng (SET LOCAL ROLE) mà không lỗi
         v_dat := p_ky_vong = 'OK';
     EXCEPTION WHEN OTHERS THEN
         GET STACKED DIAGNOSTICS v_msg = MESSAGE_TEXT, v_con = CONSTRAINT_NAME;
@@ -24,19 +25,50 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Tạo ma_thuoc thứ hai trong chi tiết để kiểm tra CHECK, không đụng khóa đã có.
+-- Cặp đơn – thuốc lấy từ dữ liệu mẫu, không phụ thuộc tên thuốc: DI_UNG là thuốc chứa hoạt chất bệnh nhân
+-- của đơn dị ứng; AN_TOAN là thuốc chưa có trong đơn và không gây dị ứng; DA_KE là thuốc đã xuất hiện trong đơn.
+-- Cấp SELECT cho mọi role để các ca chạy dưới role ứng dụng (TC07) đọc được.
+CREATE TEMP TABLE c_mau AS
+WITH don_bn AS (
+    SELECT d.ma_don, l.ma_bn
+      FROM don_thuoc d JOIN lan_kham k ON k.ma_lan_kham = d.ma_lan_kham
+      JOIN lich_hen l ON l.ma_lh = k.ma_lh
+     WHERE d.trang_thai = 'HIEU_LUC'
+)
+(SELECT 'DI_UNG'::text AS loai, db.ma_don, th.ma_thuoc
+   FROM don_bn db
+   JOIN di_ung du ON du.ma_bn = db.ma_bn
+   JOIN thuoc_hoat_chat th ON th.ma_hoat_chat = du.ma_hoat_chat
+  WHERE NOT EXISTS (SELECT 1 FROM chi_tiet_don_thuoc ct WHERE ct.ma_don = db.ma_don AND ct.ma_thuoc = th.ma_thuoc)
+  ORDER BY db.ma_don, th.ma_thuoc LIMIT 1)
+UNION ALL
+(SELECT 'AN_TOAN', db.ma_don, t.ma_thuoc
+   FROM don_bn db CROSS JOIN thuoc t
+  WHERE NOT EXISTS (SELECT 1 FROM chi_tiet_don_thuoc ct WHERE ct.ma_don = db.ma_don AND ct.ma_thuoc = t.ma_thuoc)
+    AND NOT EXISTS (SELECT 1 FROM thuoc_hoat_chat th JOIN di_ung du ON du.ma_hoat_chat = th.ma_hoat_chat
+                     WHERE th.ma_thuoc = t.ma_thuoc AND du.ma_bn = db.ma_bn)
+  ORDER BY db.ma_don, t.ma_thuoc LIMIT 1)
+UNION ALL
+(SELECT 'DA_KE', NULL, ma_thuoc FROM chi_tiet_don_thuoc ORDER BY ma_don, ma_thuoc LIMIT 1);
+GRANT SELECT ON c_mau TO PUBLIC;
+
 CALL pg_temp.kt_c('TC04', 'BR-C04', 'Số lượng bằng 0 bị từ chối',
     $q$INSERT INTO chi_tiet_don_thuoc (ma_don, ma_thuoc, so_luong, lieu_dung)
-       SELECT d.ma_don, t.ma_thuoc, 0, 'liều mẫu'
-         FROM don_thuoc d CROSS JOIN thuoc t
-        WHERE d.trang_thai = 'HIEU_LUC' AND t.ten_thuoc = 'Thuốc mẫu C-D'
-        ORDER BY d.ma_don LIMIT 1$q$, 'ck_chi_tiet_don_thuoc_so_luong');
+       SELECT ma_don, ma_thuoc, 0, 'liều mẫu' FROM c_mau WHERE loai = 'AN_TOAN'$q$,
+    'ck_chi_tiet_don_thuoc_so_luong');
 CALL pg_temp.kt_c('TC01', 'BR-C01', 'Kê thuốc chứa hoạt chất đang có trong dị ứng',
     $q$INSERT INTO chi_tiet_don_thuoc (ma_don, ma_thuoc, so_luong, lieu_dung)
-       SELECT d.ma_don, t.ma_thuoc, 1, 'liều mẫu'
-         FROM don_thuoc d CROSS JOIN thuoc t
-        WHERE d.trang_thai = 'HIEU_LUC' AND t.ten_thuoc = 'Thuốc mẫu C-B'
-        ORDER BY d.ma_don LIMIT 1$q$, 'BR-C01');
+       SELECT ma_don, ma_thuoc, 1, 'liều mẫu' FROM c_mau WHERE loai = 'DI_UNG'$q$, 'BR-C01');
+
+-- Trigger phải chạy được dưới role ứng dụng, không đòi SELECT bảng mảng khác (T30 L11).
+CALL pg_temp.kt_c('TC07A', 'BR-C01', 'Như TC01 nhưng chạy dưới r_bac_si (không có SELECT lich_hen)',
+    $q$SET LOCAL ROLE r_bac_si;
+       INSERT INTO chi_tiet_don_thuoc (ma_don, ma_thuoc, so_luong, lieu_dung)
+       SELECT ma_don, ma_thuoc, 1, 'liều mẫu' FROM c_mau WHERE loai = 'DI_UNG'$q$, 'BR-C01');
+CALL pg_temp.kt_c('TC07B', 'T05 lưu giữ lịch sử', 'Quản trị danh mục sửa thuốc đã kê (không có SELECT đơn thuốc)',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc;
+       UPDATE thuoc SET ten_thuoc = ten_thuoc || ' (sửa)'
+        WHERE ma_thuoc = (SELECT ma_thuoc FROM c_mau WHERE loai = 'DA_KE')$q$, 'T05:');
 
 CALL pg_temp.kt_c('TC02', 'BR-C02', 'Đơn thuốc ghi bởi tài khoản bệnh nhân không phải bác sĩ của lịch',
     $q$INSERT INTO don_thuoc (ma_lan_kham, thoi_diem_ke, created_by)
@@ -98,6 +130,36 @@ SELECT 'TC06B', 'BR-C06', 'Bệnh nhân được đọc view hồ sơ của mìn
 INSERT INTO kq_c (ma, quy_tac, mo_ta, ky_vong, dat, thong_bao)
 SELECT 'TC06C', 'BR-C06', 'Bệnh nhân được đọc dị ứng của mình', 'true',
        has_table_privilege('r_benh_nhan', 'v_di_ung_cua_toi', 'SELECT'), 'has_table_privilege';
+
+-- BR-C06 thử thao tác thật dưới role ứng dụng.
+CALL pg_temp.kt_c('TC06D', 'BR-C06', 'Lễ tân đọc view hồ sơ lâm sàng',
+    $q$SET LOCAL ROLE r_le_tan; SELECT count(*) FROM v_ho_so_tom_tat$q$, 'permission denied');
+CALL pg_temp.kt_c('TC06E', 'BR-C06', 'Bệnh nhân chỉ thấy hồ sơ của chính mình qua v_ho_so_cua_toi',
+    $q$SELECT set_config('app.ma_bn', (SELECT min(l.ma_bn)::text FROM lan_kham k JOIN lich_hen l ON l.ma_lh = k.ma_lh), true);
+       SET LOCAL ROLE r_benh_nhan;
+       DO $d$ BEGIN
+           IF NOT EXISTS (SELECT 1 FROM v_ho_so_cua_toi)
+              OR EXISTS (SELECT 1 FROM v_ho_so_cua_toi WHERE ma_bn <> current_setting('app.ma_bn')::int) THEN
+               RAISE EXCEPTION 'view trả hồ sơ của người khác hoặc rỗng';
+           END IF;
+       END $d$;
+       RESET app.ma_bn$q$, 'OK');
+CALL pg_temp.kt_c('TC06F', 'BR-C06', 'Bác sĩ thêm thuốc vào danh mục',
+    $q$SET LOCAL ROLE r_bac_si; INSERT INTO thuoc (ten_thuoc, dang_bao_che, ham_luong) VALUES ('x', 'viên', '1 mg')$q$,
+    'permission denied');
+CALL pg_temp.kt_c('TC06G', 'BR-C06', 'Quản trị danh mục thêm mã ICD-10',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc; INSERT INTO ma_icd10 (ma_icd10, mo_ta) VALUES ('Z00.0', 'Khám sức khỏe tổng quát')$q$,
+    'OK');
+CALL pg_temp.kt_c('TC06H', 'BR-C06', 'Lễ tân ghi nhận dị ứng',
+    $q$SET LOCAL ROLE r_le_tan; INSERT INTO di_ung (ma_bn, ma_hoat_chat) VALUES (1, 1)$q$, 'permission denied');
+CALL pg_temp.kt_c('TC06I', 'BR-C06', 'Bác sĩ ghi nhận dị ứng',
+    $q$SET LOCAL ROLE r_bac_si;
+       INSERT INTO di_ung (ma_bn, ma_hoat_chat)
+       SELECT min(bn.ma_bn), (SELECT ma_hoat_chat FROM hoat_chat WHERE ten_hoat_chat = 'Acid clavulanic')
+         FROM benh_nhan bn
+        WHERE NOT EXISTS (SELECT 1 FROM di_ung du WHERE du.ma_bn = bn.ma_bn)$q$, 'OK');
+CALL pg_temp.kt_c('TC06J', 'BR-C06', 'Quản trị danh mục đọc chẩn đoán',
+    $q$SET LOCAL ROLE r_quan_tri_danh_muc; SELECT count(*) FROM chan_doan$q$, 'permission denied');
 
 TABLE kq_c;
 SELECT count(*) AS so_ca, count(*) FILTER (WHERE dat) AS dat,

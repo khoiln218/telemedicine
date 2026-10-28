@@ -37,6 +37,17 @@ Quy ước: thuộc tính gạch chân là khóa chính; `→` là khóa ngoại
 
 Giữ bảng lớp cha và bảng lớp con giúp dùng một khóa bác sĩ thống nhất trong lịch hẹn, giấy chuyển và ca làm. `BAC_SI_DA_KHOA` là đích FK trực tiếp cho người lập giấy chuyển ở mảng B, bảo đảm BR-B07 bằng FK. Với phân lớp bác sĩ, ràng buộc disjoint/total được biểu diễn bằng `loai_bac_si` và trigger để đồng bộ lớp con. Với NHAN_VIEN→BAC_SI, phân lớp partial: nhân viên không phải bác sĩ chỉ có hàng ở NHAN_VIEN; trigger bảo đảm loại nhân viên và sự tồn tại hàng BAC_SI tương ứng (BR-A10).
 
+### Hành động tham chiếu
+
+| Khóa ngoại | ON DELETE | Lý do |
+|---|---|---|
+| BAC_SI.ma_bac_si → NHAN_VIEN | RESTRICT | Không xóa nhân viên còn thông tin bác sĩ (BR-A10) |
+| BAC_SI_DA_KHOA.ma_bac_si, BAC_SI_CHUYEN_KHOA.ma_bac_si → BAC_SI | CASCADE | Hàng lớp con là một phần của cùng bác sĩ (8A), xóa theo BAC_SI; vẫn bị chặn nếu ca, lịch hẹn, giấy chuyển còn tham chiếu |
+| BAC_SI_CHUYEN_KHOA.ma_chuyen_khoa → CHUYEN_KHOA | RESTRICT | Không xóa chuyên khoa còn bác sĩ |
+| CA_LAM_VIEC.ma_bac_si → BAC_SI | RESTRICT | Không xóa bác sĩ còn ca, giữ lịch sử ca |
+
+ON UPDATE để mặc định (NO ACTION) như mảng B, C: khóa là mã tự tăng, không sửa.
+
 ## 3. Quy tắc được ánh xạ
 
 | Quy tắc | Cơ chế dự kiến |

@@ -24,7 +24,7 @@ CREATE TABLE bac_si (
     loai_bac_si     VARCHAR(16) NOT NULL CHECK (loai_bac_si IN ('DA_KHOA', 'CHUYEN_KHOA')),
     CONSTRAINT pk_bac_si PRIMARY KEY (ma_bac_si),
     CONSTRAINT fk_bac_si_nhan_vien FOREIGN KEY (ma_bac_si)
-        REFERENCES nhan_vien (ma_nv) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES nhan_vien (ma_nv) ON DELETE RESTRICT,
     CONSTRAINT ck_bac_si_han_giay_phep CHECK (ngay_het_han_cc > ngay_cap_cc)
 );
 
@@ -32,7 +32,7 @@ CREATE TABLE bac_si_da_khoa (
     ma_bac_si INTEGER,
     CONSTRAINT pk_bac_si_da_khoa PRIMARY KEY (ma_bac_si),
     CONSTRAINT fk_bac_si_da_khoa_bac_si FOREIGN KEY (ma_bac_si)
-        REFERENCES bac_si (ma_bac_si) ON UPDATE CASCADE ON DELETE CASCADE
+        REFERENCES bac_si (ma_bac_si) ON DELETE CASCADE
 );
 
 CREATE TABLE chuyen_khoa (
@@ -46,9 +46,9 @@ CREATE TABLE bac_si_chuyen_khoa (
     ma_chuyen_khoa INTEGER NOT NULL,
     CONSTRAINT pk_bac_si_chuyen_khoa PRIMARY KEY (ma_bac_si),
     CONSTRAINT fk_bac_si_chuyen_khoa_bac_si FOREIGN KEY (ma_bac_si)
-        REFERENCES bac_si (ma_bac_si) ON UPDATE CASCADE ON DELETE CASCADE,
+        REFERENCES bac_si (ma_bac_si) ON DELETE CASCADE,
     CONSTRAINT fk_bac_si_chuyen_khoa_chuyen_khoa FOREIGN KEY (ma_chuyen_khoa)
-        REFERENCES chuyen_khoa (ma_chuyen_khoa) ON UPDATE CASCADE ON DELETE RESTRICT
+        REFERENCES chuyen_khoa (ma_chuyen_khoa) ON DELETE RESTRICT
 );
 
 CREATE TABLE ca_lam_viec (
@@ -59,7 +59,7 @@ CREATE TABLE ca_lam_viec (
     ma_bac_si    INTEGER NOT NULL,
     CONSTRAINT pk_ca_lam_viec PRIMARY KEY (ma_ca),
     CONSTRAINT fk_ca_lam_viec_bac_si FOREIGN KEY (ma_bac_si)
-        REFERENCES bac_si (ma_bac_si) ON UPDATE CASCADE ON DELETE RESTRICT,
+        REFERENCES bac_si (ma_bac_si) ON DELETE RESTRICT,
     CONSTRAINT ck_ca_lam_viec_thoi_gian CHECK (thoi_gian_kt > thoi_gian_bd),
     CONSTRAINT ex_ca_lam_viec_bac_si EXCLUDE USING gist (
         ma_bac_si WITH =,

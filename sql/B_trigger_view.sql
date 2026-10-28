@@ -10,6 +10,8 @@
 -- Lỗi trả về mã 23514 (check_violation), thông báo bắt đầu bằng mã quy tắc để ứng dụng hiển thị (T49).
 -- Dữ liệu mẫu (T39) phải theo các trigger này: lịch hẹn thêm ở DA_DAT rồi UPDATE sang trạng thái sau;
 -- mỗi lịch hẹn nằm trong một ca; lịch chuyên khoa kèm giấy hoặc là tái khám.
+-- Hàm trigger có truy vấn bảng dùng SECURITY DEFINER: chạy với quyền chủ sở hữu, role ứng dụng
+-- không cần SELECT trên bảng nó không được xem (T30 L11). Hàm trigger không gọi trực tiếp được.
 
 -- BR-B01, BR-B03: lịch hẹn nằm trong ca; lịch chuyên khoa có giấy hợp lệ hoặc là tái khám
 CREATE OR REPLACE FUNCTION fn_lich_hen_hop_le() RETURNS trigger AS $$
@@ -79,7 +81,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE OR REPLACE TRIGGER trg_lich_hen_hop_le
     BEFORE INSERT OR UPDATE OF thoi_gian_bd, thoi_gian_kt, ma_bac_si, ma_bn, ma_giay
@@ -118,8 +120,7 @@ CREATE OR REPLACE TRIGGER trg_trang_thai_lich_hen
     BEFORE INSERT OR UPDATE ON lich_hen
     FOR EACH ROW EXECUTE FUNCTION fn_trang_thai_lich_hen();
 
--- BR-B09: vai trò của tài khoản nhân viên trùng loại nhân viên
--- (chiều ngược lại – sửa nhan_vien.loai_nv khi đã có tài khoản – chờ chốt ở T30)
+-- BR-B09: vai trò của tài khoản nhân viên trùng loại nhân viên (chiều ngược lại ở trg_nhan_vien_giu_vai_tro)
 CREATE OR REPLACE FUNCTION fn_tai_khoan_vai_tro() RETURNS trigger AS $$
 DECLARE
     v_loai_nv nhan_vien.loai_nv%TYPE;
@@ -133,11 +134,27 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE OR REPLACE TRIGGER trg_tai_khoan_vai_tro
     BEFORE INSERT OR UPDATE OF vai_tro, ma_nv ON tai_khoan
     FOR EACH ROW EXECUTE FUNCTION fn_tai_khoan_vai_tro();
+
+-- BR-B09 chiều ngược lại (T30 C1): vai trò tài khoản luôn theo loại nhân viên,
+-- nên nhân viên đã có tài khoản thì không đổi loại nhân viên được
+CREATE OR REPLACE FUNCTION fn_nhan_vien_giu_vai_tro() RETURNS trigger AS $$
+BEGIN
+    IF EXISTS (SELECT 1 FROM tai_khoan WHERE ma_nv = NEW.ma_nv AND vai_tro <> NEW.loai_nv) THEN
+        RAISE EXCEPTION 'BR-B09: nhân viên % đã có tài khoản, không đổi loại nhân viên', NEW.ma_nv
+            USING ERRCODE = 'check_violation';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
+
+CREATE OR REPLACE TRIGGER trg_nhan_vien_giu_vai_tro
+    BEFORE UPDATE OF loai_nv ON nhan_vien
+    FOR EACH ROW EXECUTE FUNCTION fn_nhan_vien_giu_vai_tro();
 
 -- BR-B10: tài khoản không bị xóa, chỉ khóa (áp dụng cả với chủ sở hữu bảng, không chỉ qua GRANT).
 -- TRUNCATE không kích hoạt trigger DELETE nên chặn thêm bằng trigger mức câu lệnh.
@@ -184,3 +201,54 @@ LEFT JOIN bac_si_chuyen_khoa bck ON bck.ma_bac_si = l.ma_bac_si
 LEFT JOIN chuyen_khoa ck ON ck.ma_chuyen_khoa = bck.ma_chuyen_khoa
 WHERE l.thoi_gian_bd >= CURRENT_DATE
   AND l.thoi_gian_bd <  CURRENT_DATE + 1;
+
+-- BR-B08: bệnh nhân chỉ xem lịch hẹn của chính mình. Backend đã xác thực đặt app.ma_bn trong giao dịch
+-- (giống v_ho_so_cua_toi của mảng C); không cấp bảng gốc cho bệnh nhân.
+CREATE OR REPLACE VIEW v_lich_hen_cua_toi AS
+SELECT l.ma_lh, l.thoi_gian_bd, l.thoi_gian_kt, l.trang_thai, l.hinh_thuc,
+       COALESCE(l.phong_kham, l.nen_tang) AS phong_hoac_nen_tang, l.link_phien,
+       l.ma_bn, nv.ho_ten AS ten_bac_si, COALESCE(ck.ten_chuyen_khoa, 'Đa khoa') AS chuyen_khoa,
+       l.ly_do_kham, l.phi_kham
+FROM lich_hen l
+JOIN nhan_vien nv ON nv.ma_nv = l.ma_bac_si
+LEFT JOIN bac_si_chuyen_khoa bck ON bck.ma_bac_si = l.ma_bac_si
+LEFT JOIN chuyen_khoa ck ON ck.ma_chuyen_khoa = bck.ma_chuyen_khoa
+WHERE l.ma_bn = NULLIF(current_setting('app.ma_bn', TRUE), '')::INTEGER;
+
+-- BR-B10: lễ tân chỉ tạo tài khoản bệnh nhân và đặt lại mật khẩu tài khoản bệnh nhân; mỗi người chỉ đổi mật khẩu
+-- của chính mình. Lễ tân, bệnh nhân không có quyền trên bảng tai_khoan, chỉ gọi các hàm dưới đây (chạy với quyền
+-- chủ sở hữu); quyền EXECUTE cấp trong rbac.sql. Người đang đăng nhập lấy từ app.ma_bn hoặc app.ma_nv.
+CREATE OR REPLACE FUNCTION tao_tai_khoan_benh_nhan(p_ten_dang_nhap VARCHAR, p_mat_khau_hash VARCHAR, p_ma_bn INTEGER)
+RETURNS VOID AS $$
+    INSERT INTO tai_khoan (ten_dang_nhap, mat_khau_hash, vai_tro, ma_bn)
+    VALUES (p_ten_dang_nhap, p_mat_khau_hash, 'BENH_NHAN', p_ma_bn);
+$$ LANGUAGE sql SECURITY DEFINER SET search_path = public, pg_temp;
+
+CREATE OR REPLACE FUNCTION dat_lai_mat_khau_benh_nhan(p_ten_dang_nhap VARCHAR, p_mat_khau_hash VARCHAR)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE tai_khoan SET mat_khau_hash = p_mat_khau_hash
+    WHERE ten_dang_nhap = p_ten_dang_nhap AND vai_tro = 'BENH_NHAN';
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'BR-B10: chỉ đặt lại được mật khẩu của tài khoản bệnh nhân (%)', p_ten_dang_nhap
+            USING ERRCODE = 'check_violation';
+    END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
+
+CREATE OR REPLACE FUNCTION doi_mat_khau(p_mat_khau_hash VARCHAR)
+RETURNS VOID AS $$
+BEGIN
+    UPDATE tai_khoan SET mat_khau_hash = p_mat_khau_hash
+    WHERE ma_bn = NULLIF(current_setting('app.ma_bn', TRUE), '')::INTEGER
+       OR ma_nv = NULLIF(current_setting('app.ma_nv', TRUE), '')::INTEGER;
+    IF NOT FOUND THEN
+        RAISE EXCEPTION 'BR-B10: không xác định được tài khoản đang đăng nhập'
+            USING ERRCODE = 'check_violation';
+    END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
+
+-- Hàm mặc định cho PUBLIC quyền EXECUTE; thu hồi để chỉ role được cấp trong rbac.sql mới gọi được.
+REVOKE EXECUTE ON FUNCTION tao_tai_khoan_benh_nhan(VARCHAR, VARCHAR, INTEGER),
+    dat_lai_mat_khau_benh_nhan(VARCHAR, VARCHAR), doi_mat_khau(VARCHAR) FROM PUBLIC;

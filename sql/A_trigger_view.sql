@@ -1,5 +1,7 @@
 -- T36 – Trigger và view mảng A. Chạy sau schema.sql (A + B).
 -- Ca được kiểm tra với lịch hẹn ở trạng thái còn hiệu lực (khác HUY, VANG_MAT).
+-- Hàm trigger có truy vấn bảng dùng SECURITY DEFINER: chạy với quyền chủ sở hữu, role ứng dụng
+-- không cần SELECT trên bảng nó không được xem (T30 L11). Hàm trigger không gọi trực tiếp được.
 
 -- Chuyên biệt hóa 8A: NHAN_VIEN -> BAC_SI (partial), BAC_SI -> đúng một lớp con (total, disjoint).
 CREATE OR REPLACE FUNCTION fn_kiem_tra_phan_lop_a() RETURNS trigger AS $$
@@ -31,22 +33,22 @@ BEGIN
         RAISE EXCEPTION 'BR-A10: nhân viên loại BAC_SI phải và chỉ phải có hàng BAC_SI (ma_nv=%)', v_ma_nv
             USING ERRCODE = 'check_violation';
     END IF;
+    -- BR-A02 xét trước: bác sĩ chuyên khoa thiếu hàng lớp con là chưa có chuyên khoa.
+    IF v_co_bac_si AND v_loai_bac_si = 'CHUYEN_KHOA' AND NOT v_co_chuyen_khoa THEN
+        RAISE EXCEPTION 'BR-A02: bác sĩ chuyên khoa phải thuộc đúng một chuyên khoa (ma_bac_si=%)', v_ma_nv
+            USING ERRCODE = 'check_violation';
+    END IF;
     IF v_co_bac_si AND (
         (v_loai_bac_si = 'DA_KHOA' AND NOT v_co_da_khoa)
-        OR (v_loai_bac_si = 'CHUYEN_KHOA' AND NOT v_co_chuyen_khoa)
         OR (v_loai_bac_si = 'DA_KHOA' AND v_co_chuyen_khoa)
         OR (v_loai_bac_si = 'CHUYEN_KHOA' AND v_co_da_khoa)
     ) THEN
         RAISE EXCEPTION 'BR-A01: lớp con bác sĩ không khớp loai_bac_si (ma_bac_si=%)', v_ma_nv
             USING ERRCODE = 'check_violation';
     END IF;
-    IF v_co_bac_si AND v_loai_bac_si = 'CHUYEN_KHOA' AND NOT v_co_chuyen_khoa THEN
-        RAISE EXCEPTION 'BR-A02: bác sĩ chuyên khoa phải thuộc đúng một chuyên khoa (ma_bac_si=%)', v_ma_nv
-            USING ERRCODE = 'check_violation';
-    END IF;
     RETURN NULL;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE CONSTRAINT TRIGGER trg_phan_lop_nhan_vien
     AFTER INSERT OR UPDATE OR DELETE ON nhan_vien DEFERRABLE INITIALLY DEFERRED
@@ -75,7 +77,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE OR REPLACE TRIGGER trg_giay_phep_khong_vo_hieu_ca
     BEFORE UPDATE OF ngay_het_han_cc ON bac_si
     FOR EACH ROW EXECUTE FUNCTION fn_giay_phep_khong_vo_hieu_ca();
@@ -114,7 +116,7 @@ BEGIN
     END IF;
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 
 CREATE OR REPLACE TRIGGER trg_ca_lam_viec_hop_le
     BEFORE INSERT OR UPDATE OF thoi_gian_bd, thoi_gian_kt, trang_thai, ma_bac_si
@@ -134,7 +136,7 @@ BEGIN
     END IF;
     RETURN OLD;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public, pg_temp;
 CREATE OR REPLACE TRIGGER trg_ca_lam_viec_khong_xoa
     BEFORE DELETE ON ca_lam_viec FOR EACH ROW EXECUTE FUNCTION fn_ca_lam_viec_khong_xoa();
 
