@@ -11,7 +11,7 @@
 
 | Mảng | 2.2 Ánh xạ | 2.3 FD, chuẩn hóa | 3 Từ điển dữ liệu | Đã rà |
 |---|---|---|---|---|
-| A | T19 chưa có | T23, T26 chưa có | T29 chưa có | Chưa |
+| A | [T19](../5_anh-xa/T19_AnhXa_MangA.md) | [T23](T23_FD_MangA.md), [T26](T26_ChuanHoa_MangA.md) | [T29](T29_TuDienDuLieu_MangA.md) | Đã lập, chờ review chéo |
 | B | [T20](../5_anh-xa/T20_AnhXa_MangB.md) | [T24](T24_FD_MangB.md), [T27](T27_ChuanHoa_MangB.md) | T29 chưa có | **Có**, đối chiếu thêm `sql/B_schema.sql`, `sql/B_trigger_view.sql` |
 | C | [T21](../5_anh-xa/T21_AnhXa_MangC.md) | [T25](T25_FD_MangC.md), [T28](T28_ChuanHoa_MangC.md) | T29 chưa có | Có tài liệu, **chờ review chéo** |
 
@@ -59,12 +59,13 @@ Dùng lại cho báo cáo mục 4.1 và test T43.
 | Mã | Nội dung | Ảnh hưởng | Người chốt |
 |---|---|---|---|
 | C1 | `TAI_KHOAN.vai_tro` trùng `NHAN_VIEN.loai_nv` (dư thừa giữa hai bảng, T27 mục 5); BR-B10 cho quản trị tài khoản "đổi vai trò" mâu thuẫn BR-A09 (quản trị nhân sự sửa loại nhân viên). Hai hướng: (a) giữ `vai_tro`, vai trò nhân viên luôn theo `loai_nv`, bỏ "đổi vai trò" khỏi BR-B10, thêm trigger chặn sửa `loai_nv` khi lệch tài khoản; (b) bỏ `vai_tro`, suy từ `loai_nv` hoặc `ma_bn` | T08, T20, T24, T27, ERD B, `B_schema.sql`, `B_trigger_view.sql` | Cả nhóm (họp) |
-| C2 | Phương án ánh xạ `BAC_SI` ở T19; T20, T33 đang giả định 8A (có bảng `BAC_SI_DA_KHOA`) | FK `ma_bac_si_lap`, BR-B07 | Hữu Khoa |
-| C3 | Quy ước T18: khóa `INTEGER` tự tăng, giờ `TIMESTAMP`, giá trị `loai_nv` trùng `vai_tro`, ca hủy là `'HUY'` | `B_schema.sql`, `B_trigger_view.sql` | Hữu Khoa |
+| C2 | Phương án ánh xạ `BAC_SI` ở T19; T20, T33 đang giả định 8A (có bảng `BAC_SI_DA_KHOA`) | Chọn 8A trong T19; FK `ma_bac_si_lap`, BR-B07 khớp giả định | **Đã chốt** |
+| C3 | Quy ước T18: khóa `INTEGER` tự tăng, giờ `TIMESTAMP`, giá trị `loai_nv` trùng `vai_tro`, ca hủy là `'HUY'` | Đã ghi trong [T18](T18_QuyUocDuLieu.md), khớp B_schema và B_trigger_view | **Đã chốt** |
 | C4 | Cách trình bày FD có điều kiện (cột UNIQUE cho phép NULL) chung cho 3 mảng | T24, T27 | Đăng Khoa (T22) |
 
 ## 6. Còn lại của T30
 
+- Review chéo độc lập phần A (T19, T23, T26, T29) và rà phần C khi có T21, T25, T28.
 - Rà phần A, C khi có T19, T21, T23, T25, T26, T28. Phần C đã có T21/T25/T28; Hữu Khoa review chéo sau khi đồng bộ.
 - Rà mục 3 khi có T29.
 - Đăng Khoa đã đọc chéo T20/T24/T27 và `B_schema.sql`, `B_trigger_view.sql`, `tests_B.sql` ngày 28/10/2026; kết quả kiểm thử ghi tại mục 7.
