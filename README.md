@@ -36,6 +36,7 @@ Tên file trong `sql/` theo kế hoạch:
 | `queries_A.sql`, `queries_B.sql`, `queries_C.sql` | 4 truy vấn mỗi mảng | T40–T42 |
 | `tests_A.sql`, `tests_B.sql`, `tests_C.sql`, `tests.sql` | Test ràng buộc từng mảng; `tests.sql` gọi cả ba | T43 |
 | `rbac.sql` | Role, GRANT/REVOKE | T45 |
+| `performance.sql` | EXPLAIN ANALYZE trước/sau chỉ mục (báo cáo 4.2.3) | T44 |
 
 ## Cài đặt
 
@@ -107,6 +108,9 @@ mảng A đọc bảng lịch hẹn của B. Ba file test đều cần `rbac.sql
 tính theo ngày chạy nên truy vấn mẫu luôn có kết quả. Dữ liệu mô phỏng phòng khám đã hoạt động 3 tháng theo quy mô
 ở báo cáo mục 1 (20 bác sĩ, khoảng 150 lượt khám mỗi ngày thường, 20% từ xa); chạy hết khoảng vài giây.
 Tài khoản mẫu: `bs01`…`bs19`, `lt21`…`lt24`, `qt25`…`qt27`, `bn0001`…; mật khẩu chung `Telemed@2026`.
+
+Đo hiệu năng (T44) trên CSDL riêng có dữ liệu 1 năm (khoảng 52.000 lịch hẹn): chạy `seed.sql` với
+`-v so_ngay=365` rồi `psql -f sql/performance.sql`; script tạm bỏ chỉ mục trong giao dịch rồi ROLLBACK.
 
 ## Quy ước làm việc
 

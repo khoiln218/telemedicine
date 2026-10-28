@@ -2,8 +2,8 @@
 -- Chạy sau schema.sql và A/B/C_trigger_view.sql; gọi từ seed.sql.
 -- Quy mô theo báo cáo mục 1: một cơ sở, 20 bác sĩ (8 đa khoa, 12 chuyên khoa thuộc 6 chuyên khoa);
 -- điều dưỡng không lưu trong CSDL (T07 mục 5) nên chỉ có lễ tân và quản trị. Phòng khám đã hoạt động
--- 3 tháng: ca làm việc từ 91 ngày trước đến 14 ngày tới, tính theo CURRENT_DATE.
--- Mã nhân viên, chuyên khoa 1–99; tests_B.sql dùng 9101–9199 nên không đụng nhau.
+-- 3 tháng: ca làm việc từ :so_ngay ngày trước (mặc định 91, đặt ở seed.sql) đến 14 ngày tới.
+-- Mã nhân viên, chuyên khoa 1–99; mã ca từ 10001. tests_A.sql, tests_B.sql dùng 9101–9299 nên không đụng nhau.
 
 BEGIN;  -- phân lớp bác sĩ kiểm tra bằng constraint trigger trì hoãn tới cuối giao dịch
 
@@ -42,11 +42,13 @@ FROM generate_series(1, 20) AS i;
 INSERT INTO bac_si_da_khoa (ma_bac_si) SELECT i FROM generate_series(1, 8) AS i;
 INSERT INTO bac_si_chuyen_khoa (ma_bac_si, ma_chuyen_khoa) SELECT i, (i - 9) / 2 + 1 FROM generate_series(9, 20) AS i;
 
+SELECT setval(pg_get_serial_sequence('ca_lam_viec', 'ma_ca'), 10000);
+
 -- Ca sáng 07:30–11:30 thứ 2–7, ca chiều 13:30–17:00 thứ 2–6. Bác sĩ chuyên khoa nghỉ một ngày trong tuần,
 -- bác sĩ đa khoa nghỉ một buổi chiều, lệch nhau giữa các bác sĩ (tổng giờ khác nhau cho Q2).
 INSERT INTO ca_lam_viec (thoi_gian_bd, thoi_gian_kt, ma_bac_si)
 SELECT d::date + v.bd, d::date + v.kt, b
-FROM generate_series(CURRENT_DATE - 91, CURRENT_DATE + 14, INTERVAL '1 day') AS g(d)
+FROM generate_series(CURRENT_DATE - :so_ngay, CURRENT_DATE + 14, INTERVAL '1 day') AS g(d)
 CROSS JOIN generate_series(1, 19) AS b
 CROSS JOIN (VALUES (time '07:30', time '11:30', false), (time '13:30', time '17:00', true)) AS v(bd, kt, chieu)
 WHERE extract(isodow FROM d) <= 6
