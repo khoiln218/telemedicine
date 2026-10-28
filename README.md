@@ -17,7 +17,7 @@ docs/            Báo cáo (docx), kế hoạch (xlsx)
   0_de-bai/      Đề bài, mẫu báo cáo, kế hoạch đánh giá của môn học
   1_khao-sat/    Khảo sát nghiệp vụ (T03–T05)
   2_quy-tac/     Quy tắc nghiệp vụ (T07–T09)
-  3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14)
+  3_erd/         Sơ đồ ER/EER (.drawio, .png) (T11–T14); lược đồ quan hệ LuocDo_QuanHe (.dot, .png) (T31)
   4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
   5_anh-xa/      Ánh xạ ERD → lược đồ quan hệ (T19–T21)
   6_chuan-hoa/   Phụ thuộc hàm, khóa, chứng minh chuẩn hóa (T22–T28)
