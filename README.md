@@ -85,7 +85,18 @@ Công cụ GUI (tùy chọn): pgAdmin 4 (có sẵn trong bộ cài Windows) ho�
 
 ### 4. Python (từ GĐ4)
 
-Cần Python 3.11+. Hướng dẫn chạy Flask sẽ bổ sung ở T47.
+Cần Python 3.11+. Chạy ứng dụng Flask (T47), sau khi đã nạp CSDL như phần dưới:
+
+```bash
+cd app
+python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env                                   # sửa DATABASE_URL (user, cổng) cho khớp máy
+flask --app app run --debug                            # http://127.0.0.1:5000, đăng nhập bs01 / Telemed@2026
+```
+
+`DATABASE_URL` là tài khoản chủ sở hữu CSDL: dùng để kiểm tra mật khẩu, sau đó mỗi yêu cầu chạy `SET LOCAL ROLE`
+theo vai trò đăng nhập nên quyền ở `rbac.sql` có hiệu lực trong ứng dụng.
 
 ## Chạy script SQL
 

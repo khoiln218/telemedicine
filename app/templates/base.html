@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Telemedicine{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <a class="brand" href="{{ url_for('home') }}">Telemedicine G5</a>
+    {% if user %}
+    <nav>
+      <a href="{{ url_for('home') }}">Trang chủ</a>
+      {% block menu %}{% endblock %}
+    </nav>
+    <form method="post" action="{{ url_for('logout') }}" class="who">
+      {{ user.ten_dang_nhap }} ({{ ten_vai_tro }}) <button>Đăng xuất</button>
+    </form>
+    {% endif %}
+  </header>
+  <main>
+    {% for m in get_flashed_messages() %}<p class="flash">{{ m }}</p>{% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Đăng nhập{% endblock %}
+{% block content %}
+<h1>Đăng nhập</h1>
+<form method="post" class="card">
+  <label>Tên đăng nhập <input name="ten_dang_nhap" required autofocus></label>
+  <label>Mật khẩu <input name="mat_khau" type="password" required></label>
+  <button>Đăng nhập</button>
+</form>
+{% endblock %}
