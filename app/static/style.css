@@ -9,3 +9,6 @@ main { max-width: 960px; margin: 1.5rem auto; padding: 0 1rem; }
 .flash { background: #fdecea; border: 1px solid #f5a8a0; padding: .5rem .8rem; }
 table { border-collapse: collapse; width: 100%; }
 th, td { border: 1px solid #ccc; padding: .3rem .6rem; text-align: left; }
+.card.wide { max-width: 480px; }
+form.inline { display: flex; gap: .6rem; align-items: center; margin-bottom: 1rem; }
+.chi-tiet { background: #fff7e0; border-color: #e6c35c; padding-left: 1.6rem; }

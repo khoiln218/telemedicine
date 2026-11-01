@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Lịch hẹn{% endblock %}
+{% block content %}
+<h1>Lịch hẹn</h1>
+{% if user.vai_tro != 'BENH_NHAN' %}
+<form method="get" class="inline">
+  Ngày <input type="date" name="ngay" value="{{ ngay }}">
+  {% if user.vai_tro == 'BAC_SI' %}<label><input type="checkbox" name="tat_ca" value="1" {{ '' if cua_toi else 'checked' }}> Mọi bác sĩ</label>{% endif %}
+  <button>Xem</button>
+  {% if user.vai_tro == 'LE_TAN' %}<a href="{{ url_for('lich_hen.dat') }}">+ Đặt lịch hẹn</a>{% endif %}
+</form>
+{% endif %}
+<table>
+  <tr><th>Mã</th><th>Giờ</th>{% if user.vai_tro != 'BENH_NHAN' %}<th>Bệnh nhân</th>{% endif %}
+      <th>Bác sĩ</th><th>Chuyên khoa</th><th>Hình thức</th><th>Nơi khám</th><th>Trạng thái</th>
+      {% if user.vai_tro == 'LE_TAN' %}<th></th>{% endif %}</tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.ma_lh }}</td>
+    <td>{{ r.thoi_gian_bd.strftime('%d/%m %H:%M') }}–{{ r.thoi_gian_kt.strftime('%H:%M') }}</td>
+    {% if user.vai_tro != 'BENH_NHAN' %}<td><a href="{{ url_for('benh_nhan.chi_tiet', ma_bn=r.ma_bn) }}">{{ r.ten_bn }}</a></td>{% endif %}
+    <td>{{ r.ten_bac_si }}</td><td>{{ r.chuyen_khoa }}</td>
+    <td>{{ 'Từ xa' if r.hinh_thuc == 'TU_XA' else 'Trực tiếp' }}</td><td>{{ r.noi_kham }}</td>
+    <td>{{ TRANG_THAI[r.trang_thai] }}</td>
+    {% if user.vai_tro == 'LE_TAN' %}
+    <td>
+      {% if r.trang_thai in ('DA_DAT', 'DA_XAC_NHAN') %}<a href="{{ url_for('lich_hen.sua', ma_lh=r.ma_lh) }}">Sửa</a>{% endif %}
+      <form method="post" action="{{ url_for('lich_hen.doi_trang_thai', ma_lh=r.ma_lh) }}" class="inline">
+        <select name="trang_thai">
+          {% for k, v in TRANG_THAI.items() if k != 'DA_DAT' %}<option value="{{ k }}">{{ v }}</option>{% endfor %}
+        </select> <button>Đổi</button>
+      </form>
+    </td>
+    {% endif %}
+  </tr>
+  {% else %}
+  <tr><td colspan="9">Không có lịch hẹn.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

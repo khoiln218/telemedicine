@@ -1,8 +1,9 @@
 import hashlib
 import hmac
+import secrets
 from functools import wraps
 
-from flask import abort, redirect, session, url_for
+from flask import abort, flash, redirect, session, url_for
 
 import db
 
@@ -10,6 +11,11 @@ import db
 def bam_mat_khau(mat_khau):
     """Cùng định dạng với seed: sha256$<hex>."""
     return "sha256$" + hashlib.sha256(mat_khau.encode("utf-8")).hexdigest()
+
+
+def mat_khau_tam():
+    """Mật khẩu tạm khi cấp hoặc đặt lại tài khoản; chỉ hiện một lần cho người cấp."""
+    return secrets.token_urlsafe(6)
 
 
 def xac_thuc(ten_dang_nhap, mat_khau):
@@ -29,6 +35,13 @@ def dang_nhap_bat_buoc(f):
     @wraps(f)
     def wrapper(*a, **kw):
         if "user" not in session:
+            return redirect(url_for("login"))
+        with db.ket_noi() as conn:   # tài khoản bị khóa khi đang đăng nhập thì đăng xuất ngay (BR-B10)
+            tt = conn.execute("SELECT trang_thai FROM tai_khoan WHERE ten_dang_nhap = %s",
+                              (session["user"]["ten_dang_nhap"],)).fetchone()
+        if tt is None or tt["trang_thai"] != "HOAT_DONG":
+            session.clear()
+            flash("Tài khoản đã bị khóa.")
             return redirect(url_for("login"))
         return f(*a, **kw)
     return wrapper

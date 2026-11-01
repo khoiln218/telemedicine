@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa' if bn else 'Thêm' }} bệnh nhân{% endblock %}
+{% block content %}
+<h1>{% if bn %}Sửa bệnh nhân {{ bn.ma_bn }}{% else %}Thêm bệnh nhân{% endif %}</h1>
+<form method="post" class="card wide">
+  <label>Họ tên <input name="ho_ten" value="{{ f.ho_ten }}" required></label>
+  <label>Ngày sinh <input type="date" name="ngay_sinh" value="{{ f.ngay_sinh }}" required></label>
+  <label>Giới tính
+    <select name="gioi_tinh">
+      <option value="NAM" {{ 'selected' if f.gioi_tinh == 'NAM' }}>Nam</option>
+      <option value="NU" {{ 'selected' if f.gioi_tinh == 'NU' }}>Nữ</option>
+    </select>
+  </label>
+  <label>SĐT <input name="sdt" value="{{ f.sdt }}" pattern="0[0-9]{9}" required></label>
+  <label>Email <input type="email" name="email" value="{{ f.email }}"></label>
+  <button>Lưu</button>
+</form>
+{% endblock %}

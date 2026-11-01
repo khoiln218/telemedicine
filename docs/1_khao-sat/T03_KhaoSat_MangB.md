@@ -4,7 +4,7 @@
 |---|---|
 | Mã việc | T03 (GĐ0, tuần 1) |
 | Người thực hiện / review | Lê Ngọc Khôi / Nguyễn Đăng Khoa |
-| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 tách quản trị theo 3 mảng |
+| Ngày | 08/10/2026; cập nhật 19/10/2026 theo phạm vi đã chốt; 21/10/2026 tách quản trị theo 3 mảng; 01/11/2026 khớp nhu cầu dữ liệu, phạm vi mật khẩu với T08 |
 | Chuẩn tham chiếu | ISO/IEC/IEEE 29148:2018 – thu thập và phân tích yêu cầu |
 | Dùng cho | T08 (BR-B), T12 (ERD mảng B) |
 
@@ -14,7 +14,7 @@
 |---|---|
 | Mục tiêu | Xác định dữ liệu, trạng thái và quy tắc cần lưu cho việc đặt và quản lý lịch hẹn khám, đủ cho một CSDL đồ án môn học |
 | Phạm vi | Bệnh nhân, lịch hẹn khám trực tiếp / tư vấn từ xa, giấy chuyển chuyên khoa nội bộ, phí khám, tài khoản đăng nhập theo vai trò |
-| Ngoài phạm vi | Đăng ký tài khoản trực tuyến, quên mật khẩu, đặt hộ người thân, cuộc gọi video, BHYT |
+| Ngoài phạm vi | Đăng ký tài khoản trực tuyến, tự lấy lại mật khẩu qua email (lễ tân đặt lại tại quầy), đặt hộ người thân, cuộc gọi video, BHYT |
 | Đối tượng khảo sát | Luồng đặt khám của 3 ứng dụng đặt khám phổ biến tại Việt Nam: Medpro, YouMed, BookingCare; quy định về khám bệnh, chữa bệnh từ xa và chuyển người bệnh |
 | Phương pháp | Phân tích ứng dụng hiện có (đi qua luồng đặt lịch, ghi lại các trường dữ liệu và trạng thái) và nghiên cứu văn bản pháp lý liên quan. Không phỏng vấn trực tiếp nhân viên y tế |
 | Giới hạn | Không mô tả đầy đủ nghiệp vụ y tế thật; quy trình ở mục 3 là phần chung của ba ứng dụng, đã lược bớt chi tiết riêng của từng nơi |
@@ -24,10 +24,10 @@
 | Bên liên quan | Vai trò trong quy trình | Nhu cầu dữ liệu |
 |---|---|---|
 | Bệnh nhân | Đặt lịch, khám trực tiếp hoặc tư vấn từ xa | Xem lịch hẹn của mình |
-| Lễ tân | Đặt hộ, xác nhận, hủy lịch hẹn | Thêm, sửa bệnh nhân và lịch hẹn; xem lịch làm việc bác sĩ |
-| Bác sĩ đa khoa | Khám, lập giấy chuyển chuyên khoa | Xem lịch hẹn của mình; lập giấy chuyển |
-| Bác sĩ chuyên khoa | Khám theo chuyên khoa khi có giấy chuyển hoặc tái khám | Xem lịch hẹn của mình |
-| Quản trị tài khoản | Cấp, khóa tài khoản nhân viên | Thêm, sửa tài khoản nhân viên |
+| Lễ tân | Tiếp nhận bệnh nhân, đặt hộ, xác nhận, hủy lịch hẹn; cấp tài khoản bệnh nhân | Thêm, sửa bệnh nhân và lịch hẹn; xem lịch làm việc bác sĩ; tạo tài khoản, đặt lại mật khẩu bệnh nhân |
+| Bác sĩ đa khoa | Khám, lập giấy chuyển chuyên khoa | Xem bệnh nhân, lịch hẹn; lập giấy chuyển |
+| Bác sĩ chuyên khoa | Khám theo chuyên khoa khi có giấy chuyển hoặc tái khám | Xem bệnh nhân, lịch hẹn |
+| Quản trị tài khoản | Cấp, khóa, mở khóa tài khoản nhân viên; khóa tài khoản bệnh nhân | Thêm tài khoản nhân viên; sửa trạng thái tài khoản |
 
 Mọi tác nhân đăng nhập bằng một tài khoản mang đúng một vai trò; mỗi vai trò chỉ thao tác trên phần dữ liệu ghi ở cột nhu cầu.
 

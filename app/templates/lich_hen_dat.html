@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Sửa' if sua else 'Đặt' }} lịch hẹn{% endblock %}
+{% block content %}
+<h1>{% if sua %}Sửa lịch hẹn {{ sua.ma_lh }}{% else %}Đặt lịch hẹn{% endif %}</h1>
+{% if chi_tiet %}<ul class="flash chi-tiet">{% for d in chi_tiet %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
+<form method="post" class="card wide">
+  {% if sua %}<p>Bệnh nhân: <b>{{ sua.ten_bn }}</b> ({{ sua.sdt }}), trạng thái {{ sua.trang_thai }}</p>
+  {% else %}<label>SĐT bệnh nhân <input name="sdt" value="{{ f.sdt }}" pattern="0[0-9]{9}" required></label>{% endif %}
+  <label>Bác sĩ
+    <select name="ma_bac_si" required>
+      {% for b in bac_si %}
+      <option value="{{ b.ma_nv }}" {{ 'selected' if f.ma_bac_si == b.ma_nv|string }}>{{ b.ho_ten }} – {{ b.chuyen_khoa }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Bắt đầu <input type="datetime-local" name="bd" value="{{ f.bd }}" required></label>
+  <label>Kết thúc <input type="datetime-local" name="kt" value="{{ f.kt }}" required></label>
+  <label>Lý do khám <input name="ly_do" value="{{ f.ly_do }}" required></label>
+  <label>Hình thức
+    <select name="hinh_thuc" id="ht">
+      <option value="TRUC_TIEP" {{ 'selected' if f.hinh_thuc == 'TRUC_TIEP' }}>Trực tiếp</option>
+      <option value="TU_XA" {{ 'selected' if f.hinh_thuc == 'TU_XA' }}>Từ xa</option>
+    </select>
+  </label>
+  <label class="tt">Phòng khám <input name="phong" value="{{ f.phong }}"></label>
+  <label class="tx">Nền tảng <input name="nen_tang" value="{{ f.nen_tang }}" placeholder="Zoom, Google Meet…"></label>
+  <label class="tx">Link phiên <input name="link" value="{{ f.link }}"></label>
+  <label>Phí khám (đ) <input type="number" name="phi" min="0" value="{{ f.phi or 150000 }}" required></label>
+  <label>Mã giấy chuyển khoa (nếu có) <input type="number" name="ma_giay" value="{{ f.ma_giay }}"></label>
+  <button>{{ 'Lưu' if sua else 'Đặt lịch' }}</button>
+</form>
+<script>
+  const ht = document.getElementById('ht');
+  function doi() {
+    document.querySelectorAll('.tt').forEach(e => e.hidden = ht.value !== 'TRUC_TIEP');
+    document.querySelectorAll('.tx').forEach(e => e.hidden = ht.value !== 'TU_XA');
+  }
+  ht.onchange = doi; doi();
+</script>
+{% endblock %}

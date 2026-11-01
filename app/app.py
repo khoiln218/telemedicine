@@ -2,10 +2,16 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 
 import auth
 import config
+import benh_nhan
 import db
+import lich_hen
+import tai_khoan
 
 app = Flask(__name__)
 app.secret_key = config.SECRET_KEY
+app.register_blueprint(lich_hen.bp)
+app.register_blueprint(benh_nhan.bp)
+app.register_blueprint(tai_khoan.bp)
 
 
 @app.context_processor
@@ -39,6 +45,11 @@ def home():
     with db.phien_lam_viec(session["user"]) as conn:
         role = conn.execute("SELECT current_user AS r").fetchone()["r"]
     return render_template("home.html", role_db=role)
+
+
+@app.errorhandler(404)
+def khong_thay(_):
+    return render_template("loi.html", ma=404, noi_dung="Không tìm thấy dữ liệu."), 404
 
 
 @app.errorhandler(403)

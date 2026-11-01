@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Tài khoản{% endblock %}
+{% block content %}
+<h1>Tài khoản</h1>
+<h2>Cấp tài khoản nhân viên</h2>
+{% if chua_co %}
+<form method="post" action="{{ url_for('tai_khoan.them') }}" class="inline">
+  <select name="ma_nv">{% for n in chua_co %}<option value="{{ n.ma_nv }}">{{ n.ho_ten }} – {{ VAI_TRO[n.loai_nv][1] }}</option>{% endfor %}</select>
+  <input name="ten_dang_nhap" placeholder="Tên đăng nhập" required> <button>Tạo</button>
+</form>
+{% else %}
+<p>Mọi nhân viên đã có tài khoản.</p>
+{% endif %}
+
+<h2>Danh sách</h2>
+<form method="get" class="inline">
+  <select name="vai_tro">
+    <option value="">Nhân viên (mọi vai trò)</option>
+    {% for k, v in VAI_TRO.items() %}<option value="{{ k }}" {{ 'selected' if vai_tro == k }}>{{ v[1] }}</option>{% endfor %}
+  </select>
+  <input name="q" value="{{ q }}" placeholder="Tên đăng nhập bắt đầu bằng…"> <button>Lọc</button>
+</form>
+<table>
+  <tr><th>Tên đăng nhập</th><th>Vai trò</th><th>Chủ tài khoản</th><th>Trạng thái</th><th></th></tr>
+  {% for r in rows %}
+  <tr>
+    <td>{{ r.ten_dang_nhap }}</td><td>{{ VAI_TRO[r.vai_tro][1] }}</td>
+    <td>{{ r.ho_ten or ('Bệnh nhân mã %s' % r.ma_bn) }}</td>
+    <td>{{ 'Hoạt động' if r.trang_thai == 'HOAT_DONG' else 'Khóa' }}</td>
+    <td>
+      <form method="post" action="{{ url_for('tai_khoan.doi_trang_thai', ten=r.ten_dang_nhap) }}">
+        <button>{{ 'Khóa' if r.trang_thai == 'HOAT_DONG' else 'Mở khóa' }}</button>
+      </form>
+    </td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5">Không có tài khoản.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}{{ bn.ho_ten }}{% endblock %}
+{% block content %}
+<h1>{{ bn.ho_ten }} <small>(mã {{ bn.ma_bn }})</small></h1>
+<p>Ngày sinh {{ bn.ngay_sinh.strftime('%d/%m/%Y') }} · {{ 'Nam' if bn.gioi_tinh == 'NAM' else 'Nữ' }}
+   · SĐT {{ bn.sdt }}{% if bn.email %} · {{ bn.email }}{% endif %}</p>
+{% if user.vai_tro == 'LE_TAN' %}
+<p>
+  <a href="{{ url_for('benh_nhan.sua', ma_bn=bn.ma_bn) }}">Sửa thông tin</a> ·
+  <a href="{{ url_for('lich_hen.dat', sdt=bn.sdt) }}">Đặt lịch hẹn</a>
+</p>
+<h2>Tài khoản</h2>
+<form method="post" action="{{ url_for('benh_nhan.tao_tai_khoan', ma_bn=bn.ma_bn) }}" class="inline">
+  Tạo tài khoản: <input name="ten_dang_nhap" value="bn{{ '%04d' % bn.ma_bn }}" required> <button>Tạo</button>
+</form>
+<form method="post" action="{{ url_for('benh_nhan.dat_lai_mat_khau', ma_bn=bn.ma_bn) }}" class="inline">
+  Đặt lại mật khẩu: <input name="ten_dang_nhap" placeholder="Tên đăng nhập" required> <button>Đặt lại</button>
+</form>
+{% endif %}
+
+<h2>Giấy chuyển chuyên khoa</h2>
+{% if da_khoa %}
+<form method="post" action="{{ url_for('benh_nhan.lap_giay', ma_bn=bn.ma_bn) }}" class="inline">
+  <select name="ma_chuyen_khoa">{% for c in chuyen_khoa %}<option value="{{ c.ma_chuyen_khoa }}">{{ c.ten_chuyen_khoa }}</option>{% endfor %}</select>
+  <input name="ly_do" placeholder="Lý do chuyển" required>
+  Hiệu lực <input type="number" name="so_ngay" min="1" max="30" value="30" required> ngày
+  <button>Lập giấy</button>
+</form>
+{% endif %}
+<table>
+  <tr><th>Mã</th><th>Chuyên khoa</th><th>Lý do</th><th>Lập</th><th>Hết hạn</th><th>Bác sĩ lập</th><th>Tình trạng</th></tr>
+  {% for g in giay %}
+  <tr>
+    <td>{{ g.ma_giay }}</td><td>{{ g.ten_chuyen_khoa }}</td><td>{{ g.ly_do }}</td>
+    <td>{{ g.ngay_lap.strftime('%d/%m/%Y') }}</td><td>{{ g.ngay_het_han.strftime('%d/%m/%Y') }}</td>
+    <td>{{ g.bac_si_lap }}</td>
+    <td>{% if g.da_dung %}Đã dùng (lịch {{ g.da_dung }}){% elif g.ngay_het_han < hom_nay %}Hết hạn{% else %}Còn hiệu lực{% endif %}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7">Chưa có giấy chuyển.</td></tr>
+  {% endfor %}
+</table>
+
+<h2>Lịch hẹn gần đây</h2>
+<table>
+  <tr><th>Mã</th><th>Giờ</th><th>Bác sĩ</th><th>Hình thức</th><th>Trạng thái</th></tr>
+  {% for l in lich %}
+  <tr>
+    <td>{{ l.ma_lh }}</td>
+    <td>{{ l.thoi_gian_bd.strftime('%d/%m/%Y %H:%M') }}–{{ l.thoi_gian_kt.strftime('%H:%M') }}</td>
+    <td>{{ l.ten_bac_si }}</td><td>{{ 'Từ xa' if l.hinh_thuc == 'TU_XA' else 'Trực tiếp' }}</td><td>{{ l.trang_thai }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="5">Chưa có lịch hẹn.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

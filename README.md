@@ -98,6 +98,16 @@ flask --app app run --debug                            # http://127.0.0.1:5000, 
 `DATABASE_URL` là tài khoản chủ sở hữu CSDL: dùng để kiểm tra mật khẩu, sau đó mỗi yêu cầu chạy `SET LOCAL ROLE`
 theo vai trò đăng nhập nên quyền ở `rbac.sql` có hiệu lực trong ứng dụng.
 
+Màn hình mảng B (T49), lỗi vi phạm quy tắc hiện kèm mã BR:
+
+| Vai trò | Màn hình |
+|---|---|
+| Lễ tân (`lt21`) | Bệnh nhân: tìm, thêm, sửa, tạo tài khoản, đặt lại mật khẩu; lịch hẹn: đặt, sửa, đổi trạng thái |
+| Bác sĩ (`bs01` đa khoa, `bs10` chuyên khoa) | Xem bệnh nhân, lịch hẹn (mặc định của mình); bác sĩ đa khoa lập giấy chuyển |
+| Bệnh nhân (`bn0001`) | Lịch hẹn của mình |
+| Quản trị tài khoản (`qt26`) | Cấp tài khoản nhân viên, khóa, mở khóa |
+| Mọi vai trò | Đổi mật khẩu |
+
 ## Chạy script SQL
 
 Chạy lại từ đầu trên CSDL sạch (khi đã có file):
