@@ -1,18 +1,30 @@
 {% extends "base.html" %}
 {% block title %}{{ 'Sửa' if bn else 'Thêm' }} bệnh nhân{% endblock %}
 {% block content %}
-<h1>{% if bn %}Sửa bệnh nhân {{ bn.ma_bn }}{% else %}Thêm bệnh nhân{% endif %}</h1>
-<form method="post" class="card wide">
+<div class="tieu-de">
+  <div>
+    <a href="{{ url_for('benh_nhan.chi_tiet', ma_bn=bn.ma_bn) if bn else url_for('benh_nhan.danh_sach') }}">‹ {{ bn.ho_ten if bn else 'Bệnh nhân' }}</a>
+    <h1>{% if bn %}Sửa bệnh nhân <small>mã {{ bn.ma_bn }}</small>{% else %}Thêm bệnh nhân{% endif %}</h1>
+  </div>
+</div>
+<form method="post" class="card mau" style="max-width: 720px">
   <label>Họ tên <input name="ho_ten" value="{{ f.ho_ten }}" required></label>
-  <label>Ngày sinh <input type="date" name="ngay_sinh" value="{{ f.ngay_sinh }}" required></label>
-  <label>Giới tính
-    <select name="gioi_tinh">
-      <option value="NAM" {{ 'selected' if f.gioi_tinh == 'NAM' }}>Nam</option>
-      <option value="NU" {{ 'selected' if f.gioi_tinh == 'NU' }}>Nữ</option>
-    </select>
-  </label>
-  <label>SĐT <input name="sdt" value="{{ f.sdt }}" pattern="0[0-9]{9}" required></label>
-  <label>Email <input type="email" name="email" value="{{ f.email }}"></label>
-  <button>Lưu</button>
+  <div class="luoi">
+    <label>Ngày sinh <input type="date" name="ngay_sinh" value="{{ f.ngay_sinh }}" required></label>
+    <label>Giới tính
+      <select name="gioi_tinh">
+        <option value="NAM" {{ 'selected' if f.gioi_tinh == 'NAM' }}>Nam</option>
+        <option value="NU" {{ 'selected' if f.gioi_tinh == 'NU' }}>Nữ</option>
+      </select>
+    </label>
+  </div>
+  <div class="luoi">
+    <label>SĐT <input name="sdt" value="{{ f.sdt }}" pattern="0[0-9]{9}" inputmode="numeric" required></label>
+    <label>Email <input type="email" name="email" value="{{ f.email }}"></label>
+  </div>
+  <div class="nut">
+    <button>Lưu</button>
+    <a class="btn phu-btn" href="{{ url_for('benh_nhan.chi_tiet', ma_bn=bn.ma_bn) if bn else url_for('benh_nhan.danh_sach') }}">Hủy bỏ</a>
+  </div>
 </form>
 {% endblock %}

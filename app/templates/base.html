@@ -3,29 +3,38 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Telemedicine{% endblock %}</title>
+  <title>{% block title %}Telemedicine{% endblock %} · Telemedicine G5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+  {% set ep = request.endpoint or '' %}
   <header>
-    <a class="brand" href="{{ url_for('home') }}">Telemedicine G5</a>
-    {% if user %}
-    <nav>
-      <a href="{{ url_for('home') }}">Trang chủ</a>
-      {% if user.vai_tro in ('BAC_SI', 'LE_TAN', 'BENH_NHAN') %}<a href="{{ url_for('lich_hen.danh_sach') }}">Lịch hẹn</a>{% endif %}
-      {% if user.vai_tro == 'LE_TAN' %}<a href="{{ url_for('lich_hen.dat') }}">Đặt lịch</a>{% endif %}
-      {% if user.vai_tro in ('BAC_SI', 'LE_TAN') %}<a href="{{ url_for('benh_nhan.danh_sach') }}">Bệnh nhân</a>{% endif %}
-      {% if user.vai_tro == 'QUAN_TRI_TAI_KHOAN' %}<a href="{{ url_for('tai_khoan.danh_sach') }}">Tài khoản</a>{% endif %}
-      <a href="{{ url_for('tai_khoan.doi_mat_khau') }}">Đổi mật khẩu</a>
-      {% block menu %}{% endblock %}
-    </nav>
-    <form method="post" action="{{ url_for('logout') }}" class="who">
-      {{ user.ten_dang_nhap }} ({{ ten_vai_tro }}) <button>Đăng xuất</button>
-    </form>
-    {% endif %}
+    <div class="thanh">
+      <a class="brand" href="{{ url_for('home') }}">Telemedicine G5</a>
+      {% if user %}
+      <nav>
+        <a href="{{ url_for('home') }}" class="{{ 'on' if ep == 'home' }}">Trang chủ</a>
+        {% if user.vai_tro in ('BAC_SI', 'LE_TAN', 'BENH_NHAN') %}
+        <a href="{{ url_for('lich_hen.danh_sach') }}" class="{{ 'on' if ep in ('lich_hen.danh_sach', 'lich_hen.sua') }}">{{ 'Lịch hẹn của tôi' if user.vai_tro == 'BENH_NHAN' else 'Lịch hẹn' }}</a>
+        {% endif %}
+        {% if user.vai_tro == 'LE_TAN' %}<a href="{{ url_for('lich_hen.dat') }}" class="{{ 'on' if ep == 'lich_hen.dat' }}">Đặt lịch</a>{% endif %}
+        {% if user.vai_tro in ('BAC_SI', 'LE_TAN') %}<a href="{{ url_for('benh_nhan.danh_sach') }}" class="{{ 'on' if ep.startswith('benh_nhan.') }}">Bệnh nhân</a>{% endif %}
+        {% if user.vai_tro == 'QUAN_TRI_TAI_KHOAN' %}<a href="{{ url_for('tai_khoan.danh_sach') }}" class="{{ 'on' if ep == 'tai_khoan.danh_sach' }}">Tài khoản</a>{% endif %}
+        {% block menu %}{% endblock %}
+        <a href="{{ url_for('tai_khoan.doi_mat_khau') }}" class="{{ 'on' if ep == 'tai_khoan.doi_mat_khau' }}">Đổi mật khẩu</a>
+      </nav>
+      <form method="post" action="{{ url_for('logout') }}" class="who">
+        <span>{{ user.ten_dang_nhap }} · {{ ten_vai_tro }}</span> <button>Đăng xuất</button>
+      </form>
+      {% endif %}
+    </div>
   </header>
-  <main>
-    {% for m in get_flashed_messages() %}<p class="flash">{{ m }}</p>{% endfor %}
+  <main class="{% block main_class %}{% endblock %}">
+    {% for loai, m in get_flashed_messages(with_categories=true) %}
+    <p class="{{ 'ok' if loai == 'ok' else 'flash' }}">{{ m }}</p>
+    {% endfor %}
     {% block content %}{% endblock %}
   </main>
 </body>

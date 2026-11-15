@@ -1,40 +1,260 @@
 {% extends "base.html" %}
 {% block title %}{{ 'Sửa' if sua else 'Đặt' }} lịch hẹn{% endblock %}
 {% block content %}
-<h1>{% if sua %}Sửa lịch hẹn {{ sua.ma_lh }}{% else %}Đặt lịch hẹn{% endif %}</h1>
-{% if chi_tiet %}<ul class="flash chi-tiet">{% for d in chi_tiet %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
-<form method="post" class="card wide">
-  {% if sua %}<p>Bệnh nhân: <b>{{ sua.ten_bn }}</b> ({{ sua.sdt }}), trạng thái {{ sua.trang_thai }}</p>
-  {% else %}<label>SĐT bệnh nhân <input name="sdt" value="{{ f.sdt }}" pattern="0[0-9]{9}" required></label>{% endif %}
-  <label>Bác sĩ
-    <select name="ma_bac_si" required>
-      {% for b in bac_si %}
-      <option value="{{ b.ma_nv }}" {{ 'selected' if f.ma_bac_si == b.ma_nv|string }}>{{ b.ho_ten }} – {{ b.chuyen_khoa }}</option>
-      {% endfor %}
-    </select>
-  </label>
-  <label>Bắt đầu <input type="datetime-local" name="bd" value="{{ f.bd }}" required></label>
-  <label>Kết thúc <input type="datetime-local" name="kt" value="{{ f.kt }}" required></label>
-  <label>Lý do khám <input name="ly_do" value="{{ f.ly_do }}" required></label>
-  <label>Hình thức
-    <select name="hinh_thuc" id="ht">
-      <option value="TRUC_TIEP" {{ 'selected' if f.hinh_thuc == 'TRUC_TIEP' }}>Trực tiếp</option>
-      <option value="TU_XA" {{ 'selected' if f.hinh_thuc == 'TU_XA' }}>Từ xa</option>
-    </select>
-  </label>
-  <label class="tt">Phòng khám <input name="phong" value="{{ f.phong }}"></label>
-  <label class="tx">Nền tảng <input name="nen_tang" value="{{ f.nen_tang }}" placeholder="Zoom, Google Meet…"></label>
-  <label class="tx">Link phiên <input name="link" value="{{ f.link }}"></label>
-  <label>Phí khám (đ) <input type="number" name="phi" min="0" value="{{ f.phi or 150000 }}" required></label>
-  <label>Mã giấy chuyển khoa (nếu có) <input type="number" name="ma_giay" value="{{ f.ma_giay }}"></label>
-  <button>{{ 'Lưu' if sua else 'Đặt lịch' }}</button>
-</form>
+<div class="tieu-de">
+  <div>
+    <a href="{{ url_for('lich_hen.danh_sach', ngay=f.bd[:10] if f.bd else None) }}">‹ Lịch hẹn</a>
+    <h1>{% if sua %}Sửa lịch hẹn {{ sua.ma_lh }} <span class="bd bd-{{ sua.trang_thai }}">{{ TRANG_THAI[sua.trang_thai] }}</span>{% else %}Đặt lịch hẹn{% endif %}</h1>
+  </div>
+</div>
+
+{% if loi %}
+<div class="loi">
+  <b>{{ loi }}</b>
+  {% if chi_tiet %}<ul>{% for d in chi_tiet %}<li>{{ d }}</li>{% endfor %}</ul>{% endif %}
+  {% if chi_tiet is not none %}<div class="ghi-chu" style="color: inherit; margin-top: 6px">Giao dịch đã rollback, dữ liệu nhập được giữ lại để sửa.</div>{% endif %}
+</div>
+{% endif %}
+
+<div class="hai-cot">
+  <form method="post" class="card mau rong">
+    <fieldset>
+      <legend>Bệnh nhân</legend>
+      <div class="luoi">
+        {% if not sua %}
+        <label>SĐT bệnh nhân
+          <input name="sdt" id="sdt" value="{{ f.sdt or '' }}" pattern="0[0-9]{9}" list="ds-bn" autocomplete="off"
+                 placeholder="Gõ SĐT hoặc họ tên để tìm" title="Số điện thoại 10 chữ số, bắt đầu bằng 0" required>
+          <datalist id="ds-bn"></datalist>
+        </label>
+        {% endif %}
+        {% if bn %}
+        <div class="chip-bn" id="chip-bn"><b>{{ bn.ho_ten }}</b><span class="phu">mã {{ bn.ma_bn }} · {{ 'nam' if bn.gioi_tinh == 'NAM' else 'nữ' }} · {{ bn.ngay_sinh.year }} · {{ bn.sdt }}</span></div>
+        {% elif f.sdt %}
+        <div class="chip-bn phu" id="chip-bn">Chưa có bệnh nhân với SĐT này · <a href="{{ url_for('benh_nhan.them') }}">Thêm bệnh nhân</a></div>
+        {% endif %}
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Bác sĩ và thời gian</legend>
+      <label>Bác sĩ
+        <select name="ma_bac_si" id="bs" required>
+          <option value="">— Chọn bác sĩ —</option>
+          {% for b in bac_si %}
+          <option value="{{ b.ma_nv }}" data-ck="{{ b.ma_chuyen_khoa or '' }}" data-ten-ck="{{ b.chuyen_khoa }}" data-phong="{{ b.phong_quen or '' }}"
+                  {{ 'selected' if f.ma_bac_si == b.ma_nv|string }}>{{ b.ho_ten }} – {{ b.chuyen_khoa }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <div class="luoi">
+        <label>Ngày khám <input type="date" name="ngay" id="ngay" value="{{ ngay }}" required></label>
+        <div class="lbl">Giờ khám
+          <div id="gio-chon" class="chip-bn{{ ' sai' if loi_gio }}" aria-live="polite">
+            {% if f.bd and f.kt %}<b>{{ f.bd[11:16] }}–{{ f.kt[11:16] }}</b><span class="phu">{{ f.bd[8:10] }}/{{ f.bd[5:7] }}/{{ f.bd[:4] }}</span>
+            {% else %}<span class="phu">Bấm một ô Trống ở khung giờ bác sĩ</span>{% endif %}
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="bd" id="bd" value="{{ f.bd or '' }}">
+      <input type="hidden" name="kt" id="kt" value="{{ f.kt or '' }}">
+      <label>Lý do khám <input name="ly_do" value="{{ f.ly_do or '' }}" required></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Hình thức và phí</legend>
+      <div class="luoi">
+        <label>Hình thức
+          <select name="hinh_thuc" id="ht">
+            <option value="TRUC_TIEP" {{ 'selected' if f.hinh_thuc == 'TRUC_TIEP' }}>Trực tiếp</option>
+            <option value="TU_XA" {{ 'selected' if f.hinh_thuc == 'TU_XA' }}>Từ xa</option>
+          </select>
+        </label>
+        <label class="tt">Phòng khám
+          <select name="phong" id="phong">
+            <option value="">— Chọn phòng —</option>
+            {% for p in phong %}<option {{ 'selected' if f.phong == p }}>{{ p }}</option>{% endfor %}
+            {% if f.phong and f.phong not in phong %}<option selected>{{ f.phong }}</option>{% endif %}
+          </select>
+        </label>
+        <label class="tx">Nền tảng
+          <select name="nen_tang">
+            <option value="">— Chọn nền tảng —</option>
+            {% for n in NEN_TANG %}<option {{ 'selected' if f.nen_tang == n }}>{{ n }}</option>{% endfor %}
+            {% if f.nen_tang and f.nen_tang not in NEN_TANG %}<option selected>{{ f.nen_tang }}</option>{% endif %}
+          </select>
+        </label>
+        <label class="tx">Link phiên
+          <input value="{{ sua.link_phien if sua and sua.link_phien else '' }}" placeholder="Tự tạo khi lưu" readonly
+                 style="background: #F5F7FA; color: var(--phu)">
+        </label>
+      </div>
+      <div class="luoi" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr))">
+        <label>Phí khám
+          <select name="phi" id="phi" required>
+            {% for g in BANG_GIA %}<option value="{{ g.gia }}" data-loai="{{ g.loai }}" data-ht="{{ g.ht }}" {{ 'selected' if f.phi == g.gia|string }}>{{ g.nhan }}</option>{% endfor %}
+            {% if f.phi and f.phi|string not in gia_co_san %}<option value="{{ f.phi }}" selected>{{ '{:,}'.format(f.phi|int).replace(',', '.') }} đ · giá đang lưu</option>{% endif %}
+          </select>
+        </label>
+      <label>Giấy chuyển chuyên khoa
+        <select name="ma_giay" id="giay" data-tai-kham="{{ tai_kham|join(',') }}">
+          {% if giay is none %}
+          <option value="">Nhập SĐT bệnh nhân để xem giấy chuyển</option>
+          {% else %}
+          <option value="">Không dùng giấy</option>
+          {% for g in giay %}
+          <option value="{{ g.ma_giay }}" data-ck="{{ g.ma_chuyen_khoa }}" {{ 'selected' if f.ma_giay|string == g.ma_giay|string }}>
+            Mã {{ g.ma_giay }} · {{ g.ten_chuyen_khoa }} · hết hạn {{ g.ngay_het_han.strftime('%d/%m/%Y') }}</option>
+          {% endfor %}
+          {% endif %}
+        </select>
+      </label>
+      </div>
+      <p class="ghi-chu" id="giay-ghi">
+        {% if giay is none %}Danh sách giấy hiện sau khi có bệnh nhân.
+        {% elif not giay %}Bệnh nhân không có giấy chuyển còn hạn, chưa dùng; bác sĩ đa khoa lập giấy ở trang bệnh nhân.
+        {% else %}Chỉ liệt kê giấy còn hạn, chưa gắn lịch nào (BR-B03).{% endif %}
+      </p>
+    </fieldset>
+
+    <div class="nut">
+      <button>{{ 'Lưu' if sua else 'Đặt lịch' }}</button>
+      {# nút ẩn: JS bấm để tải lại form theo bệnh nhân mới #}
+      <button class="phu-btn" id="xem" formmethod="get" formnovalidate hidden>Tải lại</button>
+      <a class="btn phu-btn" href="{{ url_for('lich_hen.danh_sach') }}">Hủy bỏ</a>
+    </div>
+  </form>
+
+  <aside class="card hep mau" id="khung" aria-live="polite" style="gap: 12px; padding: 20px">
+    {% include "_khung_gio.html" %}
+  </aside>
+</div>
 <script>
-  const ht = document.getElementById('ht');
-  function doi() {
+  const $ = id => document.getElementById(id);
+  const ht = $('ht'), bs = $('bs'), phi = $('phi'), phong = $('phong'), giay = $('giay'), sdt = $('sdt');
+  const taiKham = giay.dataset.taiKham ? giay.dataset.taiKham.split(',') : [];
+  const bacSi = () => bs.selectedOptions[0].dataset;
+
+  function doi() {   // hiện ô theo hình thức
     document.querySelectorAll('.tt').forEach(e => e.hidden = ht.value !== 'TRUC_TIEP');
     document.querySelectorAll('.tx').forEach(e => e.hidden = ht.value !== 'TU_XA');
   }
-  ht.onchange = doi; doi();
+  function macDinh() {   // phí theo bảng giá, phòng quen của bác sĩ
+    if (!bs.value) return;
+    const loai = bacSi().ck ? 'CHUYEN_KHOA' : 'DA_KHOA';
+    const o = [...phi.options].find(x => x.dataset.loai === loai && x.dataset.ht === ht.value);
+    if (o) phi.value = o.value;
+    if (ht.value === 'TRUC_TIEP' && bacSi().phong) phong.value = bacSi().phong;
+  }
+  let benhNhanKhop = true;   // false khi ô SĐT đã đổi khác bệnh nhân đang hiện: giấy chuyển bị khóa
+  function locGiay() {   // giấy chỉ dùng cho bác sĩ chuyên khoa; đánh dấu giấy khác chuyên khoa
+    if (!benhNhanKhop) return;
+    const ck = bacSi().ck, ghi = $('giay-ghi');
+    giay.disabled = !ck || giay.options.length < 2;
+    if (!ck) {
+      giay.value = '';
+      if (giay.options.length > 1) ghi.textContent = bs.value ? 'Bác sĩ đa khoa: không dùng giấy chuyển.' : 'Chọn bác sĩ chuyên khoa để dùng giấy chuyển.';
+      return;
+    }
+    [...giay.options].forEach(x => {
+      if (x.dataset.ck) x.textContent = x.textContent.replace(' (khác chuyên khoa)', '').trim()
+                                        + (x.dataset.ck !== ck ? ' (khác chuyên khoa)' : '');
+    });
+    if (giay.options.length < 2) return;
+    if (taiKham.includes(ck)) {
+      ghi.textContent = `Tái khám ${bacSi().tenCk}: không cần giấy.`;
+    } else {
+      ghi.textContent = `Khám ${bacSi().tenCk} lần đầu: cần giấy đúng chuyên khoa (BR-B03).`;
+      const dung = [...giay.options].find(x => x.dataset.ck === ck);
+      if (!giay.value && dung) giay.value = dung.value;
+    }
+  }
+  let dangTai = false;   // tải lại khung giờ, giấy chuyển theo bệnh nhân, bác sĩ mới (một lần)
+  const taiLai = () => { if (!dangTai) { dangTai = true; $('xem').click(); } };
+
+  ht.onchange = () => { doi(); macDinh(); };
+  // Giờ khám chọn trên khung giờ bác sĩ; đổi bác sĩ hoặc ngày thì cập nhật khung tại chỗ, không tải lại trang
+  const ngay = $('ngay'), bd = $('bd'), kt = $('kt'), gio = $('gio-chon');
+  function hienGio(loi) {
+    gio.classList.toggle('sai', !!loi);
+    gio.innerHTML = '';
+    if (bd.value && !loi) {
+      const b = document.createElement('b'); b.textContent = bd.value.slice(11, 16) + '–' + kt.value.slice(11, 16);
+      const s = document.createElement('span'); s.className = 'phu'; s.textContent = bd.value.slice(0, 10).split('-').reverse().join('/');
+      gio.append(b, s);
+    } else {
+      const s = document.createElement('span'); s.className = 'phu';
+      s.textContent = loi || 'Bấm một ô Trống ở khung giờ bác sĩ'; gio.append(s);
+    }
+  }
+  let henLich, lanLich = 0;
+  function capNhatLich() {
+    clearTimeout(henLich);
+    henLich = setTimeout(async () => {
+      const so = ++lanLich;
+      const q = new URLSearchParams({ ma_bac_si: bs.value, ngay: ngay.value, bd: bd.value, kt: kt.value,
+                                      bo_qua: '{{ sua.ma_lh if sua else "" }}' });
+      const r = await fetch('{{ url_for("lich_hen.khung_gio") }}?' + q);
+      if (!r.ok || so !== lanLich) return;
+      $('khung').innerHTML = await r.text();
+      if (bd.value && !$('khung').querySelector('button.slot.chon')) {   // giờ đã chọn không còn trống với bác sĩ này
+        const cu = bd.value.slice(11, 16) + '–' + kt.value.slice(11, 16);
+        bd.value = kt.value = '';
+        hienGio(`Giờ ${cu} không trống với bác sĩ này: chọn ô Trống khác`);
+      }
+    }, 150);
+  }
+  $('khung').addEventListener('click', e => {   // bấm ô Trống: chọn giờ khám
+    const o = e.target.closest('button.slot');
+    if (!o) return;
+    bd.value = o.dataset.bd; kt.value = o.dataset.kt; hienGio();
+    $('khung').querySelectorAll('button.slot').forEach(x => {
+      const chon = x === o;
+      x.classList.toggle('chon', chon); x.setAttribute('aria-pressed', chon);
+      x.querySelector('b').textContent = chon ? 'Đang chọn' : 'Trống';
+    });
+    $('khung').querySelectorAll('.slot.trung').forEach(x => x.classList.replace('trung', 'ban'));
+  });
+  ngay.addEventListener('change', () => {   // giờ đã chọn thuộc ngày cũ: bỏ chọn
+    if (bd.value.slice(0, 10) !== ngay.value) { bd.value = kt.value = ''; hienGio(); }
+    capNhatLich();
+  });
+  bs.onchange = () => { macDinh(); giay.value = ''; locGiay(); capNhatLich(); };
+  document.querySelector('form.mau').addEventListener('submit', e => {
+    if (e.submitter?.id !== 'xem' && !bd.value) {
+      e.preventDefault(); hienGio('Chưa chọn giờ khám: bấm một ô Trống ở khung giờ bác sĩ');
+      $('khung').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+  if (sdt) {
+    // Gợi ý bệnh nhân theo SĐT hoặc họ tên; chọn một gợi ý (hoặc gõ đủ SĐT có trong gợi ý) thì tải lại form
+    const ds = $('ds-bn'), daBiet = new Set(), chip = $('chip-bn'), sdtCu = sdt.value.trim();
+    const ghiGoc = $('giay-ghi').textContent;   // ghi chú server viết theo bệnh nhân đang hiện
+    let hen, lan = 0;
+    function theoBenhNhan() {   // ô SĐT khác bệnh nhân đang hiện: ẩn thông tin, khóa giấy chuyển; gõ lại đúng thì hiện lại
+      const khop = sdtCu !== '' && sdt.value.trim() === sdtCu;
+      benhNhanKhop = khop;
+      if (chip) chip.hidden = !khop;
+      if (khop) { $('giay-ghi').textContent = ghiGoc; locGiay(); return true; }
+      giay.value = ''; giay.disabled = true;
+      $('giay-ghi').textContent = 'Danh sách giấy hiện sau khi có bệnh nhân.';
+      return false;
+    }
+    sdt.addEventListener('input', () => {
+      if (theoBenhNhan()) return;
+      if (sdt.checkValidity() && daBiet.has(sdt.value)) return taiLai();
+      clearTimeout(hen);
+      hen = setTimeout(async () => {
+        const q = sdt.value.trim(), so = ++lan;
+        if (q.length < 2) return ds.replaceChildren();
+        const kq = await (await fetch('{{ url_for("benh_nhan.goi_y") }}?q=' + encodeURIComponent(q))).json();
+        if (so !== lan) return;   // bỏ kết quả cũ về muộn
+        ds.replaceChildren(...kq.map(b => { daBiet.add(b.sdt); return new Option(b.nhan, b.sdt); }));
+      }, 200);
+    });
+    sdt.onchange = () => { if (sdt.checkValidity() && sdt.value.trim() !== sdtCu) taiLai(); };
+  }
+  doi(); locGiay();
+  {% if not f.phi %}macDinh();{% endif %}
 </script>
 {% endblock %}

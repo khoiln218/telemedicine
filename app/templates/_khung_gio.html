@@ -1,0 +1,26 @@
+{# Khung giờ bác sĩ ở trang đặt/sửa lịch: bấm ô Trống để chọn giờ khám.
+   Trả riêng qua /lich-hen/khung-gio để cập nhật không tải lại trang. #}
+{% if khung %}
+<h2>{{ ten_bs.ho_ten if ten_bs else 'Bác sĩ' }} · {{ khung.ngay }}</h2>
+{% for c in khung.ca %}
+<div class="phu" style="font-size: 13px">Ca {{ c.gio }}</div>
+<div class="ds-slot">
+  {% for o in c.o %}
+  {% if o.loai == 'trong' %}
+  <button type="button" class="slot trong{{ ' chon' if o.chon }}" data-bd="{{ o.bd }}" data-kt="{{ o.kt }}"
+          aria-pressed="{{ 'true' if o.chon else 'false' }}"><span>{{ o.gio }}</span><b>{{ 'Đang chọn' if o.chon else 'Trống' }}</b></button>
+  {% elif o.loai == 'qua' %}
+  <div class="slot qua"><span>{{ o.gio }}</span><span>Đã qua</span></div>
+  {% else %}
+  <div class="slot {{ o.loai }}"><span>{{ o.gio }}</span><span>{{ o.nhan }}</span></div>
+  {% endif %}
+  {% endfor %}
+</div>
+{% else %}
+<p class="canh-bao">Bác sĩ không có ca làm việc trong ngày này; chọn ngày khác.</p>
+{% endfor %}
+<p class="ghi-chu">Bấm một ô Trống để chọn giờ khám (30 phút). Lịch hủy, vắng mặt không chiếm giờ; ô đỏ là lịch trùng với giờ đang chọn.</p>
+{% else %}
+<h2>Khung giờ của bác sĩ</h2>
+<p class="ghi-chu">Chọn bác sĩ và ngày khám để thấy ca làm việc; bấm ô Trống để chọn giờ.</p>
+{% endif %}

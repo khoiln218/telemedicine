@@ -1,10 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Đăng nhập{% endblock %}
+{% block main_class %}dang-nhap{% endblock %}
 {% block content %}
-<h1>Đăng nhập</h1>
-<form method="post" class="card">
-  <label>Tên đăng nhập <input name="ten_dang_nhap" required autofocus></label>
-  <label>Mật khẩu <input name="mat_khau" type="password" required></label>
+<form method="post" class="card mau">
+  <div>
+    <h1>Đăng nhập</h1>
+    <p class="ghi-chu">Cổng thông tin phòng khám &amp; y tế từ xa</p>
+  </div>
+  <label>Tên đăng nhập <input name="ten_dang_nhap" autocomplete="username" required autofocus></label>
+  <label>Mật khẩu <input name="mat_khau" type="password" autocomplete="current-password" required></label>
   <button>Đăng nhập</button>
 </form>
 {% endblock %}

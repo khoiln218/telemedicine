@@ -2,10 +2,11 @@
 {% block title %}Đổi mật khẩu{% endblock %}
 {% block content %}
 <h1>Đổi mật khẩu</h1>
-<form method="post" class="card">
-  <label>Mật khẩu hiện tại <input type="password" name="cu" required></label>
-  <label>Mật khẩu mới <input type="password" name="moi" minlength="8" required></label>
-  <label>Nhập lại mật khẩu mới <input type="password" name="nhap_lai" minlength="8" required></label>
-  <button>Đổi mật khẩu</button>
+<form method="post" class="card mau hep">
+  <label>Mật khẩu hiện tại <input type="password" name="cu" autocomplete="current-password" required></label>
+  <label>Mật khẩu mới <input type="password" name="moi" minlength="8" autocomplete="new-password" required></label>
+  <label>Nhập lại mật khẩu mới <input type="password" name="nhap_lai" minlength="8" autocomplete="new-password" required></label>
+  <p class="ghi-chu">Tối thiểu 8 ký tự.</p>
+  <div><button>Đổi mật khẩu</button></div>
 </form>
 {% endblock %}

@@ -1,23 +1,28 @@
 {% extends "base.html" %}
 {% block title %}Bệnh nhân{% endblock %}
 {% block content %}
-<h1>Bệnh nhân</h1>
-<form method="get" class="inline">
-  <input name="q" value="{{ q }}" placeholder="Họ tên hoặc SĐT"> <button>Tìm</button>
-  {% if user.vai_tro == 'LE_TAN' %}<a href="{{ url_for('benh_nhan.them') }}">+ Thêm bệnh nhân</a>{% endif %}
-</form>
-<table>
-  <tr><th>Mã</th><th>Họ tên</th><th>Ngày sinh</th><th>Giới tính</th><th>SĐT</th><th>Email</th></tr>
-  {% for r in rows %}
-  <tr>
-    <td>{{ r.ma_bn }}</td>
-    <td><a href="{{ url_for('benh_nhan.chi_tiet', ma_bn=r.ma_bn) }}">{{ r.ho_ten }}</a></td>
-    <td>{{ r.ngay_sinh.strftime('%d/%m/%Y') }}</td><td>{{ 'Nam' if r.gioi_tinh == 'NAM' else 'Nữ' }}</td>
-    <td>{{ r.sdt }}</td><td>{{ r.email or '' }}</td>
-  </tr>
-  {% else %}
-  <tr><td colspan="6">Không tìm thấy bệnh nhân.</td></tr>
-  {% endfor %}
-</table>
-{% if rows|length == 100 %}<p>Hiện 100 bệnh nhân mới nhất; nhập họ tên hoặc SĐT để tìm.</p>{% endif %}
+<div class="tieu-de">
+  <div><h1>Bệnh nhân</h1></div>
+  <form method="get" class="hang">
+    <label>Tìm <input name="q" value="{{ q }}" placeholder="Họ tên hoặc SĐT" style="min-width: 260px"></label>
+    <button class="phu-btn">Tìm</button>
+    {% if user.vai_tro == 'LE_TAN' %}<a class="btn" href="{{ url_for('benh_nhan.them') }}">+ Thêm bệnh nhân</a>{% endif %}
+  </form>
+</div>
+<div class="card bang">
+  <table style="min-width: 720px">
+    <tr><th>Mã</th><th>Họ tên</th><th>Ngày sinh</th><th>Giới tính</th><th>SĐT</th><th>Email</th></tr>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.ma_bn }}</td>
+      <td><a href="{{ url_for('benh_nhan.chi_tiet', ma_bn=r.ma_bn) }}">{{ r.ho_ten }}</a></td>
+      <td>{{ r.ngay_sinh.strftime('%d/%m/%Y') }}</td><td>{{ 'Nam' if r.gioi_tinh == 'NAM' else 'Nữ' }}</td>
+      <td>{{ r.sdt }}</td><td>{{ r.email or '' }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="6" class="trong">Không tìm thấy bệnh nhân.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% if rows|length == 100 %}<p class="ghi-chu">Hiện 100 bệnh nhân mới nhất; nhập họ tên hoặc SĐT để tìm.</p>{% endif %}
 {% endblock %}

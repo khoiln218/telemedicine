@@ -1,6 +1,25 @@
 {% extends "base.html" %}
+{% block title %}Trang chủ{% endblock %}
 {% block content %}
-<h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
-<p>Vai trò: <b>{{ ten_vai_tro }}</b>. Truy vấn chạy dưới role PostgreSQL <code>{{ role_db }}</code>.</p>
-<p>Các màn hình nghiệp vụ mảng A, B, C sẽ bổ sung ở T48–T50.</p>
+<div class="tieu-de">
+  <div>
+    <h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
+    <p class="ghi-chu">Vai trò {{ ten_vai_tro }} · truy vấn chạy dưới role PostgreSQL <code>{{ role_db }}</code></p>
+  </div>
+</div>
+<div class="loi-tat">
+  {% if user.vai_tro == 'LE_TAN' %}
+  <a href="{{ url_for('lich_hen.danh_sach') }}"><b>Lịch hẹn hôm nay</b><span>Xem, sửa, đổi trạng thái</span></a>
+  <a href="{{ url_for('lich_hen.dat') }}"><b>Đặt lịch hẹn</b><span>Theo SĐT bệnh nhân</span></a>
+  <a href="{{ url_for('benh_nhan.danh_sach') }}"><b>Bệnh nhân</b><span>Tìm, thêm, cấp tài khoản</span></a>
+  {% elif user.vai_tro == 'BAC_SI' %}
+  <a href="{{ url_for('lich_hen.danh_sach') }}"><b>Lịch hẹn của tôi</b><span>Hôm nay</span></a>
+  <a href="{{ url_for('benh_nhan.danh_sach') }}"><b>Bệnh nhân</b><span>Xem hồ sơ, lập giấy chuyển</span></a>
+  {% elif user.vai_tro == 'BENH_NHAN' %}
+  <a href="{{ url_for('lich_hen.danh_sach') }}"><b>Lịch hẹn của tôi</b><span>Sắp tới và đã khám</span></a>
+  {% elif user.vai_tro == 'QUAN_TRI_TAI_KHOAN' %}
+  <a href="{{ url_for('tai_khoan.danh_sach') }}"><b>Tài khoản</b><span>Cấp, khóa, mở khóa</span></a>
+  {% endif %}
+  <a href="{{ url_for('tai_khoan.doi_mat_khau') }}"><b>Đổi mật khẩu</b><span>Của tài khoản đang dùng</span></a>
+</div>
 {% endblock %}

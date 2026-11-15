@@ -1,2 +1,9 @@
 {% extends "base.html" %}
-{% block content %}<h1>Lỗi {{ ma }}</h1><p>{{ noi_dung }}</p>{% endblock %}
+{% block title %}Lỗi {{ ma }}{% endblock %}
+{% block content %}
+<div class="card mau hep">
+  <h1>Lỗi {{ ma }}</h1>
+  <p>{{ noi_dung }}</p>
+  <div><a class="btn phu-btn" href="{{ url_for('home') }}">Về trang chủ</a></div>
+</div>
+{% endblock %}

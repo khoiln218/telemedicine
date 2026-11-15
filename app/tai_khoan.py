@@ -22,7 +22,7 @@ def doi_mat_khau():
             try:
                 with db.phien_lam_viec(user) as conn:   # hàm chỉ đổi tài khoản theo app.ma_bn / app.ma_nv
                     conn.execute("SELECT doi_mat_khau(%s)", (auth.bam_mat_khau(f["moi"]),))
-                flash("Đã đổi mật khẩu.")
+                flash("Đã đổi mật khẩu.", "ok")
                 return redirect(url_for("home"))
             except psycopg.Error as e:
                 flash("Không đổi được mật khẩu: " + db.loi_csdl(e))
@@ -59,7 +59,7 @@ def them():
                 "INSERT INTO tai_khoan (ten_dang_nhap, mat_khau_hash, vai_tro, ma_nv)"
                 " SELECT %s, %s, loai_nv, ma_nv FROM nhan_vien WHERE ma_nv = %s",
                 (ten, auth.bam_mat_khau(mk), request.form["ma_nv"]))
-        flash(f"Đã tạo tài khoản {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần).")
+        flash(f"Đã tạo tài khoản {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần).", "ok")
     except psycopg.Error as e:
         flash("Không tạo được tài khoản: " + db.loi_csdl(e))
     return redirect(url_for("tai_khoan.danh_sach"))
@@ -75,7 +75,7 @@ def doi_trang_thai(ten):
             with db.phien_lam_viec(session["user"]) as conn:
                 conn.execute("UPDATE tai_khoan SET trang_thai = CASE trang_thai WHEN 'KHOA' THEN 'HOAT_DONG'"
                              " ELSE 'KHOA' END WHERE ten_dang_nhap = %s", (ten,))
-            flash(f"Đã đổi trạng thái tài khoản {ten}.")
+            flash(f"Đã đổi trạng thái tài khoản {ten}.", "ok")
         except psycopg.Error as e:
             flash("Không đổi được trạng thái: " + db.loi_csdl(e))
     return redirect(request.referrer or url_for("tai_khoan.danh_sach"))

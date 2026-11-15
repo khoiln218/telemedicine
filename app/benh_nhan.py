@@ -1,10 +1,11 @@
 from datetime import date, timedelta
 
 import psycopg
-from flask import Blueprint, abort, flash, redirect, render_template, request, session, url_for
+from flask import Blueprint, abort, flash, jsonify, redirect, render_template, request, session, url_for
 
 import auth
 import db
+from lich_hen import TRANG_THAI
 
 bp = Blueprint("benh_nhan", __name__, url_prefix="/benh-nhan")
 
@@ -13,6 +14,20 @@ COT = ("ho_ten", "ngay_sinh", "gioi_tinh", "sdt", "email")
 
 def _gia_tri(f):
     return [f[c].strip() or None for c in COT]
+
+
+@bp.route("/goi-y")
+@auth.can_vai_tro("LE_TAN", "BAC_SI")
+def goi_y():
+    """Gợi ý cho ô SĐT khi đặt lịch: tối đa 10 bệnh nhân có SĐT bắt đầu bằng q hoặc họ tên chứa q."""
+    q = request.args.get("q", "").strip()
+    if len(q) < 2:
+        return jsonify([])
+    with db.phien_lam_viec(session["user"]) as conn:
+        rows = conn.execute(
+            "SELECT ho_ten, sdt, ngay_sinh FROM benh_nhan WHERE sdt LIKE %(q)s || '%%' OR ho_ten ILIKE '%%' || %(q)s || '%%'"
+            " ORDER BY sdt NOT LIKE %(q)s || '%%', ho_ten LIMIT 10", {"q": q}).fetchall()
+    return jsonify([{"sdt": r["sdt"], "nhan": f"{r['ho_ten']} · {r['ngay_sinh'].year}"} for r in rows])
 
 
 @bp.route("/")
@@ -36,7 +51,7 @@ def them():
                 ma_bn = conn.execute(
                     "INSERT INTO benh_nhan (ho_ten, ngay_sinh, gioi_tinh, sdt, email) VALUES (%s, %s, %s, %s, %s)"
                     " RETURNING ma_bn", _gia_tri(f)).fetchone()["ma_bn"]
-            flash(f"Đã thêm bệnh nhân {f['ho_ten']}.")
+            flash(f"Đã thêm bệnh nhân {f['ho_ten']}.", "ok")
             return redirect(url_for("benh_nhan.chi_tiet", ma_bn=ma_bn))
         except psycopg.Error as e:
             flash("Không thêm được bệnh nhân: " + db.loi_csdl(e))
@@ -56,7 +71,7 @@ def sua(ma_bn):
             with db.phien_lam_viec(session["user"]) as conn:
                 conn.execute("UPDATE benh_nhan SET ho_ten = %s, ngay_sinh = %s, gioi_tinh = %s, sdt = %s, email = %s"
                              " WHERE ma_bn = %s", [*_gia_tri(f), ma_bn])
-            flash("Đã cập nhật thông tin bệnh nhân.")
+            flash("Đã cập nhật thông tin bệnh nhân.", "ok")
             return redirect(url_for("benh_nhan.chi_tiet", ma_bn=ma_bn))
         except psycopg.Error as e:
             flash("Không cập nhật được: " + db.loi_csdl(e))
@@ -87,7 +102,7 @@ def chi_tiet(ma_bn):
             "SELECT 1 FROM bac_si_da_khoa WHERE ma_bac_si = %s", (user["ma_nv"],)).fetchone() is not None
         chuyen_khoa = conn.execute("SELECT * FROM chuyen_khoa ORDER BY ten_chuyen_khoa").fetchall() if da_khoa else []
     return render_template("benh_nhan_ct.html", bn=bn, giay=giay, lich=lich, da_khoa=da_khoa,
-                           chuyen_khoa=chuyen_khoa, hom_nay=date.today())
+                           chuyen_khoa=chuyen_khoa, hom_nay=date.today(), TRANG_THAI=TRANG_THAI)
 
 
 @bp.post("/<int:ma_bn>/giay-chuyen")
@@ -101,7 +116,7 @@ def lap_giay(ma_bn):
                 " VALUES (%s, %s, %s, %s, %s) RETURNING ma_giay",
                 (f["ly_do"].strip(), date.today() + timedelta(days=int(f["so_ngay"])), ma_bn,
                  session["user"]["ma_nv"], f["ma_chuyen_khoa"])).fetchone()["ma_giay"]
-        flash(f"Đã lập giấy chuyển khoa mã {ma}.")
+        flash(f"Đã lập giấy chuyển khoa mã {ma}.", "ok")
     except psycopg.Error as e:
         flash("Không lập được giấy chuyển: " + db.loi_csdl(e))
     return redirect(url_for("benh_nhan.chi_tiet", ma_bn=ma_bn))
@@ -114,7 +129,7 @@ def tao_tai_khoan(ma_bn):
     try:
         with db.phien_lam_viec(session["user"]) as conn:   # lễ tân chỉ gọi hàm, không ghi thẳng tai_khoan (BR-B10)
             conn.execute("SELECT tao_tai_khoan_benh_nhan(%s, %s, %s)", (ten, auth.bam_mat_khau(mk), ma_bn))
-        flash(f"Đã tạo tài khoản {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần, đưa cho bệnh nhân).")
+        flash(f"Đã tạo tài khoản {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần, đưa cho bệnh nhân).", "ok")
     except psycopg.Error as e:
         flash("Không tạo được tài khoản: " + db.loi_csdl(e))
     return redirect(url_for("benh_nhan.chi_tiet", ma_bn=ma_bn))
@@ -127,7 +142,7 @@ def dat_lai_mat_khau(ma_bn):
     try:
         with db.phien_lam_viec(session["user"]) as conn:
             conn.execute("SELECT dat_lai_mat_khau_benh_nhan(%s, %s)", (ten, auth.bam_mat_khau(mk)))
-        flash(f"Đã đặt lại mật khẩu {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần).")
+        flash(f"Đã đặt lại mật khẩu {ten}, mật khẩu tạm: {mk} (chỉ hiện một lần).", "ok")
     except psycopg.Error as e:
         flash("Không đặt lại được mật khẩu: " + db.loi_csdl(e))
     return redirect(url_for("benh_nhan.chi_tiet", ma_bn=ma_bn))
