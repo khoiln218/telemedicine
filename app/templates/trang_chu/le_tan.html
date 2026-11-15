@@ -1,0 +1,76 @@
+{# Dashboard lễ tân – thiết kế docs/8_giao-dien/trang-chu/le-tan.html; dữ liệu trang_chu.le_tan #}
+<div class="tieu-de">
+  <div>
+    <h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
+    <p class="ghi-chu">{{ thu }}, {{ ngay.strftime('%d/%m/%Y') }}{% if d.hom_nay %} · {{ d.bay_gio.strftime('%H:%M') }}{% endif %}</p>
+  </div>
+  <div class="nut">
+    <a class="btn" href="{{ url_for('lich_hen.dat') }}">+ Đặt lịch hẹn</a>
+    <a class="btn phu-btn" href="{{ url_for('benh_nhan.them') }}">+ Thêm bệnh nhân</a>
+  </div>
+</div>
+
+<div class="kpi">
+  <a class="tile" href="{{ url_for('lich_hen.danh_sach', ngay=ngay.isoformat()) }}">
+    <span class="nhan">Lịch hẹn {{ 'hôm nay' if d.hom_nay else 'trong ngày' }}</span><span class="so">{{ d.so.tong }}</span>
+    <span class="them">{{ d.so.so_bac_si }} bác sĩ · {{ d.so.tu_xa }} từ xa</span></a>
+  <div class="tile{{ ' can-lam' if d.so.cho_xac_nhan }}">
+    <span class="nhan">Chờ xác nhận</span><span class="so">{{ d.so.cho_xac_nhan }}</span>
+    <span class="them">Đã đặt, cần gọi bệnh nhân xác nhận</span></div>
+  <div class="tile">
+    <span class="nhan">Ô còn trống</span>
+    <span class="so">{{ [d.tong_o - d.so.tong, 0]|max }} <small>/ {{ d.tong_o }}</small></span>
+    <span class="them">{% if d.tong_o %}Đã lấp {{ (100 * d.so.tong / d.tong_o)|round|int }}% ô 30 phút trong ca{% else %}Không có ca làm việc{% endif %}</span></div>
+  <div class="tile">
+    <span class="nhan">Còn lại{% if d.hom_nay %} từ {{ d.bay_gio.strftime('%H:%M') }}{% endif %}</span><span class="so">{{ d.so.con_lai }}</span>
+    <span class="them">lịch hẹn chưa đến giờ</span></div>
+</div>
+
+<div class="hai-cot">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Sắp tới</h2><a href="{{ url_for('lich_hen.danh_sach', ngay=ngay.isoformat()) }}">Xem cả ngày ›</a></div>
+    {% if d.sap_toi %}
+    <div class="card bang">
+      <table style="min-width: 640px">
+        <tr><th>Giờ</th><th>Bệnh nhân</th><th>Bác sĩ</th><th>Hình thức</th><th>Trạng thái</th><th></th></tr>
+        {% for r in d.sap_toi %}
+        <tr>
+          <td><b>{{ r.thoi_gian_bd.strftime('%H:%M') }}</b></td>
+          <td><a href="{{ url_for('benh_nhan.chi_tiet', ma_bn=r.ma_bn) }}">{{ r.ten_bn }}</a><div class="phu">{{ r.sdt }}</div></td>
+          <td>{{ r.ten_bac_si }}</td>
+          <td>{% if r.hinh_thuc == 'TU_XA' %}<span class="bd bd-TU_XA">Từ xa</span>{% else %}Trực tiếp{% endif %}<div class="phu">{{ r.noi_kham or '' }}</div></td>
+          <td><span class="bd bd-{{ r.trang_thai }}">{{ 'Đã đặt' if r.trang_thai == 'DA_DAT' else 'Đã xác nhận' }}</span></td>
+          <td>{% if r.trang_thai == 'DA_DAT' %}
+            <form method="post" action="{{ url_for('lich_hen.doi_trang_thai', ma_lh=r.ma_lh) }}">
+              <input type="hidden" name="trang_thai" value="DA_XAC_NHAN"><button class="phu-btn nho">Xác nhận</button>
+            </form>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <p class="ghi-chu">Năm lịch gần nhất chưa đến giờ; Xác nhận chuyển Đã đặt sang Đã xác nhận (BR-B05).</p>
+    {% else %}
+    <div class="trong-rong">Không còn lịch hẹn nào chưa đến giờ trong ngày.</div>
+    {% endif %}
+  </section>
+
+  <section class="khoi hep">
+    <div class="khoi-dau"><h2>Bác sĩ còn nhiều ô trống</h2><span class="phu">đã đặt / ô trong ca</span></div>
+    {% if d.con_trong %}
+    <div class="card">
+      <div class="meter">
+        {% for b in d.con_trong %}
+        <div class="ten"><a href="{{ url_for('lich_hen.dat', ma_bac_si=b.ma_nv, ngay=ngay.isoformat()) }}">{{ b.ho_ten }}</a>
+          <span>{{ b.chuyen_khoa }} · trống {{ b.o - b.da_dat }}</span></div>
+        <div class="gt">{{ b.da_dat }}/{{ b.o }}</div>
+        <div class="ray" role="img" aria-label="{{ b.ho_ten }}: đã đặt {{ b.da_dat }} trên {{ b.o }} ô">
+          <i style="width: {{ (100 * b.da_dat / b.o)|round|int }}%"></i></div>
+        {% endfor %}
+      </div>
+    </div>
+    <p class="ghi-chu">Bấm tên bác sĩ để đặt lịch với bác sĩ đó trong ngày.</p>
+    {% else %}
+    <div class="trong-rong">{{ 'Không bác sĩ nào có ca làm việc trong ngày.' if not d.tong_o else 'Các ca trong ngày đã kín lịch.' }}</div>
+    {% endif %}
+  </section>
+</div>

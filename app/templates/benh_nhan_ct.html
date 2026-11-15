@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ bn.ho_ten }}{% endblock %}
+{% block content %}
+<div class="tieu-de">
+  <div>
+    <a href="{{ url_for('benh_nhan.danh_sach') }}">‹ Bệnh nhân</a>
+    <h1>{{ bn.ho_ten }} <small>mã {{ bn.ma_bn }}</small></h1>
+    <p>Sinh {{ bn.ngay_sinh.strftime('%d/%m/%Y') }} · {{ 'Nam' if bn.gioi_tinh == 'NAM' else 'Nữ' }}
+       · SĐT {{ bn.sdt }}{% if bn.email %} · {{ bn.email }}{% endif %}</p>
+  </div>
+  {% if user.vai_tro == 'LE_TAN' %}
+  <div class="nut">
+    <a class="btn phu-btn" href="{{ url_for('benh_nhan.sua', ma_bn=bn.ma_bn) }}">Sửa thông tin</a>
+    <a class="btn" href="{{ url_for('lich_hen.dat', sdt=bn.sdt) }}">Đặt lịch hẹn</a>
+  </div>
+  {% endif %}
+</div>
+
+<div class="hai-cot">
+  <div class="rong mau" style="display: flex; flex-direction: column; gap: 20px">
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2>Lịch hẹn gần đây</h2>
+      <div class="card bang">
+        <table style="min-width: 560px">
+          <tr><th>Mã</th><th>Giờ</th><th>Bác sĩ</th><th>Hình thức</th><th>Trạng thái</th></tr>
+          {% for l in lich %}
+          <tr>
+            <td>{{ l.ma_lh }}</td>
+            <td>{{ l.thoi_gian_bd.strftime('%d/%m/%Y %H:%M') }}–{{ l.thoi_gian_kt.strftime('%H:%M') }}</td>
+            <td>{{ l.ten_bac_si }}</td>
+            <td>{% if l.hinh_thuc == 'TU_XA' %}<span class="bd bd-TU_XA">Từ xa</span>{% else %}Trực tiếp{% endif %}</td>
+            <td><span class="bd bd-{{ l.trang_thai }}">{{ TRANG_THAI[l.trang_thai] }}</span></td>
+          </tr>
+          {% else %}
+          <tr><td colspan="5" class="trong">Chưa có lịch hẹn.</td></tr>
+          {% endfor %}
+        </table>
+      </div>
+    </section>
+
+    <section style="display: flex; flex-direction: column; gap: 12px">
+      <h2>Giấy chuyển chuyên khoa</h2>
+      {% if da_khoa %}
+      <form method="post" action="{{ url_for('benh_nhan.lap_giay', ma_bn=bn.ma_bn) }}" class="card luoi" style="padding: 18px">
+        <label>Chuyên khoa
+          <select name="ma_chuyen_khoa">{% for c in chuyen_khoa %}<option value="{{ c.ma_chuyen_khoa }}">{{ c.ten_chuyen_khoa }}</option>{% endfor %}</select>
+        </label>
+        <label>Lý do chuyển <input name="ly_do" required></label>
+        <label>Hiệu lực (ngày) <input type="number" name="so_ngay" min="1" max="30" value="30" required></label>
+        <button>Lập giấy</button>
+      </form>
+      {% endif %}
+      <div class="card bang">
+        <table style="min-width: 720px">
+          <tr><th>Mã</th><th>Chuyên khoa</th><th>Lý do</th><th>Lập</th><th>Hết hạn</th><th>Bác sĩ lập</th><th>Tình trạng</th></tr>
+          {% for g in giay %}
+          <tr>
+            <td>{{ g.ma_giay }}</td><td>{{ g.ten_chuyen_khoa }}</td><td>{{ g.ly_do }}</td>
+            <td>{{ g.ngay_lap.strftime('%d/%m/%Y') }}</td><td>{{ g.ngay_het_han.strftime('%d/%m/%Y') }}</td>
+            <td>{{ g.bac_si_lap }}</td>
+            <td>{% if g.da_dung %}<span class="bd bd-da-dung">Đã dùng · lịch {{ g.da_dung }}</span>
+                {% elif g.ngay_het_han < hom_nay %}<span class="bd bd-het-han">Hết hạn</span>
+                {% else %}<span class="bd bd-con-han">Còn hiệu lực</span>{% endif %}</td>
+          </tr>
+          {% else %}
+          <tr><td colspan="7" class="trong">Chưa có giấy chuyển.</td></tr>
+          {% endfor %}
+        </table>
+      </div>
+    </section>
+  </div>
+
+  {% if user.vai_tro == 'LE_TAN' %}
+  <aside class="card hep mau" style="padding: 20px; gap: 16px">
+    <h2>Tài khoản bệnh nhân</h2>
+    <form method="post" action="{{ url_for('benh_nhan.tao_tai_khoan', ma_bn=bn.ma_bn) }}" class="mau" style="gap: 10px">
+      <label>Tạo tài khoản <input name="ten_dang_nhap" value="bn{{ '%04d' % bn.ma_bn }}" required></label>
+      <button class="phu-btn">Tạo tài khoản</button>
+    </form>
+    <form method="post" action="{{ url_for('benh_nhan.dat_lai_mat_khau', ma_bn=bn.ma_bn) }}" class="mau" style="gap: 10px">
+      <label>Đặt lại mật khẩu <input name="ten_dang_nhap" placeholder="Tên đăng nhập" required></label>
+      <button class="phu-btn">Đặt lại</button>
+    </form>
+    <p class="ghi-chu">Mật khẩu tạm chỉ hiện một lần ở thông báo xanh phía trên.</p>
+  </aside>
+  {% endif %}
+</div>
+{% endblock %}

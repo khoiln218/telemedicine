@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ bệnh nhân · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="benh-nhan.html" class="on" aria-current="page">Trang chủ</a><a href="../chung/cong-benh-nhan.html">Lịch hẹn &amp; hồ sơ của tôi</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>bn0001 · Bệnh nhân</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<h1>Xin chào, Trần Minh Anh</h1>
+<section class="card" style="display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; background: #F7FAFE; border-color: #B9D2EC">
+  <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 6px">
+    <span style="font-size: 13px; font-weight: 600; color: #084A85; text-transform: uppercase; letter-spacing: .05em">Lịch hẹn sắp tới</span>
+    <b style="font-size: 20px">Thứ Năm 19/11/2026 · 15:30–16:00</b>
+    <span>BS. Trần Thị Bình · Đa khoa · Sốt, ho</span>
+    <span><span class="bd bd-DA_DAT">Trực tiếp · P102</span> <span class="bd bd-DA_DAT">Đã đặt</span></span>
+  </div>
+  <p class="ghi-chu" style="flex: 1 1 220px">Lịch từ xa có nút “Vào phiên khám”. Muốn đổi, hủy lịch: gọi lễ tân.</p>
+</section>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Lần khám gần đây</h2><a href="../chung/cong-benh-nhan.html">Xem lịch hẹn &amp; hồ sơ ›</a></div>
+    <div class="card bang">
+      <table style="min-width: 520px">
+        <tr><th>Ngày</th><th>Chẩn đoán</th><th>Bác sĩ</th></tr>
+        <tr><td>06/11/2026</td><td><b>K21.9</b> Trào ngược dạ dày – thực quản không viêm thực quản</td><td>Võ Minh Đạt</td></tr>
+        <tr><td>14/10/2026</td><td><b>R51</b> Đau đầu</td><td>Phạm Thị Dung</td></tr>
+        <tr><td>02/10/2026</td><td><b>J06.9</b> Nhiễm khuẩn hô hấp trên cấp, không đặc hiệu</td><td>Phan Ngọc Hân</td></tr>
+      </table>
+    </div>
+    <p class="ghi-chu">5 lần khám từ 27/08/2026. Chỉ hiện chẩn đoán, đơn còn hiệu lực.</p>
+  </section>
+  <section class="khoi hep">
+    <h2>Đơn thuốc gần nhất · 06/11/2026</h2>
+    <div class="card" style="display: flex; flex-direction: column; gap: 4px">
+      <b>Omeprazol × 14</b><span class="phu" style="font-size: 13px">1 viên trước ăn sáng 30 phút</span>
+    </div>
+    <h2>Dị ứng</h2>
+    <div class="trong-rong">Chưa ghi nhận dị ứng. Bác sĩ ghi nhận khi khám; thuốc chứa hoạt chất dị ứng sẽ bị chặn khi kê (BR-C01).</div>
+  </section>
+</div>
+<p class="nguon">Nguồn: <code>v_lich_hen_cua_toi</code>, <code>v_ho_so_cua_toi</code>, <code>v_di_ung_cua_toi</code> – <code>r_benh_nhan</code> chỉ đọc view lọc theo <code>app.ma_bn</code>.</p>
+
+</main>
+</body>
+</html>

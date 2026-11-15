@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ quản trị nhân sự · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="quan-tri-nhan-su.html" class="on" aria-current="page">Trang chủ</a><a href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ &amp; lịch làm việc</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>qt25 · Quản trị nhân sự</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<div class="tieu-de">
+  <div><h1>Xin chào, qt25</h1><p class="ghi-chu">Thứ Hai, 16/11/2026</p></div>
+  <div class="nut"><a class="btn" href="../mang-A/bac-si-lich-lam-viec.html">+ Thêm ca</a><a class="btn phu-btn" href="../mang-A/bac-si-lich-lam-viec.html">+ Thêm nhân viên</a></div>
+</div>
+<div class="kpi">
+  <div class="tile"><span class="nhan">Nhân viên</span><span class="so">27</span><span class="them">20 bác sĩ · 4 lễ tân · 3 quản trị</span></div>
+  <div class="tile"><span class="nhan">Ca tuần này</span><span class="so">180</span><span class="them">16–22/11 · 19 bác sĩ có ca</span></div>
+  <div class="tile can-lam"><span class="nhan">Chưa có ca tuần tới</span><span class="so">1</span><span class="them">bác sĩ, tuần 23–29/11</span></div>
+  <div class="tile"><span class="nhan">Chứng chỉ hết hạn trong 90 ngày</span><span class="so">0</span><span class="them">BR-A03</span></div>
+</div>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Bác sĩ theo chuyên khoa</h2><span class="phu">20 bác sĩ</span></div>
+    <div class="card">
+      <div class="meter"><div class="ten">Đa khoa</div><div class="gt">8</div><div class="ray" role="img" aria-label="Đa khoa: 8"><i style="width: 100%"></i></div><div class="ten">Da liễu</div><div class="gt">2</div><div class="ray" role="img" aria-label="Da liễu: 2"><i style="width: 25%"></i></div><div class="ten">Nhi khoa</div><div class="gt">2</div><div class="ray" role="img" aria-label="Nhi khoa: 2"><i style="width: 25%"></i></div><div class="ten">Nội tiết</div><div class="gt">2</div><div class="ray" role="img" aria-label="Nội tiết: 2"><i style="width: 25%"></i></div><div class="ten">Tai mũi họng</div><div class="gt">2</div><div class="ray" role="img" aria-label="Tai mũi họng: 2"><i style="width: 25%"></i></div><div class="ten">Tim mạch</div><div class="gt">2</div><div class="ray" role="img" aria-label="Tim mạch: 2"><i style="width: 25%"></i></div><div class="ten">Tiêu hóa</div><div class="gt">2</div><div class="ray" role="img" aria-label="Tiêu hóa: 2"><i style="width: 25%"></i></div></div>
+    </div>
+  </section>
+  <section class="khoi hep">
+    <h2>Cần xử lý</h2>
+    <div class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px">
+      <span><b>Tạ Ngọc Quyên</b><span class="phu" style="display: block">Bác sĩ mới · chưa có ca tuần 23–29/11</span></span>
+      <a class="btn phu-btn nho" href="../mang-A/bac-si-lich-lam-viec.html">Xếp ca</a>
+    </div>
+    <div class="trong-rong">Không có chứng chỉ hết hạn trong 90 ngày tới. Ca nằm sau ngày hết hạn chứng chỉ sẽ bị BR-A03 chặn.</div>
+  </section>
+</div>
+<p class="nguon">Nguồn: <code>nhan_vien</code>, <code>bac_si</code>, <code>bac_si_chuyen_khoa</code>, <code>ca_lam_viec</code> – <code>r_quan_tri_nhan_su</code> được thêm, sửa, không xóa (BR-A09).</p>
+
+</main>
+</body>
+</html>

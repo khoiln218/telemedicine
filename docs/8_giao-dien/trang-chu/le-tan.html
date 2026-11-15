@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ lễ tân · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="le-tan.html" class="on" aria-current="page">Trang chủ</a><a href="../mang-B/lich-hen.html">Lịch hẹn</a><a href="../mang-B/dat-lich.html">Đặt lịch</a><a href="../mang-C/benh-an.html">Bệnh nhân</a><a href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>lt21 · Lễ tân</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<div class="tieu-de">
+  <div><h1>Xin chào, lt21</h1><p class="ghi-chu">Thứ Hai, 16/11/2026 · 09:20</p></div>
+  <div class="nut"><a class="btn" href="../mang-B/dat-lich.html">+ Đặt lịch hẹn</a><a class="btn phu-btn" href="../index.html">+ Thêm bệnh nhân</a></div>
+</div>
+<div class="kpi">
+  <div class="tile"><span class="nhan">Lịch hẹn hôm nay</span><span class="so">167</span><span class="them">17 bác sĩ · 33 từ xa</span></div>
+  <div class="tile can-lam"><span class="nhan">Chờ xác nhận</span><span class="so">84</span><span class="them">Đã đặt, cần gọi bệnh nhân xác nhận</span></div>
+  <div class="tile"><span class="nhan">Ô còn trống hôm nay</span><span class="so">74 <small>/ 241</small></span><span class="them">Đã lấp 69% ô 30 phút trong ca</span></div>
+  <div class="tile"><span class="nhan">Còn lại từ 09:30</span><span class="so">120</span><span class="them">lịch hẹn chưa đến giờ</span></div>
+</div>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Sắp tới · 09:30</h2><a href="../mang-B/lich-hen.html">Xem cả ngày ›</a></div>
+    <div class="card bang">
+      <table style="min-width: 640px">
+        <tr><th>Giờ</th><th>Bệnh nhân</th><th>Bác sĩ</th><th>Hình thức</th><th>Trạng thái</th><th></th></tr>
+        <tr><td><b>09:30</b></td><td>Ngô Gia Nam<div class="phu">0912000285</div></td><td>Trần Thị Bình</td><td>Trực tiếp<div class="phu">P102</div></td><td><span class="bd bd-DA_DAT">Đã đặt</span></td><td><a class="btn phu-btn nho" href="../mang-B/lich-hen.html">Xác nhận</a></td></tr>
+        <tr><td><b>09:30</b></td><td>Phạm Văn Khang<div class="phu">0912000707</div></td><td>Phạm Thị Dung</td><td>Trực tiếp<div class="phu">P104</div></td><td><span class="bd bd-DA_DAT">Đã đặt</span></td><td><a class="btn phu-btn nho" href="../mang-B/lich-hen.html">Xác nhận</a></td></tr>
+        <tr><td><b>09:30</b></td><td>Ngô Gia Dũng<div class="phu">0912000509</div></td><td>Phan Ngọc Hân</td><td><span class="bd bd-TU_XA">Từ xa</span><div class="phu">Google Meet</div></td><td><span class="bd bd-DA_DAT">Đã đặt</span></td><td><a class="btn phu-btn nho" href="../mang-B/lich-hen.html">Xác nhận</a></td></tr>
+        <tr><td><b>09:30</b></td><td>Đỗ Minh Bảo<div class="phu">0912001611</div></td><td>Vũ Thanh Hương</td><td>Trực tiếp<div class="phu">P111</div></td><td><span class="bd bd-DA_DAT">Đã đặt</span></td><td><a class="btn phu-btn nho" href="../mang-B/lich-hen.html">Xác nhận</a></td></tr>
+        <tr><td><b>09:30</b></td><td>Huỳnh Gia Nam<div class="phu">0912002469</div></td><td>Trịnh Văn Long</td><td>Trực tiếp<div class="phu">P115</div></td><td><span class="bd bd-DA_DAT">Đã đặt</span></td><td><a class="btn phu-btn nho" href="../mang-B/lich-hen.html">Xác nhận</a></td></tr>
+      </table>
+    </div>
+    <p class="ghi-chu">Năm lịch gần nhất chưa đến giờ; nút Xác nhận chuyển Đã đặt sang Đã xác nhận (BR-B05).</p>
+  </section>
+  <section class="khoi hep">
+    <div class="khoi-dau"><h2>Bác sĩ còn nhiều ô trống</h2><span class="phu">đã đặt / ô trong ca</span></div>
+    <div class="card">
+      <div class="meter"><div class="ten"><a href="../mang-B/dat-lich.html">Trịnh Văn Long</a><span>Tai mũi họng · trống 7</span></div><div class="gt">8/15</div><div class="ray" role="img" aria-label="Trịnh Văn Long: 8/15"><i style="width: 53%"></i></div><div class="ten"><a href="../mang-B/dat-lich.html">Hồ Đức Nghĩa</a><span>Tiêu hóa · trống 6</span></div><div class="gt">9/15</div><div class="ray" role="img" aria-label="Hồ Đức Nghĩa: 9/15"><i style="width: 60%"></i></div><div class="ten"><a href="../mang-B/dat-lich.html">Phan Ngọc Hân</a><span>Đa khoa · trống 6</span></div><div class="gt">9/15</div><div class="ray" role="img" aria-label="Phan Ngọc Hân: 9/15"><i style="width: 60%"></i></div><div class="ten"><a href="../mang-B/dat-lich.html">Phạm Thị Dung</a><span>Đa khoa · trống 6</span></div><div class="gt">9/15</div><div class="ray" role="img" aria-label="Phạm Thị Dung: 9/15"><i style="width: 60%"></i></div><div class="ten"><a href="../mang-B/dat-lich.html">Lâm Quốc Phong</a><span>Nội tiết · trống 5</span></div><div class="gt">10/15</div><div class="ray" role="img" aria-label="Lâm Quốc Phong: 10/15"><i style="width: 67%"></i></div><div class="ten"><a href="../mang-B/dat-lich.html">Mai Thị Minh</a><span>Tai mũi họng · trống 5</span></div><div class="gt">10/15</div><div class="ray" role="img" aria-label="Mai Thị Minh: 10/15"><i style="width: 67%"></i></div></div>
+    </div>
+    <p class="ghi-chu">Gợi ý bác sĩ khi bệnh nhân muốn khám ngay trong ngày; bấm tên để mở trang đặt lịch với bác sĩ đó.</p>
+  </section>
+</div>
+<p class="nguon">Nguồn: <code>v_lich_hen_hom_nay</code>, <code>lich_hen</code>, <code>ca_lam_viec</code> – quyền SELECT của <code>r_le_tan</code>.</p>
+
+</main>
+</body>
+</html>

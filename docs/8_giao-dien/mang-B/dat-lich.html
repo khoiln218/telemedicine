@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đặt lịch hẹn · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#fff;background:#084A85}
+.btn.sec{background:#fff;color:#0B5EA8}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+.inp.bad{border-color:#B42318;background:#FFFBFA}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.seg{display:inline-flex;border:1px solid #C5CFDB;border-radius:8px;overflow:hidden}
+.seg button{min-height:42px;padding:0 18px;border:0;background:#fff;color:#3D4A5C;font:500 14px Inter,sans-serif;cursor:pointer}
+.seg .sel{background:#0B5EA8;color:#fff}
+.slot{display:flex;justify-content:space-between;gap:8px;padding:10px 12px;border-radius:8px;font-size:13px}
+.mut{color:#5B6675;font-size:12px}
+.slot.pick{width:100%;min-height:40px;align-items:center;border:1px solid transparent;background:#F2F6FB;color:#1B2430;font:400 13px Inter,sans-serif;cursor:pointer}
+.slot.pick:hover{border-color:#0B5EA8;background:#E3EEF9}
+.slot.pick.on{background:#0B5EA8;border-color:#0B5EA8;color:#fff}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav" href="lich-hen.html">Lịch hẹn</a>
+        <a class="nav on" href="dat-lich.html">Đặt lịch</a>
+        <a class="nav" href="../index.html">Bệnh nhân</a>
+        <a class="nav" href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>letan01 · Lễ tân</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; gap: 4px">
+      <a href="lich-hen.html" style="font-size: 14px">‹ Lịch hẹn</a>
+      <h1 style="margin: 0; font-size: 24px">Đặt lịch hẹn</h1>
+    </div>
+
+    <div style="background: #FEF3F2; border: 1px solid #F1B8B2; color: #7A1A12; border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 1.55">
+      <b>Không đặt được lịch:</b> BR-B02: bệnh nhân đã có lịch hẹn khác trùng giờ này.
+      <ul style="margin: 6px 0 0; padding-left: 20px; font-size: 13px">
+        <li>Đang trùng lịch 1050: 16/11 09:30–10:00, Đã đặt, bệnh nhân Trần Thị Bình, bác sĩ Nguyễn Văn An</li>
+      </ul>
+      <div style="margin-top: 6px; font-size: 13px">Giao dịch đã rollback, dữ liệu nhập được giữ lại để sửa.</div>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+      <form class="card" style="flex: 999 1 560px; min-width: 0; padding: 24px; display: flex; flex-direction: column; gap: 22px">
+        <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+          <legend style="font-size: 15px; font-weight: 600; padding: 0; margin-bottom: 12px">Bệnh nhân</legend>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: end">
+            <label class="lbl">SĐT bệnh nhân <input class="inp" value="0934556677" placeholder="Gõ SĐT hoặc họ tên để tìm"></label>
+            <div style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 8px; background: #F2F6FB; font-size: 14px"><b>Trần Thị Bình</b><span class="mut">mã 215 · nữ · 1988 · 0934556677</span></div>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #5B6675">Gõ từ 2 ký tự (đầu SĐT hoặc họ tên) để hiện gợi ý tối đa 10 bệnh nhân; chọn một gợi ý thì form tải lại theo bệnh nhân. Xóa hoặc sửa SĐT thì ẩn thông tin bệnh nhân cũ.</p>
+        </fieldset>
+
+        <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+          <legend style="font-size: 15px; font-weight: 600; padding: 0; margin-bottom: 12px">Bác sĩ và thời gian</legend>
+          <label class="lbl">Bác sĩ
+            <select class="inp"><option>— Chọn bác sĩ —</option><option selected>Phạm Minh Đức – Tim mạch</option><option>Nguyễn Văn An – Đa khoa</option></select>
+          </label>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; align-items: end">
+            <label class="lbl">Ngày khám <input class="inp" type="date" value="2026-11-16"></label>
+            <div class="lbl">Giờ khám
+              <div style="min-height: 44px; display: flex; align-items: center; gap: 8px; padding: 0 12px; border-radius: 8px; background: #FEF3F2; border: 1px solid #B42318; color: #7A1A12; font-size: 14px"><b>09:30–10:00</b><span style="font-size: 12px">16/11/2026</span></div>
+            </div>
+          </div>
+          <label class="lbl">Lý do khám <input class="inp" value="Tái khám tăng huyết áp"></label>
+        </fieldset>
+
+        <fieldset style="border: 0; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px">
+          <legend style="font-size: 15px; font-weight: 600; padding: 0; margin-bottom: 12px">Hình thức và phí</legend>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px">
+            <label class="lbl">Hình thức <select class="inp"><option selected>Trực tiếp</option><option>Từ xa</option></select></label>
+            <label class="lbl">Phòng khám <select class="inp"><option>— Chọn phòng —</option><option selected>P109</option></select></label>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px">
+            <label class="lbl">Phí khám <select class="inp"><option selected>250.000 đ · Chuyên khoa, trực tiếp</option></select></label>
+            <label class="lbl">Giấy chuyển chuyên khoa <select class="inp"><option>Không dùng giấy</option><option selected>Mã 87 · Tim mạch · hết hạn 30/11/2026</option></select></label>
+          </div>
+          <p style="margin: 0; font-size: 13px; color: #5B6675">Khám Tim mạch lần đầu: cần giấy đúng chuyên khoa (BR-B03).</p>
+          <p style="margin: 0; font-size: 13px; color: #5B6675">Chọn bác sĩ thì phí (theo bảng giá loại bác sĩ × hình thức) và phòng quen của bác sĩ được chọn sẵn. Giấy chuyển chỉ liệt kê giấy còn hạn, chưa dùng của bệnh nhân; bác sĩ đa khoa thì ô giấy bị khóa. Chọn Từ xa: ô Phòng đổi thành Nền tảng (Google Meet, Zoom) và Link phiên (tự tạo khi lưu).</p>
+        </fieldset>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <button class="btn" type="submit">Đặt lịch</button>
+          <a class="btn sec" href="lich-hen.html">Hủy bỏ</a>
+        </div>
+      </form>
+
+      <aside class="card" style="flex: 1 1 300px; padding: 20px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 15px">Phạm Minh Đức · 16/11/2026</h2>
+        <div class="mut" style="font-size: 13px">Ca 08:00–12:00</div>
+        <div style="display: flex; flex-direction: column; gap: 6px">
+          <div class="slot" style="background: #EEF2F7"><span>08:00–08:30</span><span>Lịch 1041 · Đã xác nhận</span></div>
+          <button type="button" class="slot pick"><span>08:30–09:00</span><b style="color: #17603A">Trống</b></button>
+          <div class="slot" style="background: #EEF2F7"><span>09:00–09:30</span><span>Lịch 1043 · Đã xác nhận</span></div>
+          <button type="button" class="slot pick on" aria-pressed="true"><span>09:30–10:00</span><b>Đang chọn</b></button>
+          <button type="button" class="slot pick"><span>10:00–10:30</span><b style="color: #17603A">Trống</b></button>
+          <div class="slot" style="background: #EEF2F7"><span>10:30–11:00</span><span>Lịch 1044 · Đã đặt</span></div>
+          <button type="button" class="slot pick"><span>11:00–11:30</span><b style="color: #17603A">Trống</b></button>
+          <button type="button" class="slot pick"><span>11:30–12:00</span><b style="color: #17603A">Trống</b></button>
+        </div>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5B6675">Bấm một ô Trống để chọn giờ khám (30 phút). Khung cập nhật tại chỗ khi đổi bác sĩ hoặc ngày; ô đã qua không chọn được. Lịch hủy, vắng mặt không chiếm giờ.</p>
+        <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5B6675">Khung chỉ hiện lịch của bác sĩ nên trùng giờ phía bác sĩ không chọn được; trùng phía bệnh nhân (lịch với bác sĩ khác) vẫn do EXCLUDE BR-B02 chặn như hộp đỏ phía trên.</p>
+      </aside>
+    </div>
+  </main>
+</div>
+</body>
+</html>

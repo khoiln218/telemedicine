@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cổng bệnh nhân · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #EDF1F5;vertical-align:top}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#fff;background:#084A85}
+.mut{color:#5B6675;font-size:12px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-weight:600}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav on" href="cong-benh-nhan.html">Lịch hẹn &amp; hồ sơ của tôi</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>bn0132 · Bệnh nhân</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 22px">
+    <h1 style="margin: 0; font-size: 24px">Xin chào, Lê Văn Cường</h1>
+
+    <section class="card" style="padding: 22px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; border-color: #B9D2EC; background: #F7FAFE">
+      <div style="flex: 1 1 360px; display: flex; flex-direction: column; gap: 6px">
+        <span style="font-size: 13px; font-weight: 600; color: #084A85; text-transform: uppercase; letter-spacing: .05em">Lịch hẹn sắp tới</span>
+        <b style="font-size: 20px">Thứ Hai 30/11/2026 · 14:00–14:20</b>
+        <span style="font-size: 14px; color: #3D4A5C">BS. Phạm Minh Đức · Tim mạch · tái khám huyết áp</span>
+        <span><span class="bd" style="background: #EAF0FB; color: #1F4E9C">Từ xa · Google Meet</span> <span class="bd" style="background: #E3EEF9; color: #084A85">Đã xác nhận</span></span>
+      </div>
+      <a class="btn" href="https://meet.google.com">Vào phiên khám</a>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+      <section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px">Lịch hẹn của tôi</h2>
+        <div class="card" style="overflow-x: auto">
+          <table class="tbl" style="min-width: 620px">
+            <thead><tr><th>Giờ</th><th>Bác sĩ</th><th>Hình thức</th><th>Phí</th><th>Trạng thái</th></tr></thead>
+            <tbody>
+              <tr><td>30/11/2026 14:00</td><td>Phạm Minh Đức<div class="mut">Tim mạch</div></td><td>Từ xa</td><td>150.000 đ</td><td><span class="bd" style="background: #E3EEF9; color: #084A85">Đã xác nhận</span></td></tr>
+              <tr><td>16/11/2026 09:00</td><td>Phạm Minh Đức<div class="mut">Tim mạch</div></td><td>Trực tiếp · P.204</td><td>200.000 đ</td><td><span class="bd" style="background: #E4F3EA; color: #17603A">Hoàn thành</span></td></tr>
+              <tr><td>04/09/2026 14:00</td><td>Nguyễn Văn An<div class="mut">Đa khoa</div></td><td>Trực tiếp · P.101</td><td>150.000 đ</td><td><span class="bd" style="background: #E4F3EA; color: #17603A">Hoàn thành</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Đặt, đổi lịch qua lễ tân (bệnh nhân chỉ có quyền đọc view v_lich_hen_cua_toi).</p>
+      </section>
+
+      <section style="flex: 1 1 320px; display: flex; flex-direction: column; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px">Hồ sơ của tôi</h2>
+        <div class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 14px; font-size: 14px">
+          <div style="padding: 10px 12px; background: #FFF7E0; border: 1px solid #E8C766; border-radius: 8px; color: #6B4600"><b>Dị ứng:</b> Amoxicillin, Ibuprofen</div>
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <b>Khám 16/11/2026</b>
+            <span><span class="mono">I10</span> Tăng huyết áp vô căn</span>
+            <span><span class="mono">J02.9</span> Viêm họng cấp</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #EDF1F5; padding-top: 12px">
+            <b>Đơn thuốc</b>
+            <div>Amlodipin 5 mg × 30<div class="mut">Uống 1 viên mỗi sáng</div></div>
+            <div>Paracetamol 500 mg × 10<div class="mut">Uống 1 viên khi sốt trên 38,5 °C, cách 6 giờ</div></div>
+          </div>
+          <span class="mut">Chỉ hiện chẩn đoán, đơn còn hiệu lực (view v_ho_so_cua_toi).</span>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

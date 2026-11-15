@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Tài khoản{% endblock %}
+{% block content %}
+<h1>Tài khoản</h1>
+<section class="card mau" style="padding: 20px; gap: 12px">
+  <h2>Cấp tài khoản nhân viên</h2>
+  {% if chua_co %}
+  <form method="post" action="{{ url_for('tai_khoan.them') }}" class="luoi">
+    <label>Nhân viên
+      <select name="ma_nv">{% for n in chua_co %}<option value="{{ n.ma_nv }}">{{ n.ho_ten }} – {{ VAI_TRO[n.loai_nv][1] }}</option>{% endfor %}</select>
+    </label>
+    <label>Tên đăng nhập <input name="ten_dang_nhap" required></label>
+    <button>Tạo tài khoản</button>
+  </form>
+  <p class="ghi-chu">Vai trò lấy theo loại nhân viên (BR-B09); mật khẩu tạm hiện một lần sau khi tạo.</p>
+  {% else %}
+  <p class="ghi-chu">Mọi nhân viên đã có tài khoản.</p>
+  {% endif %}
+</section>
+
+<div class="tieu-de">
+  <div><h2>Danh sách</h2></div>
+  <form method="get" class="hang">
+    <label>Vai trò
+      <select name="vai_tro">
+        <option value="">Nhân viên (mọi vai trò)</option>
+        {% for k, v in VAI_TRO.items() %}<option value="{{ k }}" {{ 'selected' if vai_tro == k }}>{{ v[1] }}</option>{% endfor %}
+      </select>
+    </label>
+    <label>Tên đăng nhập <input name="q" value="{{ q }}" placeholder="Bắt đầu bằng…"></label>
+    <button class="phu-btn">Lọc</button>
+  </form>
+</div>
+<div class="card bang">
+  <table style="min-width: 640px">
+    <tr><th>Tên đăng nhập</th><th>Vai trò</th><th>Chủ tài khoản</th><th>Trạng thái</th><th></th></tr>
+    {% for r in rows %}
+    <tr>
+      <td>{{ r.ten_dang_nhap }}</td><td>{{ VAI_TRO[r.vai_tro][1] }}</td>
+      <td>{{ r.ho_ten or ('Bệnh nhân mã %s' % r.ma_bn) }}</td>
+      <td><span class="bd bd-{{ r.trang_thai }}">{{ 'Hoạt động' if r.trang_thai == 'HOAT_DONG' else 'Khóa' }}</span></td>
+      <td>
+        <form method="post" action="{{ url_for('tai_khoan.doi_trang_thai', ten=r.ten_dang_nhap) }}">
+          {% if r.trang_thai == 'HOAT_DONG' %}<button class="nguy nho">Khóa</button>{% else %}<button class="phu-btn nho">Mở khóa</button>{% endif %}
+        </form>
+      </td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5" class="trong">Không có tài khoản.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

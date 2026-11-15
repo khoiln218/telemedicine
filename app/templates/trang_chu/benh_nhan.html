@@ -1,0 +1,49 @@
+{# Dashboard bệnh nhân (phần lịch hẹn, mảng B) – thiết kế docs/8_giao-dien/trang-chu/benh-nhan.html; dữ liệu trang_chu.benh_nhan.
+   Đơn thuốc gần nhất, dị ứng (v_ho_so_cua_toi, v_di_ung_cua_toi) do mảng C bổ sung ở T50. #}
+<h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
+
+{% set r = d.sap_toi[0] if d.sap_toi else none %}
+{% if r %}
+<section class="card sap-toi">
+  <div>
+    <span class="nhan-muc">Lịch hẹn sắp tới</span>
+    <b style="font-size: 20px">{{ thu_cua(r.thoi_gian_bd) }} {{ r.thoi_gian_bd.strftime('%d/%m/%Y · %H:%M') }}–{{ r.thoi_gian_kt.strftime('%H:%M') }}</b>
+    <span>{{ r.ten_bac_si }} · {{ r.chuyen_khoa }}{% if r.ly_do_kham %} · {{ r.ly_do_kham }}{% endif %}</span>
+    <span>
+      {% if r.hinh_thuc == 'TU_XA' %}<span class="bd bd-TU_XA">Từ xa · {{ r.noi_kham }}</span>
+      {% else %}<span class="bd bd-DA_DAT">Trực tiếp · {{ r.noi_kham }}</span>{% endif %}
+      <span class="bd bd-{{ r.trang_thai }}">{{ 'Đã đặt' if r.trang_thai == 'DA_DAT' else 'Đã xác nhận' }}</span>
+    </span>
+  </div>
+  {% if r.hinh_thuc == 'TU_XA' and r.link_phien %}<a class="btn" href="{{ r.link_phien }}" target="_blank" rel="noopener">Vào phiên khám</a>
+  {% else %}<p class="ghi-chu" style="flex: 1 1 220px">Muốn đổi, hủy lịch: gọi lễ tân.</p>{% endif %}
+</section>
+{% else %}
+<div class="trong-rong">Bạn chưa có lịch hẹn sắp tới. Liên hệ lễ tân để đặt lịch.</div>
+{% endif %}
+
+<div class="kpi">
+  <div class="tile"><span class="nhan">Lịch hẹn sắp tới</span><span class="so">{{ d.sap_toi|length }}</span><span class="them">đã đặt hoặc đã xác nhận</span></div>
+  <div class="tile"><span class="nhan">Đã khám</span><span class="so">{{ d.da_kham }}</span><span class="them">trên {{ d.tong }} lịch hẹn</span></div>
+</div>
+
+<section class="khoi">
+  <div class="khoi-dau"><h2>Lịch hẹn gần đây</h2><a href="{{ url_for('lich_hen.danh_sach') }}">Xem tất cả ›</a></div>
+  {% if d.da_qua %}
+  <div class="card bang">
+    <table style="min-width: 520px">
+      <tr><th>Ngày</th><th>Bác sĩ</th><th>Lý do khám</th><th>Trạng thái</th></tr>
+      {% for l in d.da_qua %}
+      <tr>
+        <td>{{ l.thoi_gian_bd.strftime('%d/%m/%Y %H:%M') }}</td>
+        <td>{{ l.ten_bac_si }}<div class="phu">{{ l.chuyen_khoa }}</div></td>
+        <td>{{ l.ly_do_kham or '' }}</td>
+        <td><span class="bd bd-{{ l.trang_thai }}">{{ TRANG_THAI[l.trang_thai] }}</span></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% else %}
+  <div class="trong-rong">Chưa có lịch hẹn nào đã qua.</div>
+  {% endif %}
+</section>

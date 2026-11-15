@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bệnh án · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:8px 10px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:8px 10px;border-bottom:1px solid #EDF1F5;vertical-align:top}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#fff;background:#084A85}
+.btn.sec{background:#fff;color:#0B5EA8}
+.btn.dg{background:#fff;color:#B42318;border-color:#E4A09A}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.mut{color:#5B6675;font-size:12px}
+.chip{display:inline-flex;gap:6px;align-items:center;padding:4px 10px;border-radius:6px;background:#F2F6FB;font-size:13px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-weight:600}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav" href="../mang-B/lich-hen.html">Lịch hẹn</a>
+        <a class="nav on" href="benh-an.html">Bệnh nhân</a>
+        <a class="nav" href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>bsduc · Bác sĩ</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-direction: column; gap: 6px">
+      <a href="../index.html" style="font-size: 14px">‹ Bệnh nhân</a>
+      <h1 style="margin: 0; font-size: 24px">Lê Văn Cường <span style="font-size: 15px; font-weight: 400; color: #5B6675">mã 132</span></h1>
+      <p style="margin: 0; font-size: 14px; color: #3D4A5C">Sinh 14/05/1981 · Nam · SĐT 0912 345 678</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start">
+      <aside style="flex: 1 1 300px; display: flex; flex-direction: column; gap: 16px">
+        <section class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 12px; border-color: #E8C766">
+          <h2 style="margin: 0; font-size: 16px">Dị ứng</h2>
+          <div style="display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+            <div style="display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; background: #FFF7E0; border-radius: 8px; color: #6B4600"><span><b>Amoxicillin</b><div style="font-size: 12px">02/03/2026 · nổi mẩn</div></span><button class="btn dg" style="min-height: 36px; padding: 0 10px; font-size: 12px">Gỡ</button></div>
+            <div style="display: flex; justify-content: space-between; gap: 8px; padding: 10px 12px; background: #FFF7E0; border-radius: 8px; color: #6B4600"><span><b>Ibuprofen</b><div style="font-size: 12px">11/08/2025</div></span><button class="btn dg" style="min-height: 36px; padding: 0 10px; font-size: 12px">Gỡ</button></div>
+          </div>
+          <label class="lbl">Hoạt chất <input class="inp" placeholder="Tìm hoạt chất"></label>
+          <label class="lbl">Ghi chú <input class="inp" placeholder="Biểu hiện"></label>
+          <button class="btn sec">Ghi nhận dị ứng</button>
+        </section>
+        <section class="card" style="padding: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 14px">
+          <h2 style="margin: 0; font-size: 16px">Giấy chuyển khoa</h2>
+          <div>Số 87 · Tim mạch<div class="mut">Hết hạn 30/11/2026 · đã dùng cho lịch 1044</div></div>
+        </section>
+      </aside>
+
+      <section style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; font-size: 18px">Lịch sử khám</h2>
+
+        <article class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+          <div style="display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px">
+            <div><b>16/11/2026 09:05</b> <span class="mut">· lịch 1043 · BS. Phạm Minh Đức · Tim mạch</span></div>
+          </div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3D4A5C">Huyết áp 160/95 mmHg, đau đầu vùng chẩm 3 ngày. Họng đỏ, sốt nhẹ 37,8 °C.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <span class="chip"><span class="mono">I10</span>Tăng huyết áp vô căn <span class="bd" style="background: #E3EEF9; color: #084A85">Chính</span></span>
+            <span class="chip"><span class="mono">J02.9</span>Viêm họng cấp</span>
+          </div>
+          <div style="border: 1px solid #EDF1F5; border-radius: 10px; overflow-x: auto">
+            <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; padding: 10px 12px; background: #F8FAFC">
+              <span style="font-size: 14px"><b>Đơn 512</b> <span class="mut">· kê 16/11/2026 09:20</span> <span class="bd" style="background: #E4F3EA; color: #17603A">Hiệu lực</span></span>
+              <button class="btn dg" style="min-height: 36px; padding: 0 12px; font-size: 13px">Hủy đơn</button>
+            </div>
+            <table class="tbl" style="min-width: 520px">
+              <thead><tr><th>Thuốc</th><th>SL</th><th>Liều dùng</th></tr></thead>
+              <tbody>
+                <tr><td>Amlodipin 5 mg</td><td>30</td><td>Uống 1 viên mỗi sáng</td></tr>
+                <tr><td>Paracetamol 500 mg</td><td>10</td><td>Uống 1 viên khi sốt trên 38,5 °C, cách 6 giờ</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+          <div><b>04/09/2026 14:10</b> <span class="mut">· lịch 877 · BS. Nguyễn Văn An · Đa khoa</span></div>
+          <p style="margin: 0; font-size: 14px; line-height: 1.55; color: #3D4A5C">Ho khan 1 tuần, không sốt. Phổi không ran.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px">
+            <span class="chip"><span class="mono">J20.9</span>Viêm phế quản cấp <span class="bd" style="background: #E3EEF9; color: #084A85">Chính</span></span>
+          </div>
+          <div style="border: 1px solid #EDF1F5; border-radius: 10px; padding: 10px 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: #5B6675; font-size: 14px">
+            <span style="text-decoration: line-through">Đơn 301 · Acetylcystein 200 mg × 20</span>
+            <span class="bd" style="background: #EEF0F3; color: #5B6675">Đã hủy</span>
+          </div>
+        </article>
+
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Nguồn: view v_ho_so_tom_tat và v_di_ung_tom_tat. Lần khám không có nút sửa, xóa (BR-C05); nút Hủy đơn chỉ hiện với đơn còn hiệu lực. Đơn đã hủy hiện mờ, gạch ngang để giữ lịch sử.</p>
+      </section>
+    </div>
+  </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ bác sĩ · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="bac-si.html" class="on" aria-current="page">Trang chủ</a><a href="../mang-B/lich-hen.html">Lịch hẹn</a><a href="../mang-C/benh-an.html">Bệnh nhân</a><a href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>bs09 · Bác sĩ</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<div class="tieu-de">
+  <div><h1>Xin chào, BS. Phạm Minh Đức</h1><p class="ghi-chu">Tim mạch · Thứ Hai, 16/11/2026 · 11:40</p></div>
+</div>
+<div class="kpi">
+  <div class="tile"><span class="nhan">Lịch hôm nay</span><span class="so">10</span><span class="them">2 ca: 07:30–11:30, 13:30–17:00</span></div>
+  <div class="tile"><span class="nhan">Đã khám</span><span class="so">6</span><span class="them">ca sáng</span></div>
+  <div class="tile can-lam"><span class="nhan">Chờ ghi lần khám</span><span class="so">2</span><span class="them">lịch Hoàn thành chưa có lần khám</span></div>
+  <div class="tile"><span class="nhan">Lần khám 30 ngày qua</span><span class="so">168</span><span class="them">từ 16/10/2026</span></div>
+</div>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Lịch của tôi hôm nay</h2><a href="../mang-B/lich-hen.html">Mở danh sách lịch hẹn ›</a></div>
+    <div class="card dong-gio" style="padding: 4px 20px">
+      <div class="xong "><span class="gio">07:30</span><span><a href="../mang-C/benh-an.html">Võ Thị Linh, 39 tuổi</a><span class="phu" style="display: block">Khám tổng quát · Từ xa</span></span><span class="bd bd-HOAN_THANH">Đã ghi</span></div>
+      <div class="xong "><span class="gio">08:00</span><span><a href="../mang-C/benh-an.html">Hoàng Thu Giang, 67 tuổi</a><span class="phu" style="display: block">Sốt, ho · P109</span></span><span class="bd bd-HOAN_THANH">Đã ghi</span></div>
+      <div class="xong "><span class="gio">09:30</span><span><a href="../mang-C/benh-an.html">Dương Thu Hạnh, 63 tuổi</a><span class="phu" style="display: block">Tư vấn kết quả xét nghiệm · P109</span></span><span class="bd bd-HOAN_THANH">Đã ghi</span></div>
+      <div class="xong "><span class="gio">10:00</span><span><a href="../mang-C/benh-an.html">Đỗ Minh Khang, 58 tuổi</a><span class="phu" style="display: block">Đau họng · P109</span></span><span class="bd bd-HOAN_THANH">Đã ghi</span></div>
+      <div class=""><span class="gio">10:30</span><span><a href="../mang-C/benh-an.html">Phan Ngọc Trang, 12 tuổi</a><span class="phu" style="display: block">Sốt, ho · P109</span></span><a class="btn nho" href="../mang-C/kham-ke-don.html">Ghi lần khám</a></div>
+      <div class=""><span class="gio">11:00</span><span><a href="../mang-C/benh-an.html">Lê Thanh Ngân, 41 tuổi</a><span class="phu" style="display: block">Đau đầu · P109</span></span><a class="btn nho" href="../mang-C/kham-ke-don.html">Ghi lần khám</a></div>
+      <div class="bay-gio"><span class="gio">14:30</span><span><a href="../mang-C/benh-an.html">Phạm Văn Khang, 21 tuổi</a><span class="phu" style="display: block">Đau ngực · P109</span></span><span class="bd bd-DA_XAC_NHAN">Đã xác nhận</span></div>
+      <div class=""><span class="gio">15:00</span><span><a href="../mang-C/benh-an.html">Hoàng Thu Vy, 22 tuổi</a><span class="phu" style="display: block">Đau ngực · P109</span></span><span class="bd bd-DA_XAC_NHAN">Đã xác nhận</span></div>
+      <div class=""><span class="gio">15:30</span><span><a href="../mang-C/benh-an.html">Đặng Đức Hiếu, 67 tuổi</a><span class="phu" style="display: block">Đau ngực · P109</span></span><span class="bd bd-DA_XAC_NHAN">Đã xác nhận</span></div>
+      <div class=""><span class="gio">16:00</span><span><a href="../mang-C/benh-an.html">Bùi Mỹ Yến, 69 tuổi</a><span class="phu" style="display: block">Đau ngực · P109</span></span><span class="bd bd-DA_XAC_NHAN">Đã xác nhận</span></div>
+    </div>
+    <p class="ghi-chu">Vạch xanh: bây giờ (11:40). Bấm tên bệnh nhân để xem bệnh án; Ghi lần khám chỉ hiện ở lịch đã Hoàn thành của chính bác sĩ (BR-C02).</p>
+  </section>
+  <section class="khoi hep">
+    <h2>Ca làm việc tuần này</h2>
+    <div class="card bang">
+      <table>
+        <tr><th>Ngày</th><th>Ca</th></tr>
+        <tr><td><b>T2 16/11</b></td><td>07:30–11:30 · 13:30–17:00</td></tr>
+        <tr><td>T3 17/11</td><td>07:30–11:30 · 13:30–17:00</td></tr>
+        <tr><td>T4 18/11</td><td>07:30–11:30 · 13:30–17:00</td></tr>
+        <tr><td>T5 19/11</td><td class="phu">Nghỉ</td></tr>
+        <tr><td>T6 20/11</td><td>07:30–11:30 · 13:30–17:00</td></tr>
+        <tr><td>T7 21/11</td><td>07:30–11:30</td></tr>
+      </table>
+    </div>
+    <p class="ghi-chu">Bác sĩ đa khoa có thêm khối “Giấy chuyển đã lập 7 ngày qua” (BR-B07).</p>
+  </section>
+</div>
+<p class="nguon">Nguồn: <code>lich_hen</code>, <code>benh_nhan</code> (B), <code>lan_kham</code> (C), <code>v_lich_truc_bac_si</code> (A) – quyền SELECT của <code>r_bac_si</code>; lọc theo <code>app.ma_nv</code>.</p>
+
+</main>
+</body>
+</html>

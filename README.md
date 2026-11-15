@@ -21,6 +21,7 @@ docs/            Báo cáo (docx), kế hoạch (xlsx)
   4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
   5_anh-xa/      Ánh xạ ERD → lược đồ quan hệ (T19–T21)
   6_chuan-hoa/   Phụ thuộc hàm, khóa, chứng minh chuẩn hóa (T22–T28)
+  8_giao-dien/   Bản thiết kế giao diện (HTML tĩnh, mở index.html): chung/, mang-A/, mang-B/, mang-C/, trang-chu/ (dashboard theo vai trò)
 sql/             Script SQL – xem thứ tự chạy bên dưới
 app/             Ứng dụng Flask (GĐ4, tuần 11)
 ```
@@ -85,7 +86,28 @@ Công cụ GUI (tùy chọn): pgAdmin 4 (có sẵn trong bộ cài Windows) ho�
 
 ### 4. Python (từ GĐ4)
 
-Cần Python 3.11+. Hướng dẫn chạy Flask sẽ bổ sung ở T47.
+Cần Python 3.11+. Chạy ứng dụng Flask (T47), sau khi đã nạp CSDL như phần dưới:
+
+```bash
+cd app
+python3 -m venv .venv && source .venv/bin/activate     # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+cp .env.example .env                                   # sửa DATABASE_URL (user, cổng) cho khớp máy
+flask --app app run --debug                            # http://127.0.0.1:5000, đăng nhập bs01 / Telemed@2026
+```
+
+`DATABASE_URL` là tài khoản chủ sở hữu CSDL: dùng để kiểm tra mật khẩu, sau đó mỗi yêu cầu chạy `SET LOCAL ROLE`
+theo vai trò đăng nhập nên quyền ở `rbac.sql` có hiệu lực trong ứng dụng.
+
+Màn hình mảng B (T49), lỗi vi phạm quy tắc hiện kèm mã BR:
+
+| Vai trò | Màn hình |
+|---|---|
+| Lễ tân (`lt21`) | Bệnh nhân: tìm, thêm, sửa, tạo tài khoản, đặt lại mật khẩu; lịch hẹn: đặt, sửa, đổi trạng thái |
+| Bác sĩ (`bs01` đa khoa, `bs10` chuyên khoa) | Xem bệnh nhân, lịch hẹn (mặc định của mình); bác sĩ đa khoa lập giấy chuyển |
+| Bệnh nhân (`bn0001`) | Lịch hẹn của mình |
+| Quản trị tài khoản (`qt26`) | Cấp tài khoản nhân viên, khóa, mở khóa |
+| Mọi vai trò | Đổi mật khẩu |
 
 ## Chạy script SQL
 

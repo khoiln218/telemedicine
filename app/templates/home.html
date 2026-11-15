@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block title %}Trang chủ{% endblock %}
+{% block content %}
+{% if user.vai_tro == 'LE_TAN' %}{% include "trang_chu/le_tan.html" %}
+{% elif user.vai_tro == 'QUAN_TRI_TAI_KHOAN' %}{% include "trang_chu/quan_tri_tai_khoan.html" %}
+{% elif user.vai_tro == 'BENH_NHAN' %}{% include "trang_chu/benh_nhan.html" %}
+{% else %}
+{# Vai trò mảng A, C: trang chủ đơn giản cho tới khi T48, T50 bổ sung dashboard (thiết kế: docs/8_giao-dien/trang-chu/) #}
+<div class="tieu-de">
+  <div>
+    <h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
+    <p class="ghi-chu">{{ thu }}, {{ ngay.strftime('%d/%m/%Y') }}</p>
+  </div>
+</div>
+<div class="viec">
+  {% for m in menu if m.url != url_for('home') %}<a href="{{ m.url }}"><b>{{ m.nhan }}</b></a>{% endfor %}
+</div>
+{% endif %}
+<p class="nguon">Truy vấn trang này chạy dưới role PostgreSQL <code>{{ role_db }}</code>.</p>
+{% endblock %}

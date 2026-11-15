@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Telemedicine{% endblock %} · Telemedicine G5</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <div class="thanh">
+      <a class="brand" href="{{ url_for('home') }}">Telemedicine G5</a>
+      {% if user %}
+      <nav>{# menu theo vai trò: config.MENU #}
+        {% for m in menu %}<a href="{{ m.url }}" class="{{ 'on' if m.on }}"{{ ' aria-current="page"'|safe if m.on }}>{{ m.nhan }}</a>{% endfor %}
+      </nav>
+      <form method="post" action="{{ url_for('logout') }}" class="who">
+        <span>{{ user.ten_dang_nhap }} · {{ ten_vai_tro }}</span> <button>Đăng xuất</button>
+      </form>
+      {% endif %}
+    </div>
+  </header>
+  <main class="{% block main_class %}{% endblock %}">
+    {% for loai, m in get_flashed_messages(with_categories=true) %}
+    <p class="{{ 'ok' if loai == 'ok' else 'flash' }}">{{ m }}</p>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

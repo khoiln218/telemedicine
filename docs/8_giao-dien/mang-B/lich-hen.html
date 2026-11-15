@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Danh sách lịch hẹn · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:8px 12px;border-bottom:1px solid #EDF1F5;vertical-align:middle}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.b1{background:#EEF2F7;color:#3D4A5C}.b2{background:#E3EEF9;color:#084A85}.b3{background:#E4F3EA;color:#17603A}.b4{background:#EEF0F3;color:#5B6675}.b5{background:#FDEEDC;color:#8A4300}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#fff;background:#084A85}
+.btn.sec{background:#fff;color:#0B5EA8}
+.sm{min-height:36px;padding:0 12px;font-size:13px}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box}
+.sel{min-height:36px;padding:0 8px;border:1px solid #C5CFDB;border-radius:8px;font:400 13px Inter,sans-serif;background:#fff;color:#1B2430}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.mut{color:#5B6675;font-size:12px}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav on" href="lich-hen.html">Lịch hẹn</a>
+        <a class="nav" href="dat-lich.html">Đặt lịch</a>
+        <a class="nav" href="../index.html">Bệnh nhân</a>
+        <a class="nav" href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>letan01 · Lễ tân</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 20px">
+    <div style="background: #E4F3EA; border: 1px solid #A9D7BB; color: #17603A; border-radius: 10px; padding: 12px 14px; font-size: 14px">Đã đặt lịch hẹn cho Trần Thị Bình.</div>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <h1 style="margin: 0; font-size: 24px">Lịch hẹn</h1>
+        <p style="margin: 0; font-size: 14px; color: #5B6675">Thứ Hai, 16/11/2026</p>
+      </div>
+      <form style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px">
+        <label class="lbl">Ngày <input class="inp" type="date" value="2026-11-16"></label>
+        <label class="lbl">Bác sĩ
+          <select class="inp"><option>Mọi bác sĩ</option><option>Nguyễn Văn An</option><option>Phạm Minh Đức</option></select>
+        </label>
+        <button class="btn sec" type="submit">Xem</button>
+        <a class="btn" href="dat-lich.html">+ Đặt lịch hẹn</a>
+      </form>
+    </div>
+
+    <div class="card" style="overflow-x: auto">
+      <table class="tbl" style="min-width: 1080px">
+        <thead><tr><th>Mã</th><th>Giờ</th><th>Bệnh nhân</th><th>Bác sĩ</th><th>Hình thức</th><th>Trạng thái</th><th>Thao tác</th></tr></thead>
+        <tbody>
+          <tr><td>1041</td><td><b>07:30</b>–08:00</td><td><a href="../index.html">Hoàng Văn Nam</a><div class="mut">0903 112 233</div></td><td>Nguyễn Văn An<div class="mut">Đa khoa</div></td><td>Trực tiếp<div class="mut">P.101</div></td><td><span class="bd b3">Hoàn thành</span></td><td><span class="mut">—</span></td></tr>
+          <tr><td>1042</td><td><b>08:00</b>–08:30</td><td><a href="../index.html">Đỗ Thị Lan</a><div class="mut">0987 654 321</div></td><td>Nguyễn Văn An<div class="mut">Đa khoa</div></td><td>Trực tiếp<div class="mut">P.101</div></td><td><span class="bd b5">Vắng mặt</span></td><td><span class="mut">—</span></td></tr>
+          <tr><td>1043</td><td><b>09:00</b>–09:30</td><td><a href="../index.html">Lê Văn Cường</a><div class="mut">0912 345 678</div></td><td>Phạm Minh Đức<div class="mut">Tim mạch</div></td><td>Trực tiếp<div class="mut">P.204</div></td><td><span class="bd b2">Đã xác nhận</span></td>
+            <td><div style="display: flex; gap: 6px; align-items: center"><a class="btn sec sm" href="dat-lich.html">Sửa</a><select class="sel" aria-label="Trạng thái mới"><option>Hoàn thành</option><option>Đã xác nhận</option><option>Vắng mặt</option><option>Hủy</option></select><button class="btn sm">Đổi</button></div></td></tr>
+          <tr><td>1044</td><td><b>09:30</b>–10:00</td><td><a href="../index.html">Trần Thị Bình</a><div class="mut">0934 556 677</div></td><td>Phạm Minh Đức<div class="mut">Tim mạch · giấy chuyển 87</div></td><td>Trực tiếp<div class="mut">P.204</div></td><td><span class="bd b1">Đã đặt</span></td>
+            <td><div style="display: flex; gap: 6px; align-items: center"><a class="btn sec sm" href="dat-lich.html">Sửa</a><select class="sel" aria-label="Trạng thái mới"><option>Đã xác nhận</option><option>Hoàn thành</option><option>Vắng mặt</option><option>Hủy</option></select><button class="btn sm">Đổi</button></div></td></tr>
+          <tr><td>1045</td><td><b>10:00</b>–10:20</td><td><a href="../index.html">Phan Quốc Huy</a><div class="mut">0977 001 122</div></td><td>Nguyễn Văn An<div class="mut">Đa khoa</div></td><td><span class="bd" style="background: #EAF0FB; color: #1F4E9C">Từ xa</span><div class="mut">Google Meet</div></td><td><span class="bd b2">Đã xác nhận</span></td>
+            <td><div style="display: flex; gap: 6px; align-items: center"><a class="btn sec sm" href="dat-lich.html">Sửa</a><select class="sel" aria-label="Trạng thái mới"><option>Hoàn thành</option><option>Đã xác nhận</option><option>Vắng mặt</option><option>Hủy</option></select><button class="btn sm">Đổi</button></div></td></tr>
+          <tr><td>1046</td><td><b>10:30</b>–11:00</td><td><a href="../index.html">Ngô Bảo Châu</a><div class="mut">0966 778 899</div></td><td>Phạm Minh Đức<div class="mut">Tim mạch</div></td><td>Trực tiếp<div class="mut">P.204</div></td><td><span class="bd b4">Hủy</span></td><td><span class="mut">—</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; font-size: 13px; color: #5B6675; line-height: 1.5">
+      <p style="margin: 0"><b style="color: #3D4A5C">Sửa, Đổi</b> chỉ hiện cho lịch Đã đặt, Đã xác nhận. Lịch đã kết thúc trạng thái không còn thao tác.</p>
+      <p style="margin: 0"><b style="color: #3D4A5C">Bác sĩ</b> mở cùng trang, không có cột Thao tác; mặc định lọc lịch của mình, có ô “Mọi bác sĩ”.</p>
+      <p style="margin: 0"><b style="color: #3D4A5C">Bệnh nhân</b> thấy danh sách của mình (view v_lich_hen_cua_toi), không có cột Bệnh nhân.</p>
+    </div>
+  </main>
+</div>
+</body>
+</html>
