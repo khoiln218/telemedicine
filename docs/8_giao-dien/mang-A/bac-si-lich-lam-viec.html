@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bác sĩ và lịch làm việc · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #EDF1F5;vertical-align:middle}
+.grp td{background:#F2F6FB;font-weight:600;color:#084A85;font-size:13px}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;white-space:nowrap}
+.btn.sec{background:#fff;color:#0B5EA8}
+.pill{display:inline-flex;align-items:center;min-height:36px;padding:0 14px;border-radius:999px;border:1px solid #C5CFDB;background:#fff;color:#3D4A5C;font:500 13px Inter,sans-serif;cursor:pointer}
+.pill.sel{background:#0B5EA8;border-color:#0B5EA8;color:#fff}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.ca{display:block;background:#E3EEF9;color:#084A85;border-radius:6px;padding:6px 8px;font-size:12px;font-weight:600;margin-bottom:4px}
+.ca span{display:block;font-weight:400;color:#3D4A5C}
+.wk th,.wk td{border-right:1px solid #EDF1F5}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav on" href="bac-si-lich-lam-viec.html">Bác sĩ &amp; lịch làm việc</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>nhansu01 · Quản trị nhân sự</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 24px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-size: 24px">Bác sĩ theo chuyên khoa</h1>
+        <p style="margin: 0; font-size: 14px; color: #5B6675">Bác sĩ, lễ tân thấy cùng trang này nhưng không có nút Thêm ca (chỉ quyền SELECT).</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 8px">
+        <button class="pill sel">Tất cả</button>
+        <button class="pill">Đa khoa</button>
+        <button class="pill">Tim mạch</button>
+        <button class="pill">Nhi</button>
+        <button class="pill">Da liễu</button>
+      </div>
+    </div>
+
+    <div class="card" style="overflow-x: auto">
+      <table class="tbl" style="min-width: 760px">
+        <thead><tr><th>Họ tên</th><th>Loại</th><th>Số chứng chỉ</th><th>Hạn chứng chỉ</th><th>Ca tuần này</th></tr></thead>
+        <tbody>
+          <tr class="grp"><td colspan="5">Đa khoa · 2 bác sĩ</td></tr>
+          <tr><td>BS. Nguyễn Văn An</td><td>Đa khoa</td><td>CCHN-00123</td><td>31/12/2028</td><td>4</td></tr>
+          <tr><td>BS. Trần Thu Hà</td><td>Đa khoa</td><td>CCHN-00178</td><td>05/12/2026 <span class="bd" style="background: #FDEEDC; color: #8A4300">Còn 20 ngày</span></td><td>2</td></tr>
+          <tr class="grp"><td colspan="5">Tim mạch · 2 bác sĩ</td></tr>
+          <tr><td>BS. Phạm Minh Đức</td><td>Chuyên khoa</td><td>CCHN-00341</td><td>30/06/2029</td><td>3</td></tr>
+          <tr><td>BS. Lê Hoàng Yến</td><td>Chuyên khoa</td><td>CCHN-00402</td><td>15/03/2027</td><td>0 <span class="bd" style="background: #EEF0F3; color: #5B6675">Chưa xếp ca</span></td></tr>
+          <tr class="grp"><td colspan="5">Nhi · 1 bác sĩ</td></tr>
+          <tr><td>BS. Võ Thanh Tâm</td><td>Chuyên khoa</td><td>CCHN-00519</td><td>20/09/2028</td><td>3</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px">
+        <h2 style="margin: 0; font-size: 18px">Lịch làm việc tuần 16–22/11/2026</h2>
+        <div style="display: flex; gap: 8px">
+          <button class="btn sec" aria-label="Tuần trước">‹ Tuần trước</button>
+          <button class="btn sec" aria-label="Tuần sau">Tuần sau ›</button>
+        </div>
+      </div>
+      <div class="card" style="overflow-x: auto">
+        <table class="tbl wk" style="min-width: 980px; table-layout: fixed">
+          <thead><tr><th style="width: 180px">Bác sĩ</th><th>T2 16/11</th><th>T3 17/11</th><th>T4 18/11</th><th>T5 19/11</th><th>T6 20/11</th><th>T7 21/11</th><th>CN 22/11</th></tr></thead>
+          <tbody>
+            <tr><td>Nguyễn Văn An<div style="font-size: 12px; color: #5B6675">Đa khoa</div></td>
+              <td style="vertical-align: top"><span class="ca">07:30–11:30<span>5 lịch hẹn</span></span></td>
+              <td style="vertical-align: top"><span class="ca">13:00–17:00<span>2 lịch hẹn</span></span></td>
+              <td></td>
+              <td style="vertical-align: top"><span class="ca">07:30–11:30<span>0 lịch hẹn</span></span></td>
+              <td style="vertical-align: top"><span class="ca">07:30–11:30<span>1 lịch hẹn</span></span></td>
+              <td></td><td></td></tr>
+            <tr><td>Phạm Minh Đức<div style="font-size: 12px; color: #5B6675">Tim mạch</div></td>
+              <td style="vertical-align: top"><span class="ca">08:00–12:00<span>4 lịch hẹn</span></span></td>
+              <td></td>
+              <td style="vertical-align: top"><span class="ca">08:00–12:00<span>2 lịch hẹn</span></span><span class="ca">13:30–16:30<span>Từ xa</span></span></td>
+              <td></td><td></td><td></td><td></td></tr>
+            <tr><td>Võ Thanh Tâm<div style="font-size: 12px; color: #5B6675">Nhi</div></td>
+              <td></td>
+              <td style="vertical-align: top"><span class="ca">08:00–12:00<span>3 lịch hẹn</span></span></td>
+              <td></td>
+              <td style="vertical-align: top"><span class="ca">13:00–17:00<span>1 lịch hẹn</span></span></td>
+              <td></td>
+              <td style="vertical-align: top"><span class="ca">08:00–11:00<span>0 lịch hẹn</span></span></td>
+              <td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p style="margin: 0; font-size: 13px; color: #5B6675">Nguồn: view v_lich_truc_bac_si (chỉ ca DA_XEP); số lịch hẹn trong ca như truy vấn Q01. Bấm vào một ca để sửa giờ hoặc hủy ca.</p>
+    </section>
+
+    <section class="card" style="padding: 20px; display: flex; flex-direction: column; gap: 14px">
+      <h2 style="margin: 0; font-size: 17px">Thêm ca làm việc</h2>
+      <div style="background: #FEF3F2; border: 1px solid #F1B8B2; color: #7A1A12; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5"><b>Không thêm được ca:</b> BR-A03: giấy phép phải bao trùm toàn bộ ngày ca làm việc.<div style="font-size: 13px; margin-top: 4px">Chứng chỉ của BS. Trần Thu Hà hết hạn 05/12/2026; ca 07/12/2026 nằm sau ngày này.</div></div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; align-items: end">
+        <label class="lbl">Bác sĩ
+          <select class="inp"><option>Trần Thu Hà – Đa khoa</option></select>
+        </label>
+        <label class="lbl">Bắt đầu <input class="inp" type="datetime-local" value="2026-12-07T07:30"></label>
+        <label class="lbl">Kết thúc <input class="inp" type="datetime-local" value="2026-12-07T11:30"></label>
+        <button class="btn">Thêm ca</button>
+      </div>
+      <p style="margin: 0; font-size: 13px; color: #5B6675">Sửa giờ hoặc hủy một ca còn lịch hẹn hiệu lực nằm ngoài ca mới sẽ bị BR-A08 chặn; không có nút Xóa (BR-A09).</p>
+    </section>
+  </main>
+</div>
+</body>
+</html>

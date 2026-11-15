@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ quản trị danh mục · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="quan-tri-danh-muc.html" class="on" aria-current="page">Trang chủ</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>qt27 · Quản trị danh mục</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<div class="tieu-de">
+  <div><h1>Xin chào, qt27</h1><p class="ghi-chu">Thứ Hai, 16/11/2026</p></div>
+</div>
+<div class="kpi">
+  <div class="tile"><span class="nhan">Thuốc</span><span class="so">14</span><span class="them">15 dòng thành phần</span></div>
+  <div class="tile"><span class="nhan">Hoạt chất</span><span class="so">13</span><span class="them">đều có trong ít nhất 1 thuốc</span></div>
+  <div class="tile"><span class="nhan">Mã ICD-10</span><span class="so">17</span><span class="them">6 chương</span></div>
+  <div class="tile"><span class="nhan">Thuốc chưa khai báo hoạt chất</span><span class="so">0</span><span class="them">cần đủ để kiểm tra dị ứng (BR-C01)</span></div>
+</div>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <div class="khoi-dau"><h2>Hoạt chất có trong nhiều thuốc nhất</h2><span class="phu">số thuốc</span></div>
+    <div class="card">
+      <div class="meter"><div class="ten">Amoxicillin</div><div class="gt">2</div><div class="ray" role="img" aria-label="Amoxicillin: 2"><i style="width: 100%"></i></div><div class="ten">Paracetamol</div><div class="gt">2</div><div class="ray" role="img" aria-label="Paracetamol: 2"><i style="width: 100%"></i></div><div class="ten">Acid clavulanic</div><div class="gt">1</div><div class="ray" role="img" aria-label="Acid clavulanic: 1"><i style="width: 50%"></i></div><div class="ten">Amlodipin</div><div class="gt">1</div><div class="ray" role="img" aria-label="Amlodipin: 1"><i style="width: 50%"></i></div><div class="ten">Atorvastatin</div><div class="gt">1</div><div class="ray" role="img" aria-label="Atorvastatin: 1"><i style="width: 50%"></i></div></div>
+    </div>
+  </section>
+  <section class="khoi hep">
+    <div class="khoi-dau"><h2>Mã ICD-10 theo chương</h2><span class="phu">số mã</span></div>
+    <div class="card">
+      <div class="meter"><div class="ten">J · Hô hấp</div><div class="gt">4</div><div class="ray" role="img" aria-label="J · Hô hấp: 4"><i style="width: 100%"></i></div><div class="ten">E · Nội tiết</div><div class="gt">3</div><div class="ray" role="img" aria-label="E · Nội tiết: 3"><i style="width: 75%"></i></div><div class="ten">K · Tiêu hóa</div><div class="gt">3</div><div class="ray" role="img" aria-label="K · Tiêu hóa: 3"><i style="width: 75%"></i></div><div class="ten">I · Tuần hoàn</div><div class="gt">2</div><div class="ray" role="img" aria-label="I · Tuần hoàn: 2"><i style="width: 50%"></i></div><div class="ten">L · Da</div><div class="gt">2</div><div class="ray" role="img" aria-label="L · Da: 2"><i style="width: 50%"></i></div><div class="ten">R · Triệu chứng</div><div class="gt">2</div><div class="ray" role="img" aria-label="R · Triệu chứng: 2"><i style="width: 50%"></i></div></div>
+    </div>
+  </section>
+</div>
+<p class="ghi-chu">Quản trị danh mục không đọc đơn thuốc, chẩn đoán (BR-C06) nên trang không có thống kê kê đơn. Màn hình sửa danh mục ngoài phạm vi demo.</p>
+<p class="nguon">Nguồn: <code>thuoc</code>, <code>hoat_chat</code>, <code>thuoc_hoat_chat</code>, <code>ma_icd10</code> – quyền SELECT, INSERT, UPDATE của <code>r_quan_tri_danh_muc</code>.</p>
+
+</main>
+</body>
+</html>

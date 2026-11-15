@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đăng nhập · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 15px Inter,sans-serif;cursor:pointer}
+.btn:hover{background:#084A85}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 15px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div style="min-height: 760px; display: flex; flex-direction: column">
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 14px 24px; font-weight: 700; font-size: 17px">Telemedicine G5</div>
+  </header>
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center; padding: 48px 16px">
+    <form style="width: 100%; max-width: 400px; background: #fff; border: 1px solid #D9E0E8; border-radius: 14px; padding: 32px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-size: 24px">Đăng nhập</h1>
+        <p style="margin: 0; font-size: 14px; color: #5B6675">Cổng thông tin phòng khám &amp; y tế từ xa</p>
+      </div>
+      <div style="background: #FEF3F2; border: 1px solid #F1B8B2; color: #7A1A12; border-radius: 10px; padding: 12px 14px; font-size: 14px">Sai tên đăng nhập hoặc mật khẩu.</div>
+      <label class="lbl">Tên đăng nhập <input class="inp" name="ten_dang_nhap" value="letan01" autocomplete="username"></label>
+      <label class="lbl">Mật khẩu <input class="inp" type="password" name="mat_khau" value="matkhau" autocomplete="current-password"></label>
+      <button class="btn" type="submit">Đăng nhập</button>
+      <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5B6675">Vai trò lấy từ tài khoản, không chọn khi đăng nhập. Tài khoản bị khóa sẽ báo “Tài khoản đã bị khóa.” và bị đăng xuất ngay cả khi đang dùng (BR-B10).</p>
+    </form>
+  </main>
+</div>
+</body>
+</html>

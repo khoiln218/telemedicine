@@ -21,6 +21,7 @@ docs/            Báo cáo (docx), kế hoạch (xlsx)
   4_truy-vet/    Ma trận truy vết quy tắc → ERD (T15)
   5_anh-xa/      Ánh xạ ERD → lược đồ quan hệ (T19–T21)
   6_chuan-hoa/   Phụ thuộc hàm, khóa, chứng minh chuẩn hóa (T22–T28)
+  8_giao-dien/   Bản thiết kế giao diện (HTML tĩnh, mở index.html): chung/, mang-A/, mang-B/, mang-C/, trang-chu/ (dashboard theo vai trò)
 sql/             Script SQL – xem thứ tự chạy bên dưới
 app/             Ứng dụng Flask (GĐ4, tuần 11)
 ```

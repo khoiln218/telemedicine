@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trang chủ quản trị tài khoản · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<link rel="stylesheet" href="trang-chu.css">
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh) – số liệu lấy từ seed.sql ngày Thứ Hai 16/11/2026 -->
+<header>
+  <div class="thanh">
+    <a class="brand" href="../index.html">Telemedicine G5</a>
+    <nav><a href="quan-tri-tai-khoan.html" class="on" aria-current="page">Trang chủ</a><a href="../index.html">Tài khoản</a><a href="../index.html">Đổi mật khẩu</a></nav>
+    <div class="who"><span>qt26 · Quản trị tài khoản</span><button>Đăng xuất</button></div>
+  </div>
+</header>
+<main>
+
+<div class="tieu-de">
+  <div><h1>Xin chào, qt26</h1><p class="ghi-chu">Thứ Hai, 16/11/2026</p></div>
+  <div class="nut"><a class="btn" href="../index.html">Cấp tài khoản nhân viên</a></div>
+</div>
+<div class="kpi">
+  <div class="tile"><span class="nhan">Tài khoản nhân viên</span><span class="so">27</span><span class="them">mọi nhân viên đã có tài khoản</span></div>
+  <div class="tile"><span class="nhan">Tài khoản bệnh nhân</span><span class="so">1.201</span><span class="them">do lễ tân cấp</span></div>
+  <div class="tile"><span class="nhan">Đang khóa</span><span class="so">0</span><span class="them">tài khoản</span></div>
+  <div class="tile"><span class="nhan">Nhân viên chưa có tài khoản</span><span class="so">0</span><span class="them">BR-B09</span></div>
+</div>
+<div class="luoi-2">
+  <section class="khoi rong">
+    <h2>Tài khoản theo vai trò</h2>
+    <div class="card bang">
+      <table>
+        <tr><th>Vai trò</th><th style="text-align: right">Tài khoản</th><th style="text-align: right">Đang khóa</th></tr>
+        <tr><td>Bệnh nhân</td><td style="text-align: right">1.201</td><td style="text-align: right">0</td></tr>
+        <tr><td>Bác sĩ</td><td style="text-align: right">20</td><td style="text-align: right">0</td></tr>
+        <tr><td>Lễ tân</td><td style="text-align: right">4</td><td style="text-align: right">0</td></tr>
+        <tr><td>Quản trị nhân sự</td><td style="text-align: right">1</td><td style="text-align: right">0</td></tr>
+        <tr><td>Quản trị tài khoản</td><td style="text-align: right">1</td><td style="text-align: right">0</td></tr>
+        <tr><td>Quản trị danh mục</td><td style="text-align: right">1</td><td style="text-align: right">0</td></tr>
+      </table>
+    </div>
+    <p class="ghi-chu">Dùng bảng thay biểu đồ: bệnh nhân lấn át các vai trò khác về số lượng.</p>
+  </section>
+  <section class="khoi hep">
+    <h2>Việc nhanh</h2>
+    <div class="viec">
+      <a href="../index.html"><b>Khóa / mở khóa</b><span>Tìm theo tên đăng nhập</span></a>
+      <a href="../index.html"><b>Cấp tài khoản</b><span>Cho nhân viên mới</span></a>
+    </div>
+    <div class="trong-rong">Không có tài khoản đang khóa. Khóa có hiệu lực ngay cả khi người dùng đang đăng nhập (BR-B10).</div>
+  </section>
+</div>
+<p class="nguon">Nguồn: <code>tai_khoan</code> (chỉ các cột được cấp, không có mật khẩu băm), <code>nhan_vien</code> – quyền của <code>r_quan_tri_tai_khoan</code>.</p>
+
+</main>
+</body>
+</html>

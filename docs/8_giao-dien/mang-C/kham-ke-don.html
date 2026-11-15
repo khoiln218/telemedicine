@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tạo lần khám và kê đơn · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.nav{color:#fff;text-decoration:none;padding:10px 12px;border-radius:6px;font-size:14px;font-weight:500}
+.nav:hover{color:#fff;background:#084A85}
+.on{background:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #EDF1F5;vertical-align:top}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 20px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn:hover{color:#fff;background:#084A85}
+.btn.sec{background:#fff;color:#0B5EA8}
+.x{min-height:44px;min-width:44px;border:1px solid #D9E0E8;border-radius:8px;background:#fff;color:#5B6675;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+textarea.inp{padding:10px 12px;min-height:96px;line-height:1.5;resize:vertical}
+.inp.bad{border-color:#B42318}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.sec-h{display:flex;align-items:center;gap:10px;margin:0;font-size:17px}
+.num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:#E3EEF9;color:#084A85;font-weight:700;font-size:13px}
+.mut{color:#5B6675;font-size:12px}
+.icd{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 12px;border:1px solid #D9E0E8;border-radius:8px;font-size:14px}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div>
+  <header style="background: #0B5EA8; color: #fff">
+    <div style="max-width: 1200px; margin: 0 auto; padding: 8px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 24px">
+      <a href="../index.html" style="color: #fff; font-weight: 700; font-size: 17px; text-decoration: none">Telemedicine G5</a>
+      <nav style="display: flex; flex-wrap: wrap; gap: 2px">
+        <a class="nav" href="../index.html">Trang chủ</a>
+        <a class="nav on" href="../mang-B/lich-hen.html">Lịch hẹn</a>
+        <a class="nav" href="benh-an.html">Bệnh nhân</a>
+        <a class="nav" href="../mang-A/bac-si-lich-lam-viec.html">Bác sĩ</a>
+        <a class="nav" href="../index.html">Đổi mật khẩu</a>
+      </nav>
+      <div style="margin-left: auto; display: flex; align-items: center; gap: 12px; font-size: 14px"><span>bsduc · Bác sĩ</span><button style="min-height: 36px; padding: 0 12px; border-radius: 6px; border: 1px solid #fff; background: transparent; color: #fff; font: 500 13px Inter,sans-serif">Đăng xuất</button></div>
+    </div>
+  </header>
+
+  <main style="max-width: 1200px; margin: 0 auto; padding: 28px 24px 48px; display: flex; flex-direction: column; gap: 20px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px">
+      <div style="display: flex; flex-direction: column; gap: 4px">
+        <a href="../mang-B/lich-hen.html" style="font-size: 14px">‹ Lịch hẹn của tôi</a>
+        <h1 style="margin: 0; font-size: 24px">Ghi lần khám · Lịch hẹn 1043</h1>
+      </div>
+      <a class="btn sec" href="benh-an.html">Xem bệnh án</a>
+    </div>
+
+    <div class="card" style="padding: 16px 20px; display: flex; flex-wrap: wrap; gap: 8px 32px; font-size: 14px">
+      <div><span class="mut">Bệnh nhân</span><div><b>Lê Văn Cường</b> · nam · 1981</div></div>
+      <div><span class="mut">Thời gian</span><div>16/11/2026 09:00–09:30 · P.204</div></div>
+      <div><span class="mut">Lý do khám</span><div>Đau đầu, huyết áp cao</div></div>
+      <div><span class="mut">Trạng thái</span><div><span class="bd" style="background: #E4F3EA; color: #17603A">Hoàn thành</span></div></div>
+    </div>
+
+    <div style="background: #FFF7E0; border: 1px solid #E8C766; color: #6B4600; border-radius: 10px; padding: 14px 16px; font-size: 14px; display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center">
+      <b style="font-size: 15px">Dị ứng đã ghi nhận:</b>
+      <span>Amoxicillin <span style="font-size: 12px">(02/03/2026, nổi mẩn)</span></span>
+      <span>Ibuprofen <span style="font-size: 12px">(11/08/2025)</span></span>
+      <span style="font-size: 13px">Thuốc chứa các hoạt chất này bị đánh dấu ngay khi chọn.</span>
+    </div>
+
+    <section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+      <div style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 16px">
+        <h2 class="sec-h"><span class="num">1</span>Lần khám</h2>
+        <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 8px; background: #F2F6FB; font-size: 14px">
+          <span class="mut">Thời điểm khám</span><b>16/11/2026 09:05</b>
+        </div>
+      </div>
+      <label class="lbl">Tóm tắt <textarea class="inp">Huyết áp 160/95 mmHg, đau đầu vùng chẩm 3 ngày. Họng đỏ, sốt nhẹ 37,8 °C.</textarea></label>
+    </section>
+
+    <section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+      <h2 class="sec-h"><span class="num">2</span>Chẩn đoán</h2>
+      <div style="display: flex; flex-direction: column; gap: 8px">
+        <div class="icd"><b class="mono" style="font-family: ui-monospace,Menlo,monospace">I10</b><span>Tăng huyết áp vô căn</span><span class="bd" style="background: #E3EEF9; color: #084A85">Chính</span><button class="x" style="margin-left: auto" aria-label="Bỏ chẩn đoán I10">✕</button></div>
+        <div class="icd"><b style="font-family: ui-monospace,Menlo,monospace">J02.9</b><span>Viêm họng cấp, không đặc hiệu</span><button class="x" style="margin-left: auto" aria-label="Bỏ chẩn đoán J02.9">✕</button></div>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 3fr) minmax(0, 1fr) auto; gap: 12px; align-items: end">
+        <label class="lbl">Thêm mã ICD-10 <input class="inp" placeholder="Gõ mã hoặc mô tả, ví dụ J02"></label>
+        <label style="display: flex; align-items: center; gap: 8px; min-height: 44px; font-size: 14px"><input type="checkbox" style="width: 18px; height: 18px"> Chẩn đoán chính</label>
+        <button class="btn sec">Thêm</button>
+      </div>
+    </section>
+
+    <section class="card" style="padding: 22px; display: flex; flex-direction: column; gap: 14px">
+      <h2 class="sec-h"><span class="num">3</span>Đơn thuốc</h2>
+      <div style="background: #FEF3F2; border: 1px solid #F1B8B2; color: #7A1A12; border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 1.55"><b>Không lưu được:</b> BR-C01: thuốc có hoạt chất bệnh nhân đã ghi nhận dị ứng.<div style="font-size: 13px; margin-top: 4px">Augmentin 625 mg chứa Amoxicillin. Toàn bộ lần khám chưa được ghi; bỏ hoặc đổi dòng thuốc rồi lưu lại.</div></div>
+      <div style="overflow-x: auto">
+        <table class="tbl" style="min-width: 760px">
+          <thead><tr><th style="width: 40%">Thuốc</th><th style="width: 110px">Số lượng</th><th>Liều dùng</th><th style="width: 60px"></th></tr></thead>
+          <tbody>
+            <tr><td><select class="inp"><option>Amlodipin 5 mg · viên nén</option></select></td><td><input class="inp" type="number" value="30"></td><td><input class="inp" value="Uống 1 viên mỗi sáng"></td><td><button class="x" aria-label="Bỏ dòng Amlodipin">✕</button></td></tr>
+            <tr style="background: #FFFBFA"><td><select class="inp bad"><option>Augmentin 625 mg · viên nén bao phim</option></select><div style="margin-top: 6px; font-size: 13px; font-weight: 600; color: #B42318">Chứa Amoxicillin: bệnh nhân dị ứng</div></td><td><input class="inp" type="number" value="14"></td><td><input class="inp" value="Uống 1 viên × 2 lần/ngày, 7 ngày"></td><td><button class="x" aria-label="Bỏ dòng Augmentin">✕</button></td></tr>
+            <tr><td><select class="inp"><option>Paracetamol 500 mg · viên nén</option></select></td><td><input class="inp" type="number" value="10"></td><td><input class="inp" value="Uống 1 viên khi sốt trên 38,5 °C, cách 6 giờ"></td><td><button class="x" aria-label="Bỏ dòng Paracetamol">✕</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div><button class="btn sec">+ Thêm thuốc</button></div>
+      <p style="margin: 0; font-size: 13px; color: #5B6675">Phần đơn thuốc chỉ mở khi đã có ít nhất một chẩn đoán (BR-C03). Đơn phải có ít nhất một dòng thuốc.</p>
+    </section>
+
+    <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px">
+      <button class="btn">Lưu lần khám</button>
+      <a class="btn sec" href="../mang-B/lich-hen.html">Hủy bỏ</a>
+      <span style="font-size: 13px; color: #5B6675; flex: 1 1 320px">Lưu trong một giao dịch. Sau khi lưu, lần khám không sửa được; chẩn đoán, đơn thuốc chỉ chuyển sang Đã hủy (BR-C05). Chỉ bác sĩ của lịch hẹn đã hoàn thành mới thấy trang này (BR-C02).</span>
+    </div>
+  </main>
+</div>
+</body>
+</html>

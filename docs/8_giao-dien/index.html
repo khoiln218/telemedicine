@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tổng quan giao diện · Thiết kế giao diện G5</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap">
+<style>
+body{margin:0;font-family:Inter,system-ui,sans-serif;color:#1B2430;background:#F5F7FA}
+a{color:#0B5EA8}a:hover{color:#084A85}
+.card{background:#fff;border:1px solid #D9E0E8;border-radius:12px;padding:24px;box-sizing:border-box}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-weight:600;color:#5B6675;font-size:12px;text-transform:uppercase;letter-spacing:.04em;padding:10px 12px;border-bottom:1px solid #D9E0E8;background:#F8FAFC;white-space:nowrap}
+.tbl td{padding:10px 12px;border-bottom:1px solid #EDF1F5;vertical-align:top}
+.bd{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid #0B5EA8;background:#0B5EA8;color:#fff;font:600 14px Inter,sans-serif;text-decoration:none;cursor:pointer}
+.btn:hover{color:#fff;background:#084A85}
+.btn.sec{background:#fff;color:#0B5EA8}
+.btn.dg{background:#fff;color:#B42318;border-color:#E4A09A}
+.inp{min-height:44px;padding:0 12px;border:1px solid #C5CFDB;border-radius:8px;font:400 14px Inter,sans-serif;color:#1B2430;background:#fff;box-sizing:border-box;width:100%}
+.lbl{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#3D4A5C}
+.step{color:#1B2430;text-decoration:none;display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid #D9E0E8;border-radius:12px;padding:16px;min-height:120px;box-sizing:border-box}
+.step:hover{border-color:#0B5EA8;color:#1B2430}
+.num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;background:#E3EEF9;color:#084A85;font-weight:700;font-size:13px}
+.y{color:#17603A;font-weight:600}.v{color:#084A85;font-weight:600}.n{color:#8A94A3}
+</style>
+</head>
+<body>
+<!-- Bản thiết kế (mockup tĩnh, dữ liệu minh họa) – nhóm G5, đề tài 05 Telemedicine -->
+<div style="max-width: 1200px; margin: 0 auto; padding: 40px 24px 56px; display: flex; flex-direction: column; gap: 32px">
+  <div style="display: flex; flex-direction: column; gap: 8px">
+    <div style="font-size: 13px; font-weight: 600; color: #0B5EA8; letter-spacing: .06em; text-transform: uppercase">Nhóm G5 · Đề tài 05 · GĐ4</div>
+    <h1 style="margin: 0; font-size: 34px; line-height: 1.2">Thiết kế giao diện ứng dụng Telemedicine</h1>
+    <p style="margin: 0; max-width: 760px; font-size: 16px; line-height: 1.6; color: #3D4A5C">Ứng dụng Flask một trang chủ, menu đổi theo vai trò. Mỗi trang chạy truy vấn dưới role PostgreSQL của người dùng (sql/rbac.sql), nên giao diện chỉ hiện việc mà role đó được phép làm; khi trigger hay ràng buộc từ chối, trang hiện nguyên mã quy tắc (BR-…) kèm dòng giải thích.</p>
+  </div>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 style="margin: 0; font-size: 20px">1. Màn hình theo vai trò</h2>
+    <div class="card" style="padding: 0; overflow-x: auto">
+      <table class="tbl" style="min-width: 900px">
+        <thead><tr><th>Màn hình</th><th>Mảng</th><th>QT nhân sự</th><th>QT tài khoản</th><th>QT danh mục</th><th>Bác sĩ</th><th>Lễ tân</th><th>Bệnh nhân</th></tr></thead>
+        <tbody>
+          <tr><td><a href="mang-A/bac-si-lich-lam-viec.html">Bác sĩ theo chuyên khoa</a></td><td>A</td><td class="y">Thêm, sửa</td><td class="n">—</td><td class="n">—</td><td class="v">Xem</td><td class="v">Xem</td><td class="n">—</td></tr>
+          <tr><td><a href="mang-A/bac-si-lich-lam-viec.html">Lịch làm việc (ca)</a></td><td>A</td><td class="y">Thêm, sửa, hủy ca</td><td class="n">—</td><td class="n">—</td><td class="v">Xem</td><td class="v">Xem</td><td class="n">—</td></tr>
+          <tr><td><a href="mang-B/lich-hen.html">Lịch hẹn</a></td><td>B</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="v">Xem (mặc định của mình)</td><td class="y">Đặt, sửa, đổi trạng thái</td><td class="v">Của tôi</td></tr>
+          <tr><td>Bệnh nhân, giấy chuyển khoa</td><td>B</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Xem, lập giấy chuyển</td><td class="y">Thêm, sửa; cấp tài khoản</td><td class="n">—</td></tr>
+          <tr><td>Tài khoản</td><td>B</td><td class="n">—</td><td class="y">Cấp, khóa, mở khóa</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td><a href="mang-C/kham-ke-don.html">Khám &amp; kê đơn</a></td><td>C</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Ghi lần khám, chẩn đoán, đơn</td><td class="n">—</td><td class="n">—</td></tr>
+          <tr><td><a href="mang-C/benh-an.html">Bệnh án, dị ứng</a></td><td>C</td><td class="n">—</td><td class="n">—</td><td class="n">—</td><td class="y">Xem, ghi dị ứng, hủy đơn</td><td class="n">—</td><td class="v"><a href="chung/cong-benh-nhan.html">Của tôi</a></td></tr>
+          <tr><td>Đổi mật khẩu</td><td>B</td><td class="y">Của mình</td><td class="y">Của mình</td><td class="y">Của mình</td><td class="y">Của mình</td><td class="y">Của mình</td><td class="y">Của mình</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin: 0; font-size: 13px; color: #5B6675">Trang chủ (dashboard) theo vai trò: <a href="trang-chu/le-tan.html">lễ tân</a> · <a href="trang-chu/bac-si.html">bác sĩ</a> · <a href="trang-chu/benh-nhan.html">bệnh nhân</a> · <a href="trang-chu/quan-tri-nhan-su.html">quản trị nhân sự</a> · <a href="trang-chu/quan-tri-tai-khoan.html">quản trị tài khoản</a> · <a href="trang-chu/quan-tri-danh-muc.html">quản trị danh mục</a>.</p>
+    <p style="margin: 0; font-size: 13px; color: #5B6675">Trang theo mảng: <a href="mang-A/bac-si-lich-lam-viec.html">A</a> · <a href="mang-B/lich-hen.html">B lịch hẹn</a>, <a href="mang-B/dat-lich.html">B đặt lịch</a> · <a href="mang-C/kham-ke-don.html">C khám, kê đơn</a>, <a href="mang-C/benh-an.html">C bệnh án</a> · chung: <a href="chung/dang-nhap.html">đăng nhập</a>, <a href="chung/cong-benh-nhan.html">cổng bệnh nhân</a>. Mảng B đã cài trong app/ (T49).</p>
+    <p style="margin: 0; font-size: 13px; color: #5B6675">Ngoài phạm vi demo: màn hình danh mục thuốc, hoạt chất, ICD-10 cho Quản trị danh mục (dữ liệu nạp sẵn từ seed).</p>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 style="margin: 0; font-size: 20px">2. Luồng demo (kịch bản T51)</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+      <a class="step" href="mang-A/bac-si-lich-lam-viec.html"><span class="num">1</span><b>Xem ca của bác sĩ</b><span style="font-size: 13px; color: #5B6675">Lễ tân xem lịch làm việc tuần trước khi đặt.</span></a>
+      <a class="step" href="mang-B/dat-lich.html"><span class="num">2</span><b>Đặt lịch trùng giờ</b><span style="font-size: 13px; color: #5B6675">Chọn giờ bệnh nhân đã có lịch với bác sĩ khác: EXCLUDE BR-B02 từ chối, trang chỉ ra lịch đang trùng.</span></a>
+      <a class="step" href="mang-B/lich-hen.html"><span class="num">3</span><b>Chuyển Hoàn thành</b><span style="font-size: 13px; color: #5B6675">Lễ tân đổi trạng thái sau buổi khám.</span></a>
+      <a class="step" href="mang-C/kham-ke-don.html"><span class="num">4</span><b>Kê thuốc dị ứng</b><span style="font-size: 13px; color: #5B6675">Trigger BR-C01 chặn, dòng thuốc bị tô đỏ.</span></a>
+      <a class="step" href="chung/cong-benh-nhan.html"><span class="num">5</span><b>Bệnh nhân xem hồ sơ</b><span style="font-size: 13px; color: #5B6675">Chỉ thấy dữ liệu của mình qua view _cua_toi.</span></a>
+    </div>
+  </section>
+
+  <section style="display: flex; flex-direction: column; gap: 14px">
+    <h2 style="margin: 0; font-size: 20px">3. Thành phần dùng chung</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 16px">
+      <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+        <h3 style="margin: 0; font-size: 15px">Màu</h3>
+        <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; font-size: 12px; color: #3D4A5C">
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #0B5EA8"></div>Chính #0B5EA8</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #084A85"></div>Đậm #084A85</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #F5F7FA; border: 1px solid #D9E0E8"></div>Nền #F5F7FA</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #1B2430"></div>Chữ #1B2430</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #B42318"></div>Lỗi #B42318</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #B97A00"></div>Cảnh báo #B97A00</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #17603A"></div>Thành công #17603A</div>
+          <div style="display: flex; flex-direction: column; gap: 6px"><div style="height: 48px; border-radius: 8px; background: #5B6675"></div>Phụ #5B6675</div>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Chữ Inter (đủ dấu tiếng Việt): tiêu đề 24/600, mục 17/600, nội dung 14/400, nhãn 13/600.</p>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+        <h3 style="margin: 0; font-size: 15px">Nút và ô nhập</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 10px">
+          <button class="btn">Đặt lịch</button>
+          <button class="btn sec">Hủy bỏ</button>
+          <button class="btn dg">Hủy đơn</button>
+        </div>
+        <label class="lbl">SĐT bệnh nhân <input class="inp" value="0912345678"></label>
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Một nút chính mỗi biểu mẫu. Nút đỏ viền chỉ dùng cho thao tác hủy (BR-C05 không cho xóa).</p>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 14px">
+        <h3 style="margin: 0; font-size: 15px">Trạng thái lịch hẹn</h3>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <span class="bd" style="background: #EEF2F7; color: #3D4A5C">Đã đặt</span>
+          <span class="bd" style="background: #E3EEF9; color: #084A85">Đã xác nhận</span>
+          <span class="bd" style="background: #E4F3EA; color: #17603A">Hoàn thành</span>
+          <span class="bd" style="background: #EEF0F3; color: #5B6675">Hủy</span>
+          <span class="bd" style="background: #FDEEDC; color: #8A4300">Vắng mặt</span>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; gap: 8px">
+          <span class="bd" style="background: #F2F4F7; color: #3D4A5C">Trực tiếp · P.204</span>
+          <span class="bd" style="background: #EAF0FB; color: #1F4E9C">Từ xa · Google Meet</span>
+        </div>
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Màu khác nhau cả độ sáng, không chỉ sắc độ; luôn có chữ đi kèm.</p>
+      </div>
+      <div class="card" style="display: flex; flex-direction: column; gap: 12px">
+        <h3 style="margin: 0; font-size: 15px">Hộp thông báo</h3>
+        <div style="background: #FEF3F2; border: 1px solid #F1B8B2; color: #7A1A12; border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.5"><b>Không đặt được lịch:</b> BR-B02: bệnh nhân đã có lịch hẹn khác trùng giờ này.<div style="margin-top: 6px; font-size: 13px">Đang trùng lịch 1050: 16/11 09:30–10:00, Đã đặt.</div></div>
+        <div style="background: #FFF7E0; border: 1px solid #E8C766; color: #6B4600; border-radius: 10px; padding: 12px 14px; font-size: 14px"><b>Dị ứng:</b> Amoxicillin (ghi nhận 02/03/2026)</div>
+        <div style="background: #E4F3EA; border: 1px solid #A9D7BB; color: #17603A; border-radius: 10px; padding: 12px 14px; font-size: 14px">Đã đặt lịch hẹn cho Trần Thị Bình.</div>
+        <p style="margin: 0; font-size: 13px; color: #5B6675">Đỏ: lỗi từ CSDL (dòng đầu là thông điệp gốc, dòng sau là thông tin tra thêm). Vàng: cảnh báo trước khi gửi. Xanh: flash thành công.</p>
+      </div>
+    </div>
+  </section>
+</div>
+</body>
+</html>
