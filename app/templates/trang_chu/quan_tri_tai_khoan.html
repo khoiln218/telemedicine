@@ -1,0 +1,54 @@
+{# Dashboard quản trị tài khoản – thiết kế docs/8_giao-dien/trang-chu/quan-tri-tai-khoan.html; dữ liệu trang_chu.quan_tri_tai_khoan #}
+{% set so = '{:,}' %}
+<div class="tieu-de">
+  <div>
+    <h1>Xin chào, {{ user.ten_dang_nhap }}</h1>
+    <p class="ghi-chu">{{ thu }}, {{ ngay.strftime('%d/%m/%Y') }}</p>
+  </div>
+  <div class="nut"><a class="btn" href="{{ url_for('tai_khoan.danh_sach') }}">Cấp tài khoản nhân viên</a></div>
+</div>
+
+<div class="kpi">
+  <div class="tile"><span class="nhan">Tài khoản nhân viên</span><span class="so">{{ so.format(d.nhan_vien).replace(',', '.') }}</span>
+    <span class="them">{{ 'mọi nhân viên đã có tài khoản' if not d.chua_co else d.chua_co|length ~ ' nhân viên chưa có' }}</span></div>
+  <div class="tile"><span class="nhan">Tài khoản bệnh nhân</span><span class="so">{{ so.format(d.benh_nhan).replace(',', '.') }}</span>
+    <span class="them">do lễ tân cấp</span></div>
+  <div class="tile{{ ' can-lam' if d.so_khoa }}"><span class="nhan">Đang khóa</span><span class="so">{{ d.so_khoa }}</span>
+    <span class="them">tài khoản</span></div>
+  <div class="tile{{ ' can-lam' if d.chua_co }}"><span class="nhan">Nhân viên chưa có tài khoản</span><span class="so">{{ d.chua_co|length }}</span>
+    <span class="them">BR-B09</span></div>
+</div>
+
+<div class="hai-cot">
+  <section class="khoi rong">
+    <h2>Tài khoản theo vai trò</h2>
+    <div class="card bang">
+      <table>
+        <tr><th>Vai trò</th><th style="text-align: right">Tài khoản</th><th style="text-align: right">Đang khóa</th></tr>
+        {% for r in d.bang %}
+        <tr><td>{{ r.ten }}</td><td style="text-align: right">{{ so.format(r.so).replace(',', '.') }}</td><td style="text-align: right">{{ r.khoa }}</td></tr>
+        {% endfor %}
+      </table>
+    </div>
+  </section>
+
+  <section class="khoi hep">
+    <h2>Cần xử lý</h2>
+    {% for n in d.chua_co %}
+    <div class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px">
+      <span><b>{{ n.ho_ten }}</b><span class="phu" style="display: block">{{ config_vai_tro[n.loai_nv][1] }} · chưa có tài khoản</span></span>
+      <a class="btn phu-btn nho" href="{{ url_for('tai_khoan.danh_sach') }}">Cấp</a>
+    </div>
+    {% endfor %}
+    {% for t in d.dang_khoa %}
+    <div class="card" style="display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 16px">
+      <span><b>{{ t.ten_dang_nhap }}</b><span class="phu" style="display: block">{{ t.ho_ten or ('Bệnh nhân mã %s' % t.ma_bn) }} · đang khóa</span></span>
+      <form method="post" action="{{ url_for('tai_khoan.doi_trang_thai', ten=t.ten_dang_nhap) }}"><button class="phu-btn nho">Mở khóa</button></form>
+    </div>
+    {% endfor %}
+    {% if not d.chua_co and not d.dang_khoa %}
+    <div class="trong-rong">Không có việc cần xử lý: mọi nhân viên đã có tài khoản, không tài khoản nào đang khóa.</div>
+    {% endif %}
+    <p class="ghi-chu">Khóa có hiệu lực ngay cả khi người dùng đang đăng nhập (BR-B10).</p>
+  </section>
+</div>

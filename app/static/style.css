@@ -114,12 +114,40 @@ button.slot.chon b { color: #fff; }
 .dang-nhap { min-height: calc(100vh - 56px); justify-content: center; align-items: center; }
 .dang-nhap form { width: 100%; max-width: 400px; gap: 18px; }
 
-/* Trang chủ */
-.loi-tat { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
-.loi-tat a { display: flex; flex-direction: column; gap: 4px; padding: 16px; background: #fff; border: 1px solid var(--vien);
+/* Trang chủ (dashboard) – thiết kế docs/8_giao-dien/trang-chu/ */
+.kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+.tile { background: #fff; border: 1px solid var(--vien); border-radius: 12px; padding: 16px 18px; display: flex; flex-direction: column; gap: 2px;
+  color: var(--chu); text-decoration: none; }
+a.tile:hover { border-color: var(--chinh); color: var(--chu); }
+.tile .nhan { font-size: 13px; color: var(--phu); }
+.tile .so { font-size: 30px; font-weight: 600; line-height: 1.2; }
+.tile .so small { font-size: 15px; font-weight: 500; color: var(--phu); }
+.tile .them { font-size: 12px; color: var(--phu); }
+.tile.can-lam { border-color: #F0C48A; background: #FFFBF4; }   /* việc cần xử lý: viền cam + chữ, không chỉ màu */
+.tile.can-lam .so { color: #8A4300; }
+.khoi { display: flex; flex-direction: column; gap: 12px; }
+.khoi-dau { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+/* Danh sách thanh tỷ lệ: tên · thanh · số (DOM: tên, số, thanh); khung hẹp thì thanh xuống dòng */
+.meter { display: grid; grid-template-columns: minmax(0, 1fr) minmax(64px, 1.6fr) auto; grid-auto-flow: dense; align-items: center; gap: 6px 12px; }
+.meter .ten { grid-column: 1; font-size: 14px; min-width: 0; }
+.meter .ten a { color: var(--chu); }
+.meter .ten a:hover { color: var(--chinh); }
+.meter .ten span { display: block; font-size: 12px; color: var(--phu); }
+.meter .ray { grid-column: 2; height: 8px; border-radius: 999px; background: var(--nhat); overflow: hidden; }
+.meter .ray i { display: block; height: 100%; border-radius: 999px; background: var(--chinh); }
+.meter .gt { grid-column: 3; font-size: 13px; color: var(--chu-2); text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.card:has(> .meter) { container-type: inline-size; }
+@container (max-width: 420px) {
+  .meter { grid-template-columns: 1fr auto; row-gap: 4px; }
+  .meter .ray { grid-column: 1 / -1; margin-bottom: 8px; }
+  .meter .gt { grid-column: 2; }
+}
+.viec { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+.viec a { display: flex; flex-direction: column; gap: 4px; padding: 16px; min-height: 44px; background: #fff; border: 1px solid var(--vien);
   border-radius: 12px; color: var(--chu); text-decoration: none; }
-.loi-tat a:hover { border-color: var(--chinh); color: var(--chu); }
-.loi-tat span { color: var(--phu); font-size: 13px; }
+.viec a:hover { border-color: var(--chinh); color: var(--chu); }
+.trong-rong { padding: 14px 16px; border: 1px dashed var(--vien); border-radius: 10px; color: var(--phu); font-size: 13px; }
+.nguon { font-size: 12px; color: var(--phu); }
 
 .sap-toi { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 32px; background: #F7FAFE; border-color: #B9D2EC; }
 .sap-toi > div { flex: 1 1 360px; display: flex; flex-direction: column; gap: 6px; }

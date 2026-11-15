@@ -16,3 +16,17 @@ VAI_TRO = {
     "LE_TAN": ("r_le_tan", "Lễ tân"),
     "BENH_NHAN": ("r_benh_nhan", "Bệnh nhân"),
 }
+
+# Menu theo vai trò, khớp bản thiết kế docs/8_giao-dien: (nhãn, endpoint Flask).
+# Trang chủ đứng đầu, Đổi mật khẩu đứng cuối ở mọi vai trò. Mục có endpoint chưa cài thì tạm ẩn:
+# màn hình mảng A (T48) đặt endpoint bac_si.danh_sach thì mục Bác sĩ tự hiện.
+MENU = {
+    "LE_TAN": [("Lịch hẹn", "lich_hen.danh_sach"), ("Đặt lịch", "lich_hen.dat"),
+               ("Bệnh nhân", "benh_nhan.danh_sach"), ("Bác sĩ", "bac_si.danh_sach")],
+    "BAC_SI": [("Lịch hẹn", "lich_hen.danh_sach"), ("Bệnh nhân", "benh_nhan.danh_sach"),
+               ("Bác sĩ", "bac_si.danh_sach")],
+    "QUAN_TRI_NHAN_SU": [("Bác sĩ & lịch làm việc", "bac_si.danh_sach")],
+    "QUAN_TRI_TAI_KHOAN": [("Tài khoản", "tai_khoan.danh_sach")],
+    "QUAN_TRI_DANH_MUC": [],
+    "BENH_NHAN": [("Lịch hẹn & hồ sơ của tôi", "lich_hen.danh_sach")],
+}
